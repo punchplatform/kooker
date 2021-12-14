@@ -22,7 +22,7 @@ clrend=$'\e[0m'
 cat << EOF 
 ${bred}ARTEFACT SERVER${clrend} --> ${bcyn}http://artifacts-service.${CLUSTER_NAME}:4245${clrend}
 ${bred}GRAFANA${clrend} --> ${bcyn}http://grafana.${CLUSTER_NAME}:3000${clrend} - ${GRAFANA_USER}/ ${GRAFANA_PASSWORD}
-${bred}PROMETHEUS${clrend} --> ${bcyn}http://prometheus.${CLUSTER_NAME}:9090${clrend}
+${bred}PROMETHEUS${clrend} --> ui: ${bcyn}http://prometheus.${CLUSTER_NAME}:9090${clrend} / datasource: ${bcyn}http://prometheus.${MONITORING_NAMESPACE}:9090${clrend}
 ${bred}CLICKHOUSE HTTP/TCP${clrend} --> ${bcyn}http://clickhouse.${CLUSTER_NAME}:8123 / http://clickhouse.${CLUSTER_NAME}:9000${clrend} - clickhouse_operator / clickhouse_operator_password
 ${bred}MINIO${clrend} --> ${bcyn}http://minio.${CLUSTER_NAME}:9002${clrend} - ${MINIO_ACCESS_KEY} / ${MINIO_SECRET_KEY}
 ${bred}KIBANA${clrend} --> ${bcyn}http://kibana.${CLUSTER_NAME}:5601${clrend} - ${ES_USER} / ${ES_PASSWORD}
