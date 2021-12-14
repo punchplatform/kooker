@@ -34,7 +34,7 @@ spec:
           - com/mycompany/sample/groks
         punchlet_json_resources:
           - com/mycompany/sample/resources/color_codes.json
-        punchlets:
+        punchlet:
           - com/mycompany/sample/parser.punch
       subscribe:
       - stream: logs
