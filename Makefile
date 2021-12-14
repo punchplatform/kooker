@@ -43,6 +43,7 @@ start: download cluster prepare load-images-from-directory deploy-cots network p
 
 stop: ## kooker uninstall
 	-$(K3D) cluster delete ${CLUSTER_NAME}
+	rm -rf build activate.sh
 
 ##@ Download all kooker dependencies locally
 

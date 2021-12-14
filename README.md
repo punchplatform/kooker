@@ -27,7 +27,7 @@ make start
 
 !!! info 
 
-    You need to be online to run this quick start guide
+    You need to have internet access
 
 This command will : 
 
@@ -36,7 +36,7 @@ This command will :
 - Deploy Punch components : Artefact Server & Punch Operator
 - Load Elastisearch templates 
 
-After a successful installation, you will be able to launch your first punchline, which generates fake data on stdout:  
+After a successful installation, you will be able to launch your first punchline, which generates arbitrary data on stdout:  
 
 ```sh
 kubectl apply -f examples/stormline_example.yaml -n kast
@@ -50,7 +50,7 @@ make credentials
 
 Then, open you browser and go to the `ARTEFACT SERVER` url and import the provided example artifacts `examples/test-parsers-1.0.0-artefact.zip` thanks to the `Upload artifacts` button
 
-Finnaly, launch your punchline using this example resource : 
+Finally, execute your punchline using the command below: 
 
 ```sh
 kubectl apply -f examples/stormline_with_resource_example.yaml -n kast

@@ -2,8 +2,8 @@
 
 ### DEPLOY ENV
 
-#export OFFLINE=false
-#export DEBUG=false
+# export OFFLINE=false
+# export DEBUG=false
 
 ### CLICKHOUSE ENV
 
@@ -44,11 +44,10 @@
 # export MINIO_CLI_IMG=minio/mc:RELEASE.2021-10-07T04-19-58Z
 # export MINIO_SECRET_KEY=K@st2020*
 # export MINIO_ACCESS_KEY=minio
-# export PUNCHPLATFORM_TENANT=kast
 
 ## PUNCH ENV 
 
-# export PUNCHPLATFORM_TENANT=kast
+# export PUNCHPLATFORM_TENANT=default
 # export PUNCH_VERSION=7.0.1-SNAPSHOT
 # export PUNCH_OPERATOR_VERSION=1.0-SNAPSHOT
 # export PUNCH_SYSTEM_NAMESPACE=punchoperator-system

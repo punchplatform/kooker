@@ -1,28 +1,3 @@
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: admin-user
-rules:
-- apiGroups: [""]
-  resources: ["pods", "pods/log", "services", "configmaps"]
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: admin-user
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: admin-user
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: admin-user
-subjects:
-- kind: ServiceAccount
-  name: admin-user
 ---
 apiVersion: punchline.gitlab.thalesdigital.io/v1
 kind: Sparkline
