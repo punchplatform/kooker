@@ -28,7 +28,9 @@ else
 	fi
 	${K3D} cluster create ${CLUSTER_NAME} \
 	--k3s-server-arg '--kubelet-arg=minimum-image-ttl-duration=0' \
-	--k3s-server-arg '--kubelet-arg=image-gc-high-threshold=100'
+	--k3s-server-arg '--kubelet-arg=image-gc-high-threshold=100' \
+	--k3s-server-arg '--kubelet-arg=eviction-hard=imagefs.available<1%,nodefs.available<1%' \
+	--k3s-server-arg '--kubelet-arg=eviction-minimum-reclaim=imagefs.available=1%,nodefs.available=1%'
 	${KUBECTL} config use-context k3d-${CLUSTER_NAME} 
 	${KUBECTL} wait nodes --all --for=condition=ready --timeout=120s 
 	make patch-coredns CLUSTER_NAME=${CLUSTER_NAME}

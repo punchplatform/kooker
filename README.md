@@ -15,6 +15,10 @@ The tool was built to showcase the concept on how to facilitate local developmen
 
 ## Quick start 
 
+!!! warn
+
+    Sometimes, you may need to do a: `docker system prune && systemctl restart docker.service` before playing this guide.
+
 To deploy a local Kubernetes cluster with basic COTS and Punch components simply run : 
 
 ```sh
@@ -32,7 +36,7 @@ This command will :
 - Deploy Punch components : Artefact Server & Punch Operator
 - Load Elastisearch templates 
 
-After a successful installation, you can launch your first punchline which generate fake data and print them in stdout :  
+After a successful installation, you will be able to launch your first punchline, which generates fake data on stdout:  
 
 ```sh
 kubectl apply -f examples/stormline_example.yaml -n kast

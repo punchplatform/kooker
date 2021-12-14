@@ -9,8 +9,8 @@ if [ ${OFFLINE} = false ] ; then
 
 mkdir -p ${CHARTS_DIR}
 
-${HELM} repo add punchplatform https://punchplatform.github.io/punch-helm
-${HELM} repo add jetstack https://charts.jetstack.io
+${HELM} repo add punchplatform https://punchplatform.github.io/punch-helm || true
+${HELM} repo add jetstack https://charts.jetstack.io || true
 ${HELM} repo update
 
 ${HELM} pull punchplatform/${PUNCH_OPERATOR_CHART} --version ${PUNCH_OPERATOR_VERSION} --devel --destination ${CHARTS_DIR}

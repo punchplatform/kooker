@@ -1,1 +1,3 @@
 downloads/
+activate.sh
+build/punch/deploy-vars.yaml
