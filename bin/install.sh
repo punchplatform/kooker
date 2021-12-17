@@ -46,7 +46,7 @@ export PS1='\[\e[1;32m\]kooker:\[\e[0m\][\W]\$ '
 # If tools are not set up natively, define aliases to use downloaded tool
 
 for tool in kubectl helm k3d ; do
-  which \${tool} 1>/dev/null || alias \${tool}=${kookerDir}/downloads/\${tool}
+  alias \${tool}=${kookerDir}/downloads/\${tool}
 done
 
 
