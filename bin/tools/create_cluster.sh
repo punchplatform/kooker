@@ -6,12 +6,12 @@ set -o pipefail
 source bin/env.sh
 
 function clusterExists () {
-	cat ~/.kube/config | grep "name: ${1}\$" 1>/dev/null
+	${K3D} cluster ls -o json | jq -r .[].name | grep '^'${1}'$'  > /dev/null
 }
 
 ## Two if to deal a k3d and a non-k3d cluster
-if clusterExists "k3d-${CLUSTER_NAME}" ; then
-	echo "Cluster k3d-${CLUSTER_NAME} already exists skipping installation"
+if clusterExists "${CLUSTER_NAME}" ; then
+	echo "Cluster ${CLUSTER_NAME} already exists skipping installation"
 	${KUBECTL} config use-context k3d-${CLUSTER_NAME} 
 elif clusterExists "${CLUSTER_NAME}" ; then
 	echo "Cluster ${CLUSTER_NAME} already exists skipping installation"
