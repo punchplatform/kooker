@@ -18,11 +18,11 @@ In case something does not work after full deployment (see README.md `make start
 	- Create  Prometheus datasource, providing url `http://prometheus.monitoring:9090`
 	
 
+## Top-down troubleshooting track
 
 
 
-
-## Check your kube resources status
+### Check your kube resources status
 
 * List pods that are not starting or have failed :
 
@@ -30,3 +30,9 @@ In case something does not work after full deployment (see README.md `make start
 
 
 
+
+## Useful debug commands
+
+### Viewing logs from punch operator service
+
+	kubectl logs -f --tail=-1 -n punchoperator-system -l control-plane=controller-manager
