@@ -32,10 +32,11 @@ make start
 
 This command will : 
 
-- Create a k3d cluster
+- Create a k3d cluster named 'kooker'
 - Deploy basic COTS : Elasticsearch, Kibana, Kafka, Minio, Prometheus, Grafana, Kubernetes Dashboard and Clickhouse
 - Deploy Punch components : Artefact Server & Punch Operator
 - Load Elastisearch templates 
+- configure your /etc/hosts to allow direct access to the delpoyed services (this step will ask you your sudoer password)
 
 After a successful installation, you will be able to launch your first punchline, which generates arbitrary data on stdout:  
 
