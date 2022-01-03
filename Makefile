@@ -112,7 +112,7 @@ deploy-kafka: ## Deploy only kafka
 .PHONY: deploy-minio
 
 MINIO_INSTALL = $(shell pwd)/bin/cots/minio.sh
-deploy-minio: ## Install only minio
+deploy-minio: ## Deploy only minio
 	$(SETUP_ENV) && $(MINIO_INSTALL)
 
 ##@ Platform management
