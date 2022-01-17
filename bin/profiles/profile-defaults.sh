@@ -58,4 +58,4 @@
 # export PUNCH_STORMLINE_IMG=ghcr.io/punchplatform/stormline:${PUNCH_VERSION}
 # export PUNCH_SPARKLINE_IMG=ghcr.io/punchplatform/sparkline:${PUNCH_VERSION}
 # export PUNCH_ES_HOUSEKEEPING_IMG=ghcr.io/punchplatform/es-housekeeping:${PUNCH_VERSION}
-
+# export PUNCH_S3_HOUSEKEEPING_IMG=ghcr.io/punchplatform/archive-housekeeping:${PUNCH_VERSION}
