@@ -4,6 +4,7 @@ set -o errexit
 set -o pipefail
 
 source bin/env.sh
+source bin/utils/libs.sh
 
 if [ $DEBUG = true ] ; then
   set -x
@@ -13,7 +14,7 @@ ${KUBECTL} create namespace ${KAFKA_NAMESPACE} > /dev/null 2>&1 || true
 
 ${KUBECTL} apply -f ${KUBE_RESOURCES_DIR}/kafka
 
-${KUBECTL} wait pods --all --for=condition=ready --timeout=300s -n ${KAFKA_NAMESPACE}
+kubectlWait 240 ${KAFKA_NAMESPACE}
 
 ${KUBECTL} -n ${KAFKA_NAMESPACE} apply -f- <<EOF
 apiVersion: kafka.strimzi.io/v1beta2
