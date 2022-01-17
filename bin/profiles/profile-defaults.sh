@@ -52,10 +52,10 @@
 # export PUNCH_OPERATOR_VERSION=1.0-SNAPSHOT
 # export PUNCH_SYSTEM_NAMESPACE=punchoperator-system
 # export PUNCH_ARTEFACT_NAMESPACE=punch-gateway-ns
-# export PUNCH_OPERATOR_IMG=ghcr.io/punchplatform/operator
-# export PUNCH_ARTIFACT_IMG=ghcr.io/punchplatform/artifacts-server
-# export PUNCH_RESOURCECTL_IMG=ghcr.io/punchplatform/resourcectl
-# export PUNCH_STORMLINE_IMG=ghcr.io/punchplatform/stormline
-# export PUNCH_SPARKLINE_IMG=ghcr.io/punchplatform/sparkline
-# export PUNCH_ES_HOUSEKEEPING_IMG=ghcr.io/punchplatform/es-housekeeping
-# export PUNCH_S3_HOUSEKEEPING_IMG=ghcr.io/punchplatform/archive-housekeeping
+# export PUNCH_OPERATOR_IMG=ghcr.io/punchplatform/operator:${PUNCH_OPERATOR_VERSION}
+# export PUNCH_ARTIFACT_IMG=ghcr.io/punchplatform/artifacts-server:${PUNCH_VERSION}
+# export PUNCH_RESOURCECTL_IMG=ghcr.io/punchplatform/resourcectl:${PUNCH_VERSION}
+# export PUNCH_STORMLINE_IMG=ghcr.io/punchplatform/stormline:${PUNCH_VERSION}
+# export PUNCH_SPARKLINE_IMG=ghcr.io/punchplatform/sparkline:${PUNCH_VERSION}
+# export PUNCH_ES_HOUSEKEEPING_IMG=ghcr.io/punchplatform/es-housekeeping:${PUNCH_VERSION}
+
