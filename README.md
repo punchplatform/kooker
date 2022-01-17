@@ -113,8 +113,8 @@ make CLUSTER_NAME=mycluster start
 ### Update default configuration
 
 Kooker comes with a default configuration.
-To override any of them, update the file `bin/profiles/default_profile.sh`, by setting your desired value and run: 
+To override any of them, update the file `bin/profiles/profile-defaults.sh`, by setting your desired value and run: 
 
 ```sh
-make PROFILE=bin/profiles/default_profile.sh start
+make PROFILE=bin/profiles/profile-defaults.sh start
 ```
