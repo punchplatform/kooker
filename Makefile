@@ -22,7 +22,7 @@ DOWNLOAD_IMG_DIR ?= ${DOWNLOAD_DIR}/images/*
 DOWNLOAD_CHART_DIR ?= ${DOWNLOAD_DIR}/charts/*
 WITH_COTS ?= true
 
-PROFILE ?= $(shell pwd)/bin/profiles/default_profile.sh
+PROFILE ?= $(shell pwd)/bin/profiles/profile-defaults.sh
 CLUSTER_NAME ?= kooker
 SETUP_ENV = . $(shell realpath ${PROFILE})
 CONSOLE_ENV = . $(shell pwd)/activate.sh
