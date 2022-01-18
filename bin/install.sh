@@ -53,7 +53,7 @@ done
 # Define a 'kesapi' function for easy ES querying
 function kesapi() {
   url="\${1:-}"
-  if [ $# -gt 0 ] ; then shift ; fi
+  if [ \$# -gt 0 ] ; then shift ; fi
   curl -u "$ES_USER:$ES_PASSWORD" http://${ELASTICSEARCH_EXTERNAL_API_URL}/\${url} "\${@}"
 }
 
