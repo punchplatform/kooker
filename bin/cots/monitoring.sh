@@ -13,8 +13,7 @@ fi
 # create monitoring namespace
 ${KUBECTL} create ns ${MONITORING_NAMESPACE} 2>/dev/null || true
 
-sed -i "s/namespace: default/namespace: ${MONITORING_NAMESPACE}/g" ${KUBE_RESOURCES_DIR}/prometheus/bundle.yaml
-
+sed -i -e "s/namespace: default/namespace: ${MONITORING_NAMESPACE}/g" ${KUBE_RESOURCES_DIR}/prometheus/bundle.yaml 
 # install prometheus operator and it's related CRDs
 ${KUBECTL} apply \
   -f ${KUBE_RESOURCES_DIR}/prometheus \
