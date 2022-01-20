@@ -1,10 +1,10 @@
 # Kooker
 
-**K**ooker with a **K** is derived from the word *Cooker*. Like a cooker is used for making delicious recipes, kooker will try to cook a Punch recipe on K3D. 
+**K**ooker with a **K** is derived from the word *Cooker*. Like a cooker is used for 
+making delicious recipes, kooker cooks a (hopefully tasty) Punch recipe on top of K3D.
 
-kooker is container, a swiss knife army, built with tools required for an autonomous deployment. Delivering prerequisites as containers makes it platform agnostic.
-
-The tool was built to showcase the concept on how to facilitate local development with Punch services dependencies and how it can be seamlessly included in CI pipelines
+In short: kooker deploys a kubernetes cluster together with punch services such as Minio,
+Clickhouse, Elastic, etc .. so that you can start punch applications in minutes.  
 
 ## Requirements
 
