@@ -184,7 +184,7 @@ load-image-from-docker: ## Deploy an image from your local docker registry to k3
 	rm ${IMAGES_DIR}/img
 
 load-images-from-directory: ## Deploy all images in $DOWNLOAD_IMG_DIR to k3d cluster.
-	$(K3D) image import ${DOWNLOAD_IMG_DIR} --cluster $(CLUSTER_NAME)
+	$(shell pwd)/bin/tools/import_images_from_directory.sh $(DOWNLOAD_IMG_DIR)
 
 ##@ General
 
