@@ -14,7 +14,7 @@ Clickhouse, Elastic, etc .. so that you can start punch applications in minutes.
 - unzip
 - bash
 
-## Quick start 
+## Quick start
 
 !!! warn
 
@@ -61,7 +61,7 @@ Finally, execute your punchline using the command below:
 kubectl apply -f examples/stormline_with_resource_example.yaml -n kast
 ```
 
-## Tooltips  
+## Tooltips
 
 The PConsole provides a set of commands to interact with your deployed kubernetes cluster. The `start` command is a wrapper of some of them but you can use them independently if necessary. 
 
@@ -82,9 +82,9 @@ make credentials
 make stop
 ```
 
-## Going further 
+## Going further
 
-### Offline mode 
+### Offline mode
 
 Kooker can be also be used without internet access. 
 
@@ -102,7 +102,7 @@ Then, copy the `download` directory to your offline platform at the root directo
 make OFFLINE=true start
 ```
 
-### Deploy only components 
+### Deploy only components
 
 If your `KUBECONFIG` is already configured to access a kubernetes cluster with proper **RBAC**, you can deploy our prerequisites by using the command:
 
@@ -113,8 +113,8 @@ make CLUSTER_NAME=mycluster start
 ### Update default configuration
 
 Kooker comes with a default configuration.
-To override any of them, update the file `bin/profiles/profile-defaults.sh`, by setting your desired value and run: 
+To override any of them, update the file `bin/profiles/profile-defaults.sh`, by setting your desired value or derivate this profile and specify it like this when running make: 
 
 ```sh
-make PROFILE=bin/profiles/profile-defaults.sh start
+make PROFILE=bin/profiles/profile-8.0-DEV.sh start
 ```
