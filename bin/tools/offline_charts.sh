@@ -15,12 +15,12 @@ ${HELM} repo update
 
 ${HELM} pull punchplatform/${PUNCH_OPERATOR_CHART} --version ${PUNCH_OPERATOR_VERSION} --devel --destination ${CHARTS_DIR}
 ${HELM} pull punchplatform/${PUNCH_OPERATOR_CRD_CHART} --version ${PUNCH_OPERATOR_VERSION} --devel --destination ${CHARTS_DIR}
-${HELM} pull punchplatform/${PUNCH_INJECTOR_CHART} --version ${PUNCH_VERSION} --devel --destination ${CHARTS_DIR}
-${HELM} pull punchplatform/${PUNCH_ARTIFACT_CHART} --version ${PUNCH_VERSION} --devel --destination ${CHARTS_DIR}
-${HELM} pull punchplatform/${PUNCH_ES_HOUSEKEEPING_CHART} --version ${PUNCH_VERSION} --devel --destination ${CHARTS_DIR}
-${HELM} pull punchplatform/${PUNCH_S3_HOUSEKEEPING_CHART} --version ${PUNCH_VERSION} --devel --destination ${CHARTS_DIR}
-${HELM} pull punchplatform/${PUNCH_EXTRACTION_SERVER_CHART} --version ${PUNCH_VERSION} --devel --destination ${CHARTS_DIR}
-${HELM} pull punchplatform/${PUNCH_ELASTALERT_SERVER_CHART} --version ${PUNCH_VERSION} --devel --destination ${CHARTS_DIR}
+${HELM} pull punchplatform/${PUNCH_INJECTOR_CHART} --version ${PUNCH_INJECTOR_VERSION} --devel --destination ${CHARTS_DIR}
+${HELM} pull punchplatform/${PUNCH_ARTIFACT_CHART} --version ${PUNCH_ARTIFACTS_SERVICE_VERSION} --devel --destination ${CHARTS_DIR}
+${HELM} pull punchplatform/${PUNCH_ES_HOUSEKEEPING_CHART} --version ${PUNCH_HELM_VERSION} --devel --destination ${CHARTS_DIR}
+${HELM} pull punchplatform/${PUNCH_S3_HOUSEKEEPING_CHART} --version ${PUNCH_HELM_VERSION} --devel --destination ${CHARTS_DIR}
+${HELM} pull punchplatform/${PUNCH_EXTRACTION_SERVER_CHART} --version ${PUNCH_HELM_VERSION} --devel --destination ${CHARTS_DIR}
+${HELM} pull punchplatform/${PUNCH_ELASTALERT_SERVER_CHART} --version ${PUNCH_HELM_VERSION} --devel --destination ${CHARTS_DIR}
 
 ${HELM} pull jetstack/${CERT_MANAGER_CHART} --version ${CERT_MANAGER_VERSION} --destination ${CHARTS_DIR}
 

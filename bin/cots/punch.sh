@@ -11,6 +11,12 @@ if [ $DEBUG = true ] ; then
   set -x
 fi
 
+
+echo ""
+echo "Preparing for punch services deployment ..."
+echo ""
+
+
 mkdir -p ${HELM_VARSFILE_DIR}
 cat > ${HELM_VARSFILE} <<- EOF
 application:
@@ -47,8 +53,12 @@ ${HELM} upgrade \
 ${KUBECTL} create namespace ${PUNCH_SYSTEM_NAMESPACE} > /dev/null 2>&1 || true
 ${KUBECTL} create namespace ${PUNCH_ARTEFACT_NAMESPACE} > /dev/null 2>&1 || true
 
+echo ""
+echo "Deploying Punch Kube operator and CRDs..."
+echo ""
 
-echo "CRDS:${CHARTS_DIR}/operator-crds-${PUNCH_OPERATOR_VERSION}.tgz"
+
+# echo "CRDS:${CHARTS_DIR}/operator-crds-${PUNCH_OPERATOR_VERSION}.tgz"
 ${HELM} upgrade \
   --install operator-crds \
   --namespace ${PUNCH_SYSTEM_NAMESPACE} \
@@ -63,12 +73,16 @@ ${HELM} upgrade \
   --values "${HELM_VARSFILE}" \
   --set image.name=${PUNCH_OPERATOR_IMG} \
   --create-namespace \
-  --wait
+  --
+
+echo ""
+echo "Deploying Punch artifacts server..."
+echo ""
 
 ${HELM} upgrade \
   --install artifacts \
   --namespace ${PUNCH_ARTEFACT_NAMESPACE} \
-  ${CHARTS_DIR}/artifacts-${PUNCH_VERSION}.tgz \
+  ${CHARTS_DIR}/artifacts-${PUNCH_ARTIFACTS_SERVICE_VERSION}.tgz \
   --set image.name=${PUNCH_ARTIFACT_IMG} \
   --values "${HELM_VARSFILE}" \
   --create-namespace \
@@ -76,6 +90,12 @@ ${HELM} upgrade \
 
 ## In case services are not of type LoadBalancer, patch those to LoadBalancer
 patchSVCAndWait svc/artifacts-service ${PUNCH_ARTEFACT_NAMESPACE} 2>&1 > /dev/null
+
+
+echo ""
+echo "Initializing '${PUNCHPLATFORM_TENANT}' namespace and associated configuration items to enable running punchlines..."
+echo ""
+
 
 # Initialize central namespace for 'punch' operator
 ${KUBECTL} create namespace ${PUNCHPLATFORM_TENANT} > /dev/null 2>&1 || true
@@ -127,3 +147,9 @@ subjects:
 - kind: ServiceAccount
   name: admin-user
 EOF
+
+
+
+echo ""
+echo "Finished pushing Punch services descriptors into the cluster"
+echo ""
