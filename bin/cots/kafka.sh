@@ -14,7 +14,12 @@ ${KUBECTL} create namespace ${KAFKA_NAMESPACE} > /dev/null 2>&1 || true
 
 ${KUBECTL} apply -f ${KUBE_RESOURCES_DIR}/kafka
 
-kubectlWait 240 ${KAFKA_NAMESPACE}
+# We cannot apply a 'Kafka' resource until it is actually deployed...
+
+echo "Waiting for kafka CRDs to be deployed..."
+${KUBECTL} -n ${KAFKA_NAMESPACE} wait --for condition=established --timeout=500s  crd/kafkas.kafka.strimzi.io
+
+#kubectlWait 240 ${KAFKA_NAMESPACE}
 
 ${KUBECTL} -n ${KAFKA_NAMESPACE} apply -f- <<EOF
 apiVersion: kafka.strimzi.io/v1beta2
