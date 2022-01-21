@@ -172,7 +172,7 @@ download-kube-resources:
 
 FETCH_IMG = $(shell pwd)/bin/tools/docker_save.sh
 fetch-image: ## fetch an image locally in downloads/images.
-	-IMG=${IMG} $(FETCH_IMG)
+	IMG=${IMG} $(FETCH_IMG)
 
 .PHONY: load-image-from-docker
 
