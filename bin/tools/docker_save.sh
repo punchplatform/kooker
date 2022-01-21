@@ -19,9 +19,9 @@ IMG_STRIP_FORWARD_SLASH=$(echo ${IMG} | sed 's/^\///;s/\///g')
 TARGET_ARCHIVE_PATH=${IMAGES_DIR}/${IMG_STRIP_FORWARD_SLASH}.tar.gz
 
 
-## If tag does not end with a digit, then we always pull, to allow refresh of 'floating' tag images
+## If tag does not end with a digit or with a 'Z' (timezone) , then we always pull, to allow refresh of 'floating' tag images
 
-if [[ $IMG =~ [0-9]$ ]] && [ -f ${TARGET_ARCHIVE_PATH} ] ; then
+if [[ $IMG =~ [0-9]Z?$ ]] && [ -f ${TARGET_ARCHIVE_PATH} ] ; then
     echo "Release image already cached: ${IMG}; skipping"
 else
     echo "Pulling image '${IMG}"
