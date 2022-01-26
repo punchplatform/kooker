@@ -49,25 +49,22 @@
 
 # export PUNCHPLATFORM_TENANT=default
 
-export PUNCH_VERSION=8.0.0-SNAPSHOT
-export PUNCH_IMAGES_TAG=${PUNCH_VERSION}
-# export PUNCH_OPERATOR_VERSION=1.0-SNAPSHOT
+export PUNCH_VERSION=8.0-dev
+export PUNCH_IMAGES_TAG=8.0-dev
+export PUNCH_OPERATOR_VERSION=${PUNCH_IMAGES_TAG}
 
-export PUNCH_HELM_VERSION=7.0.2-SNAPSHOT
-export PUNCH_INJECTOR_VERSION=7.0.2-SNAPSHOT
-export PUNCH_ARTIFACTS_SERVICE_VERSION=7.0.2-SNAPSHOT
+#export PUNCH_HELM_VERSION=7.0.2-SNAPSHOT
+#export PUNCH_INJECTOR_VERSION=7.0.2-SNAPSHOT
+#export PUNCH_ARTIFACTS_SERVICE_VERSION=7.0.2-SNAPSHOT
 
 # export PUNCH_SYSTEM_NAMESPACE=punchoperator-system
 # export PUNCH_ARTEFACT_NAMESPACE=punch-gateway-ns
 
 # Target :m 8.0-DEV . Pour l'instant operateur 7.
-export PUNCH_OPERATOR_IMG=ghcr.io/punchplatform/operator:1.1.0   
+# export PUNCH_OPERATOR_IMG=ghcr.io/punchplatform/operator:1.1.0   
 
-export PUNCH_ARTIFACT_IMG=ghcr.io/punchplatform/artifacts-server:${PUNCH_IMAGES_TAG}
-export PUNCH_RESOURCECTL_IMG=ghcr.io/punchplatform/resourcectl:${PUNCH_IMAGES_TAG}
-export PUNCH_STORMLINE_IMG=ghcr.io/punchplatform/punchline-java:8.0.0-snapshot
-export PUNCH_SPARKLINE_IMG=ghcr.io/punchplatform/sparkline:${PUNCH_IMAGES_TAG}
+#export PUNCH_ARTIFACT_IMG=ghcr.io/punchplatform/artifacts-server:${PUNCH_IMAGES_TAG}
+#export PUNCH_RESOURCECTL_IMG=ghcr.io/punchplatform/resourcectl:${PUNCH_IMAGES_TAG}
+export PUNCH_STORMLINE_IMG=ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}
+export PUNCH_SPARKLINE_IMG=ghcr.io/punchplatform/sparkline:7.0.2-SNAPSHOT
 
-# Maybe no hkp in v8 ? using v7.
-export PUNCH_ES_HOUSEKEEPING_IMG=ghcr.io/punchplatform/es-housekeeping:7.0.2-SNAPSHOT
-export PUNCH_S3_HOUSEKEEPING_IMG=ghcr.io/punchplatform/archive-housekeeping:7.0.2-SNAPSHOT

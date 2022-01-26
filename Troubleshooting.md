@@ -36,3 +36,13 @@ In case something does not work after full deployment (see README.md `make start
 ### Viewing logs from punch operator service
 
 	kubectl logs -f --tail=-1 -n punchoperator-system -l control-plane=controller-manager
+
+
+### Viewing logs from artifacts service
+
+	kubectl logs -f --tail=-1 -n punch-gateway-ns -l app=artifacts
+
+### Reinstall artifact server
+
+	helm uninstall artifacts -n punch-gateway-ns
+	make PROFILE=bin/profiles/profile-8.0-DEV.sh deploy-punch
