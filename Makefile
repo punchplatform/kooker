@@ -35,7 +35,7 @@ IMG ?= busybox
 
 .PHONY: start
 
-start: download cluster prepare load-images-from-directory deploy-cots network push-templates ## Start and configure PConsole with all required services
+start: download cluster prepare load-images-from-directory deploy-cots network ## Start and configure PConsole with all required services
 
 ##@ Stop and remove kooker
 
@@ -116,12 +116,6 @@ deploy-minio: ## Deploy only minio
 	$(SETUP_ENV) && $(MINIO_INSTALL)
 
 ##@ Platform management
-
-PUSH_TEMPLATES = $(shell pwd)/bin/tools/push_templates.sh
-.PHONY: push-templates
-
-push-templates: ## Push Elastic templates
-	$(PUSH_TEMPLATES)
 
 .PHONY: cluster
 
