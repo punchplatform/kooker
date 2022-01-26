@@ -24,14 +24,14 @@ application:
   file_size: 500MB
 metadata:
   elasticsearch:
-    hosts:
-      - http://${ELASTIC_SERVICE_NAME}.${ELASTIC_NAMESPACE}:9200
-    credentials:
-      username: ${ES_USER}
-      password: ${ES_PASSWORD}
-    ssl_enabled: false
-    ssl_insecure: false
-    ssl_hostname_verification: false
+    http_hosts:
+      - host: ${ELASTIC_SERVICE_NAME}.${ELASTIC_NAMESPACE}
+        port: 9200
+        scheme: http
+    security:
+      credentials:
+        username: ${ES_USER}
+        password: ${ES_PASSWORD}
 
 data:
   minio:
