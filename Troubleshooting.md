@@ -55,11 +55,46 @@ In case something does not work after full deployment (see README.md `make start
 	helm uninstall artifacts -n punch-gateway-ns
 	make PROFILE=bin/profiles/profile-8.0-DEV.sh deploy-punch
 
+### Reinstall operator server
+
+
+	helm uninstall -n punchoperator-system operator
+	helm uninstall -n punchoperator-system operator-crds
+	kubectl get crds -o name | grep -i punch | xargs -n 1 kubectl delete 
+	make PROFILE=bin/profiles/profile-8.0-DEV.sh deploy-punch
+
+
+
+
+
 ### View punchline logs
 
-kubectl logs -l stormline-owner=ltr-in
+kubectl logs --tail -1 -f -l stormline-owner=ltr-in
 
 ### View kafka topics
 
-. activate.sh
-kkafka ./kafka-topics.sh --list  --bootstrap-server localhost:9092
+	. activate.sh
+	kkafka ./kafka-topics.sh --list  --bootstrap-server localhost:9092
+
+Get the earliest offset still in a topic
+	
+	kkafka ./kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic ref-test-01-ltr --time -2
+
+Get the latest offset still in a topic
+	
+	kkafka ./kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic ref-test-01-ltr --time -1
+
+
+### View kafka consumer group
+
+
+	. activate.sh
+
+	kkafka ./kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group ltr_out
+
+
+
+### Run curl commands from inside the kube (using kibana container)
+
+	kubectl exec -n doc-store $(kubectl get pod -n doc-store -o name -l common.k8s.elastic.co/type=kibana)  -it -- /bin/bash
+
