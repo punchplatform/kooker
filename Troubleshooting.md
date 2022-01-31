@@ -64,6 +64,14 @@ In case something does not work after full deployment (see README.md `make start
 	make PROFILE=bin/profiles/profile-8.0-DEV.sh deploy-punch
 
 
+### Viewing logs from the prometheus service
+
+	kubectl logs -f --tail -1  -n monitoring  -l app=prometheus
+	
+### Kill/restart the prometheus service pods
+
+	kubectl delete pods -A  -l app=prometheus
+
 
 
 
@@ -97,4 +105,6 @@ Get the latest offset still in a topic
 ### Run curl commands from inside the kube (using kibana container)
 
 	kubectl exec -n doc-store $(kubectl get pod -n doc-store -o name -l common.k8s.elastic.co/type=kibana)  -it -- /bin/bash
+	curl punchplatform-es-http:9200 -u elastic:elastic
+
 
