@@ -1,0 +1,15 @@
+---
+# Service to receive logs at input point of ltr
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ltr-input-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 31880
+      targetPort: 8880
+      name: ltr-input-service
+  selector:
+    stormline-owner: ltr-in
