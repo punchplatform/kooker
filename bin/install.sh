@@ -57,6 +57,28 @@ function kesapi() {
   curl -u "$ES_USER:$ES_PASSWORD" http://${ELASTICSEARCH_EXTERNAL_API_URL}/\${url} "\${@}"
 }
 
+
+# Define a 'kkafka' function for easy usage of in-kube kafka broker node and binaries
+
+function kkafka () { 
+  if [ \$# -eq 0 ] || [ "\$1" == "--help" ] ; then
+    {
+      echo "Usage:    kkafka <command> <args> ..."
+      echo "            Will run this command inside kafka binaries folder in the kooker broker pod"
+      echo ""
+      echo "       e.g.:  kkfaka ls   # => Will list commands in kafka binary folder"
+      echo ""
+
+    } 1>& 2
+    return 1
+  fi
+
+  BROKER_POD=\$(kubectl get pods -n processing -l app.kubernetes.io/name=kafka -o name)
+  echo "using broker pod '\${BROKER_POD}'..."
+  kubectl exec -i -t -n processing "\${BROKER_POD}" -- /bin/bash -c "cd /opt/kafka/bin ; \$*  " 
+}
+
+
 # Define a 'chclient' function for easy clickhouse querying
 
 function chclient() {

@@ -26,12 +26,20 @@ In case something does not work after full deployment (see README.md `make start
 
 * List pods that are not starting or have failed :
 
-	kubectl get pods -A --field-selector=status.phase!=Running,status.phase!=Succeeded
+	kubectl get pods -A -l '!job-name' | grep -v Running
 
 
+### Check your artifacts service status
+	
+	kubectl get pod -A -l app=artifacts      # Should be running
+	
 
 
 ## Useful debug commands
+
+
+## 
+
 
 ### Viewing logs from punch operator service
 
@@ -46,3 +54,12 @@ In case something does not work after full deployment (see README.md `make start
 
 	helm uninstall artifacts -n punch-gateway-ns
 	make PROFILE=bin/profiles/profile-8.0-DEV.sh deploy-punch
+
+### View punchline logs
+
+kubectl logs -l stormline-owner=ltr-in
+
+### View kafka topics
+
+. activate.sh
+kkafka ./kafka-topics.sh --list  --bootstrap-server localhost:9092
