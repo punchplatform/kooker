@@ -33,10 +33,15 @@ KOOKER_DOWNLOADS="${KOOKER_DIR}/downloads"
 
 #### MONITORING #####
 : ${MONITORING_NAMESPACE:="monitoring"}
+: ${PROMETHEUS_USE_OPERATOR:="false"}
+#### used when operator is not deployed
+: ${PROMETHEUS_HELM_CHART_VERSION:=15.0.2}
+#### used when operator is deployed
 : ${PROMETHEUS_OPERATOR_VERSION:="v0.51.2"}
 : ${PROMETHEUS_OPERATOR_IMG:="quay.io/prometheus-operator/prometheus-operator:${PROMETHEUS_OPERATOR_VERSION}"}
 : ${PROMETHEUS_VERSION:="v2.22.1"}
 : ${PROMETHEUS_IMG:="quay.io/prometheus/prometheus:${PROMETHEUS_VERSION}"}
+
 : ${GRAFANA_VERSION:="7.5.2"}
 : ${GRAFANA_IMG:="grafana/grafana:${GRAFANA_VERSION}"}
 : ${GRAFANA_USER:="admin"}

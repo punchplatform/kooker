@@ -1,13 +1,14 @@
 apiVersion: punchline.gitlab.thalesdigital.io/v2
 kind: StreamJavaPunchline
 metadata:
-  name: ltr-out
+  name: lmc-elasticsearch
   annotations:
      prometheus.io/scrape: 'true'
-     prometheus.io/port: '7770'    
-
+     prometheus.io/port: '7773'     
 spec:  
   image: ghcr.io/punchplatform/punchline-java:8.0-dev
+  dependencies:
+  - punch-parsers:org.thales.punch:punch-common-punchlets:1.1.0
   env:
   - name: JDK_JAVA_OPTIONS
     value: "-Xms100m -Xmx450m"
@@ -17,17 +18,16 @@ spec:
     kind: source
     type: kafka_source
     load_control:
-      throughput: 100000
-      max_pending_row_number: 10000
-      row_timeout_secs: 0
+      throughput: 100
+      max_pending_row_number: 1000
+      row_timeout_secs: 30
     settings:
       bootstrap.servers: kafka-kafka-bootstrap.processing:9092
-      group.id: ltr_out
-      topics: ref-test-01-ltr
+      topics: ref-test-01-lmr
       value.format: lumberjack
       start_offset_strategy: last_committed
     out: 
-    - id: filter
+    - id: parser
       table: logs
       columns:
       - name: log
@@ -44,17 +44,14 @@ spec:
         type: string
       - name: _ppf_id      
         type: string
-  - id: filter
-    type: filter_function
+  - id: parser
+    type: punchlet_function
     kind: function
     settings:
-       blacklist:
-         column: _ppf_remote_host
-         values:
-          - '10.0.0.0/8'
-          - '172.16.0.0/1'
-    out:
-    - id: output
+      punchlets:
+      - org/thales/punch/common/input.punch
+    out: 
+    - id: elasticsearch_sink
       table: logs
       columns:
       - name: log
@@ -71,13 +68,24 @@ spec:
         type: string
       - name: _ppf_id      
         type: string
-  - id: output
-    type: lumberjack_sink
+  - id: elasticsearch_sink
+    type: elasticsearch_sink
     kind: function
     settings:
-      host: lmr-input-service.default
-      port: 9990
-      compression: true
-      keepalive_interval: 5
-      keepalive_timeout: 10
-   
+      http_hosts: 
+      - host: localhost
+        port: 9200
+      batch_interval: 5000
+      batch_size: 1
+      request_timeout: 20s
+      index_type: daily
+      index_prefix: testv7-1-
+      document_json_column: log
+      document_id_column: _ppf_id
+      extra_fields:
+      - type: date
+        document_field: '@timestamp'
+        format: iso
+      bulk_failure_action: fail
+      document_failure_action: forward_all 
+ 

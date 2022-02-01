@@ -4,7 +4,7 @@ metadata:
   name: lmr-in
   annotations:
      prometheus.io/scrape: 'true'
-     prometheus.io/port: '7772'     
+     prometheus.io/port: '7770'     
 spec:  
   image: ghcr.io/punchplatform/punchline-java:8.0-dev
   env:

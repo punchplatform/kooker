@@ -13,13 +13,56 @@ fi
 # create monitoring namespace
 ${KUBECTL} create ns ${MONITORING_NAMESPACE} 2>/dev/null || true
 
-sed -i -e "s/namespace: default/namespace: ${MONITORING_NAMESPACE}/g" ${KUBE_RESOURCES_DIR}/prometheus/bundle.yaml 
-# install prometheus operator and it's related CRDs
-${KUBECTL} apply \
-  -f ${KUBE_RESOURCES_DIR}/prometheus \
-  -n ${MONITORING_NAMESPACE}
+if [ ${PROMETHEUS_USE_OPERATOR} == false ] ; then
+  # Here we install the community chart, providing standard config with old-school prometheus scraping based on annotations
 
-kubectlWait 360 ${MONITORING_NAMESPACE}
+
+  ${HELM} upgrade --install prometheus prometheus-community/prometheus \
+    --namespace ${MONITORING_NAMESPACE} \
+    --version ${PROMETHEUS_HELM_CHART_VERSION} \
+    --set alertmanager.enabled=false --set server.persistentVolume.enabled=false \
+    --wait
+
+
+## Install service exposure
+
+${KUBECTL} -n ${MONITORING_NAMESPACE} apply -f- <<EOF
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  labels:
+    app: prometheus
+spec:
+  ports:
+  - name: web
+    port: 9090
+    targetPort: 9090
+  selector:
+    app: prometheus
+    component: server
+  type: LoadBalancer
+EOF
+
+
+
+else
+
+    # Here we install the operator-based deployment of prometheus stack, with scraping based on manifests and labels
+
+
+    sed -i -e "s/namespace: default/namespace: ${MONITORING_NAMESPACE}/g" ${KUBE_RESOURCES_DIR}/prometheus/bundle.yaml 
+    # install prometheus operator and it's related CRDs
+    ${KUBECTL} apply \
+      -f ${KUBE_RESOURCES_DIR}/prometheus \
+      -n ${MONITORING_NAMESPACE}
+
+    kubectlWait 360 ${MONITORING_NAMESPACE}
+
+
+
+
 
 ## Install needed rbac and prometheus backend
 
@@ -87,6 +130,7 @@ spec:
     runAsUser: 1000
   serviceAccountName: prometheus
   version: v2.22.1
+  podMonitorSelector: {}
   serviceMonitorSelector: {}
 ---
 apiVersion: v1
@@ -104,6 +148,55 @@ spec:
     app: prometheus
   type: LoadBalancer
 EOF
+
+kubectlWait 240 ${MONITORING_NAMESPACE}
+
+
+${KUBECTL} -n ${MONITORING_NAMESPACE} apply -f- << EOF
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: punchoperator-servicemonitor
+  labels:
+    control-plane: controller-manager
+spec:
+  namespaceSelector:
+    any: true
+  endpoints:
+  - interval: 1s
+    port: "8443"
+    path: "/metrics"
+  selector:
+    matchLabels:
+      control-plane: controller-manager
+EOF
+
+${KUBECTL} -n ${MONITORING_NAMESPACE} apply -f- << EOF
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: punchlines-pods-monitoring
+  labels:
+    control-plane: controller-manager
+spec:
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - interval: 10s
+    port: "metrics-http"
+    path: "/metrics"
+  - interval: 10s
+    targetPort: 7770
+    path: "/metrics"
+  selector:
+    matchLabels:
+      punchplatform/metrics-scraping-group: punchlines
+EOF
+
+fi
+
 
 kubectlWait 240 ${MONITORING_NAMESPACE}
 
@@ -175,23 +268,3 @@ spec:
 EOF
 
 kubectlWait 240 ${MONITORING_NAMESPACE}
-
-${KUBECTL} -n ${MONITORING_NAMESPACE} apply -f- << EOF
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: punchoperator-servicemonitor
-  labels:
-    control-plane: controller-manager
-spec:
-  namespaceSelector:
-    any: true
-  endpoints:
-  - interval: 1s
-    port: "8443"
-    path: "/metrics"
-  selector:
-    matchLabels:
-      control-plane: controller-manager
-EOF

@@ -108,3 +108,19 @@ Get the latest offset still in a topic
 	curl punchplatform-es-http:9200 -u elastic:elastic
 
 
+
+### List images version inside the kooker kube master repository
+
+
+
+
+1860
+
+### Running a local grafana :
+
+	docker run -d -p 3000:3000 grafana/grafana-oss
+
+
+### Metrics
+
+app_name ne devrait pas etre positionné automatiquement (trop générique)
