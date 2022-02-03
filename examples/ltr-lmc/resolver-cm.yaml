@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resolver
+data:
+  resolver_rules.yaml: |
+    rules:
+    - name: hello
+      value: world2
+    - name: this
+      value: is working

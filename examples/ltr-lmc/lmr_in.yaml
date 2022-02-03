@@ -1,5 +1,5 @@
 apiVersion: punchline.gitlab.thalesdigital.io/v2
-kind: StreamJavaPunchline
+kind: StreamPunchline
 metadata:
   name: lmr-in
   annotations:

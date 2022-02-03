@@ -202,6 +202,35 @@ kubectlWait 240 ${MONITORING_NAMESPACE}
 
 # install grafana
 
+
+
+function createOrReplaceCm () {
+  CM_NAME=$1
+  shift
+  # A configmap cannot be updated, just replaced, so either we can create it or we should replace it:
+
+
+  if ! ${KUBECTL} get cm -n ${MONITORING_NAMESPACE} $CM_NAME 1>/dev/null 2>/dev/null ; then
+    echo "Creating configmap '$CM_NAME '..."
+    ${KUBECTL} create configmap $CM_NAME -n ${MONITORING_NAMESPACE} $*
+    return $?
+  else
+    echo "Updating configmap '$CM_NAME' ..."
+    ${KUBECTL} create configmap --dry-run=client -o yaml $CM_NAME -n ${MONITORING_NAMESPACE}  $* | ${KUBECTL} replace -n ${MONITORING_NAMESPACE} -f -
+    return $?
+  fi
+}
+
+
+# Create grafana datasource and dashboards configmaps
+
+createOrReplaceCm  grafana-datasources --from-file dashboards/grafana/datasources
+createOrReplaceCm  grafana-dashboards-loaders --from-file dashboards/grafana/dashboards-loaders
+createOrReplaceCm  grafana-community-dashboards --from-file dashboards/grafana/community 
+createOrReplaceCm  grafana-punch-dashboards --from-file dashboards/grafana/punch 
+
+
+
 ${KUBECTL} -n ${MONITORING_NAMESPACE} apply -f- << EOF
 apiVersion: apps/v1
 kind: Deployment
@@ -252,6 +281,33 @@ spec:
             requests:
               cpu: 250m
               memory: 750Mi
+          volumeMounts:
+            - mountPath: /var/lib/grafana/dashboards/community
+              name: community-dashboards-volume
+            - mountPath: /var/lib/grafana/dashboards/punch
+              name: punch-dashboards-volume
+            - mountPath: /etc/grafana/provisioning/dashboards
+              name: dashboards-loaders-volume
+            - mountPath: /etc/grafana/provisioning/datasources
+              name: datasources-volume
+
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: grafana-community-dashboards
+          name: community-dashboards-volume
+        - configMap:
+            defaultMode: 420
+            name: grafana-punch-dashboards
+          name: punch-dashboards-volume
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboards-loaders
+          name: dashboards-loaders-volume
+        - configMap:
+            defaultMode: 420
+            name: grafana-datasources
+          name: datasources-volume
 ---
 apiVersion: v1
 kind: Service

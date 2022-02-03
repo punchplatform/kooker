@@ -111,10 +111,9 @@ Get the latest offset still in a topic
 
 ### List images version inside the kooker kube master repository
 
+	docker exec -ti k3d-kooker-server-0 crictl images
 
 
-
-1860
 
 ### Running a local grafana :
 
@@ -124,3 +123,4 @@ Get the latest offset still in a topic
 ### Metrics
 
 app_name ne devrait pas etre positionné automatiquement (trop générique)
+'created' acked

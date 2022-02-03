@@ -1,10 +1,11 @@
 apiVersion: punchline.gitlab.thalesdigital.io/v2
-kind: StreamJavaPunchline
+kind: StreamPunchline
 metadata:
   name: ltr-in
   annotations:
      prometheus.io/scrape: 'true'
      prometheus.io/port: '7770'     
+     platform.gitlab.thalesdigital.io/platform: platform-sample
 spec:  
   image: ghcr.io/punchplatform/punchline-java:8.0-dev
   env:

@@ -8,8 +8,6 @@ metadata:
   annotations:
      prometheus.io/scrape: 'true'
      prometheus.io/port: '7770'     
-  labels:
-    metricsscrapetargetgroup: 'javastreamline'
 spec:
   type: LoadBalancer
   ports:
@@ -17,4 +15,4 @@ spec:
       targetPort: 8880
       name: ltr-input-service
   selector:
-    stormline-owner: ltr-in
+    punchline-name: ltr-in

@@ -9,7 +9,7 @@ datasources:
   type: prometheus
   typeLogoUrl: ''
   access: proxy
-  url: http://prometheus.kooker:9090
+  url: http://prometheus.monitoring:9090
   password: ''
   user: ''
   database: ''
