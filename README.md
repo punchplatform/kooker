@@ -6,7 +6,6 @@ making delicious recipes, kooker cooks a (hopefully tasty) Punch recipe on top o
 In short: kooker deploys a kubernetes cluster together with punch services such as Minio,
 Clickhouse, Elastic, etc .. so that you can start punch applications in minutes.  
 
-
 ## Requirements
 
 - Docker engine installed
