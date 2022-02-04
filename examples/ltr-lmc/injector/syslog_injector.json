@@ -3,7 +3,7 @@
 	"load" :{
 		"total_messages" : 1000000,
 		"stats_publish_interval" : "2s",
-		"message_throughput" : 1
+		"message_throughput" : 1000
 	},
 	"message" : {
 		"payloads" : [
