@@ -51,7 +51,7 @@ spec:
        blacklist:
          column: _ppf_remote_host
          values:
-          - '10.0.0.0/8'
+          - '10.55.0.0/16'
           - '172.16.0.0/1'
     out:
     - id: output

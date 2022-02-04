@@ -107,19 +107,25 @@ KOOKER_DOWNLOADS="${KOOKER_DIR}/downloads"
 
 : ${PUNCHPLATFORM_TENANT:="default"}
 
-: ${PUNCH_VERSION:="7.0.1-SNAPSHOT"}
-: ${PUNCH_OPERATOR_VERSION:="1.0-SNAPSHOT"}
+: ${PUNCH_VERSION:="8.0-dev"}
+: ${PUNCH_IMAGES_TAG:=${PUNCH_VERSION}}
+
+: ${PUNCH_OPERATOR_VERSION:=${PUNCH_VERSION}}
+
 : ${PUNCH_INJECTOR_VERSION:=${PUNCH_VERSION}}
 : ${PUNCH_ARTIFACTS_SERVICE_VERSION:=${PUNCH_VERSION}}
 
 
 : ${PUNCH_OPERATOR_IMG:="ghcr.io/punchplatform/operator:${PUNCH_OPERATOR_VERSION}"}
 : ${PUNCH_ARTIFACT_IMG:="ghcr.io/punchplatform/artifacts-server:${PUNCH_ARTIFACTS_SERVICE_VERSION}"}
-: ${PUNCH_RESOURCECTL_IMG:="ghcr.io/punchplatform/resourcectl:${PUNCH_VERSION}"}
-: ${PUNCH_STORMLINE_IMG:="ghcr.io/punchplatform/stormline:${PUNCH_VERSION}"}
-: ${PUNCH_SPARKLINE_IMG:="ghcr.io/punchplatform/sparkline:${PUNCH_VERSION}"}
-: ${PUNCH_ES_HOUSEKEEPING_IMG:="ghcr.io/punchplatform/es-housekeeping:${PUNCH_VERSION}"}
-: ${PUNCH_S3_HOUSEKEEPING_IMG:="ghcr.io/punchplatform/archive-housekeeping:${PUNCH_VERSION}"}
+: ${PUNCH_RESOURCECTL_IMG:="ghcr.io/punchplatform/resourcectl:${PUNCH_IMAGES_TAG}"}
+: ${PUNCH_ES_HOUSEKEEPING_IMG:="ghcr.io/punchplatform/es-housekeeping:${PUNCH_IMAGES_TAG}"}
+: ${PUNCH_S3_HOUSEKEEPING_IMG:="ghcr.io/punchplatform/archive-housekeeping:${PUNCH_IMAGES_TAG}"}
+: ${PUNCH_SIMULATOR_IMG:="ghcr.io/punchplatform/operator:${PUNCH_INJECTOR_VERSION}"}
+
+: ${PUNCH_JAVASTREAM_IMG:="ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}"}
+: ${PUNCH_SPARKLINE_IMG:="ghcr.io/punchplatform/sparkline:${PUNCH_IMAGES_TAG}"}
+
 
 
 : ${PUNCH_HELM_VERSION:=${PUNCH_VERSION}}
