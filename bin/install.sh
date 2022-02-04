@@ -40,7 +40,7 @@ function generate_activate_sh() {
   activateShell=${kookerDir}/activate.sh
   source ${kookerDir}/bin/env.sh
   cat > ${activateShell} << EOF
-export PATH=${kookerDir}/bin:\$PATH
+export PATH=${kookerDir}/bin:${kookerDir}/starter_tools:\$PATH
 export PS1='\[\e[1;32m\]kooker:\[\e[0m\][\W]\$ '
 
 # If tools are not set up natively, define aliases to use downloaded tool

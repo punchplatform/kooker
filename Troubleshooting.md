@@ -8,7 +8,7 @@ In case something does not work after full deployment (see README.md `make start
 
 * Ensure your kubectl configuration is available
 
-		make network
+		make start
 		. activate.sh
 
 * Have a grafana set up to watch for cluster metrics
@@ -77,7 +77,7 @@ In case something does not work after full deployment (see README.md `make start
 
 ### View punchline logs
 
-kubectl logs --tail -1 -f -l stormline-owner=ltr-in
+kubectl logs --tail -1 -f -l punchline-name=ltr-in
 
 ### View kafka topics
 
