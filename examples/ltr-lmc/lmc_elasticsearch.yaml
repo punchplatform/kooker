@@ -47,7 +47,50 @@ spec:
         type: string
   - id: parser
     type: punchlet_function
-    kind: function 
+    kind: function
     settings:
-      punchlet_code: "{ print(root); }"
- 
+      punchlets:
+      - org/thales/punch/common/input.punch
+      - org/thales/punch/common/printroot.punch
+    out:
+    - id: elasticsearch_sink
+      table: logs
+      columns:
+      - name: log
+        type: string
+      - name: _ppf_remote_host
+        type: string
+      - name: _ppf_remote_port
+        type: int
+      - name: _ppf_local_host
+        type: string
+      - name: _ppf_local_port
+        type: int
+      - name: _ppf_timestamp
+        type: string
+      - name: _ppf_id      
+        type: string
+  - id: elasticsearch_sink
+    type: elasticsearch_sink
+    kind: function
+    settings:
+      http_hosts: 
+      - host: punchplatform-es-default.doc-store
+        port: 9200
+      security:
+        credentials:
+          username: elastic
+          password: elastic
+      batch_interval: 5000
+      batch_size: 1
+      request_timeout: 20s
+      index_type: daily
+      index_prefix: testv7-1-
+      document_json_column: log
+      document_id_column: _ppf_id
+      extra_fields:
+      - type: date
+        document_field: '@timestamp'
+        format: iso
+      bulk_failure_action: fail
+      document_failure_action: forward_all 
