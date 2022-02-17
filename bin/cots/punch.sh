@@ -103,7 +103,7 @@ ${KUBECTL} create namespace ${PUNCHPLATFORM_TENANT} > /dev/null 2>&1 || true
 
 ${KUBECTL} -n ${PUNCHPLATFORM_TENANT} apply -f- <<EOF
 ---
-apiVersion: platform.gitlab.thalesdigital.io/v1
+apiVersion: platform.gitlab.thalesdigital.io/v2
 kind: Platform
 metadata:
   name: platform
@@ -115,6 +115,33 @@ spec:
   - type: dependencies
     url: http://artifacts-service.${PUNCH_ARTEFACT_NAMESPACE}:4245
     secretRefs: []
+  transformRules:
+
+    # All kafka_source and kafka_sink nodes bootstrap.servers
+    kafka_nodes:
+      match: $.spec.dag[?(@.type =~ /kafka_s.*/)].settings
+      set:
+        - values:
+            bootstrap.servers: kafka-kafka-bootstrap.${KAFKA_NAMESPACE}:9092
+    
+    # Elasticsearch sinks: using kube service + basic auth
+    elasticsearch_sinks:
+      match: $.spec.dag[?(@.type == elasticsearch_sink)].settings
+      set:
+        - values:
+            http_hosts:
+              - host: punchplatform-es-default.${ELASTIC_NAMESPACE}
+                port: 9200
+            security:
+              credentials:
+                password: ${ES_USER}
+                username: ${ES_PASSWORD}
+    # In kube, ltr lumerjack sender should send to lmr-in service
+    lumberjack_ltr_out:
+      match: $.spec.dag[?(@.type == lumberjack_sink)].settings
+      set:
+        - values:
+            host: lmr-input-service.${PUNCHPLATFORM_TENANT} 
 EOF
 
 ${KUBECTL} -n ${PUNCHPLATFORM_TENANT} apply -f- <<EOF
