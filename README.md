@@ -58,7 +58,7 @@ Then, open your navigator and browse to the `ARTEFACT SERVER` url and import the
 Finally, execute your punchline using the command below: 
 
 ```sh
-kubectl apply -f examples/stormline_with_resource_example.yaml -n kast
+kubectl apply -f examples/punchline_java_resource_example.yaml -n kast
 ```
 
 ## Tooltips
