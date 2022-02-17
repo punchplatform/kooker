@@ -1,0 +1,13 @@
+{
+  // The parsed log is stored as Json under the <stream><data_field> of the punchlet
+  // Default parsers assume the Storm stream is "logs" and the first field in the
+  // PunchBolt configuration is "log" 
+  String xml = root:[logs][log];
+
+  convert(xml).into(root:[logs][log][output]);
+
+  //
+  // All done, we only need to overwrite the root document with that String.
+  //
+  root:[logs][log] = root:[logs][log][output];
+}

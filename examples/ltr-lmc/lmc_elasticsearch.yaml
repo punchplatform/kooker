@@ -8,7 +8,7 @@ metadata:
     punchplatform.thalesdigital.io/platform: platform
 spec:
   dependencies:
-    - punch-parsers:org.thales.punch:punch-common-punchlets:1.1.0
+    - punch-parsers:org.thales.punch:punch-simple-punchlets:1.1.0
   dag:
     - id: input
       kind: source
