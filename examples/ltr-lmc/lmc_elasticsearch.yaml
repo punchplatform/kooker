@@ -75,7 +75,7 @@ spec:
         batch_size: 1
         request_timeout: 20s
         index_type: daily
-        index_prefix: testv7-1-
+        index_prefix: testv8-
         document_json_column: log
         document_id_column: _ppf_id
         extra_fields:
