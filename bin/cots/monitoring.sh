@@ -16,12 +16,22 @@ ${KUBECTL} create ns ${MONITORING_NAMESPACE} 2>/dev/null || true
 if [ ${PROMETHEUS_USE_OPERATOR} == false ] ; then
   # Here we install the community chart, providing standard config with old-school prometheus scraping based on annotations
 
+    if [ $OFFLINE == true ] ; then
 
-  ${HELM} upgrade --install prometheus prometheus-community/prometheus \
-    --namespace ${MONITORING_NAMESPACE} \
-    --version ${PROMETHEUS_HELM_CHART_VERSION} \
-    --set alertmanager.enabled=false --set server.persistentVolume.enabled=false \
-    --wait
+    ${HELM} upgrade --install prometheus ${CHARTS_DIR}/prometheus-${PROMETHEUS_HELM_CHART_VERSION}.tgz \
+      --namespace ${MONITORING_NAMESPACE} \
+      --set alertmanager.enabled=false --set server.persistentVolume.enabled=false \
+      --wait
+
+    else 
+    ${HELM} upgrade --install prometheus prometheus-community/prometheus \
+      --namespace ${MONITORING_NAMESPACE} \
+      --version ${PROMETHEUS_HELM_CHART_VERSION} \
+      --set alertmanager.enabled=false --set server.persistentVolume.enabled=false \
+      --wait
+    fi
+
+
 
 
 ## Install service exposure
