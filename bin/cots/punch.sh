@@ -71,9 +71,10 @@ ${HELM} upgrade \
   --namespace ${PUNCH_SYSTEM_NAMESPACE} \
   ${CHARTS_DIR}/operator-${PUNCH_OPERATOR_VERSION}.tgz \
   --values "${HELM_VARSFILE}" \
-  --set image.name=${PUNCH_OPERATOR_IMG} \
+  --set kubernetes.image=${PUNCH_OPERATOR_IMG} \
+  --set kubernetes.replicas=3 \
   --create-namespace \
-  --
+  --wait
 
 echo ""
 echo "Deploying Punch artifacts server..."
