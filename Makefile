@@ -40,7 +40,7 @@ start: ## Start and configure PConsole with all required services
 
 .PHONY: stop
 
-stop: ## kooker uninstall
+stop: k3d ## kooker uninstall
 	-$(K3D) cluster delete ${CLUSTER_NAME}
 	rm -rf build activate.sh
 
