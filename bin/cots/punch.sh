@@ -62,15 +62,12 @@ echo ""
 ${HELM} upgrade \
   --install operator-crds \
   --namespace ${PUNCH_SYSTEM_NAMESPACE} \
-  ${CHARTS_DIR}/operator-crds-${PUNCH_OPERATOR_VERSION}.tgz \
-  --create-namespace \
-  --wait
+  ${CHARTS_DIR}/operator-crds-${PUNCH_OPERATOR_VERSION}.tgz
 
 ${HELM} upgrade \
   --install operator \
   --namespace ${PUNCH_SYSTEM_NAMESPACE} \
   ${CHARTS_DIR}/operator-${PUNCH_OPERATOR_VERSION}.tgz \
-  --values "${HELM_VARSFILE}" \
   --set kubernetes.image=${PUNCH_OPERATOR_IMG} \
   --set kubernetes.replicas=3 \
   --create-namespace \
@@ -85,7 +82,6 @@ ${HELM} upgrade \
   --namespace ${PUNCH_ARTEFACT_NAMESPACE} \
   ${CHARTS_DIR}/artifacts-${PUNCH_ARTIFACTS_SERVICE_VERSION}.tgz \
   --set image.name=${PUNCH_ARTIFACT_IMG} \
-  --values "${HELM_VARSFILE}" \
   --create-namespace \
   --wait
 

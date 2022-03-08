@@ -1,0 +1,56 @@
+#!/usr/bin/env bash -ec -o pipefail
+
+##@ Deploy services manually
+
+.PHONY: deploy-cots
+
+deploy-cots: prepare ## Download default COTS
+ifeq ($(WITH_COTS), true)
+		make deploy-monitoring
+		make deploy-minio
+		make deploy-kafka
+		make deploy-kubernetes-dashboard
+		make deploy-elastic
+		make deploy-clickhouse
+endif
+		make deploy-punch
+
+.PHONY: deploy-punch
+
+deploy-punch: ## Deploy only Punch services
+	$(SETUP_ENV) && $(PUNCH_INSTALL)
+
+.PHONY: deploy-monitoring
+
+deploy-monitoring: ## Deploy only monitoring stack
+	$(SETUP_ENV) && $(MONITORING_INSTALL)
+
+.PHONY: deploy-clickhouse
+
+deploy-clickhouse: ## Deploy only clickhouse
+	$(SETUP_ENV) && $(CLICKHOUSE_INSTALL)
+
+.PHONY: deploy-opensearch
+
+deploy-opensearch: ## Deploy only opensearch and opensearch-dashboard
+	$(SETUP_ENV)  && $(OPENSEARCH_INSTALL)
+
+.PHONY: deploy-elastic
+
+deploy-elastic: ## Deploy only kibana and elasticsearch
+	$(SETUP_ENV) && $(ES_KIBANA_INSTALL)
+
+.PHONY: deploy-kubernetes-dashboard
+
+deploy-kubernetes-dashboard: ## Deploy only kubernetes dashboard
+	$(SETUP_ENV) && $(KUBERNETES_DASHBOARD_INSTALL)
+
+.PHONY: deploy-kafka
+
+deploy-kafka: ## Deploy only kafka
+	$(SETUP_ENV) && $(KAFKA_INSTALL)
+
+.PHONY: deploy-minio
+
+deploy-minio: ## Deploy only minio
+	$(SETUP_ENV) && $(MINIO_INSTALL)

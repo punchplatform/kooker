@@ -1,0 +1,59 @@
+#!/usr/bin/env bash -ec -o pipefail
+
+###
+# BUILD
+###
+
+DOWNLOAD_DIR ?= $(shell pwd)/downloads
+DOWNLOAD_IMG_DIR ?= ${DOWNLOAD_DIR}/images/*
+DOWNLOAD_CHART_DIR ?= ${DOWNLOAD_DIR}/charts/*
+WITH_COTS ?= true
+
+PROFILE ?= $(shell pwd)/bin/profiles/profile-defaults.sh
+CLUSTER_NAME ?= kooker
+SETUP_ENV = . $(shell realpath ${PROFILE})
+CONSOLE_ENV = . $(shell pwd)/activate.sh
+IMG ?= busybox
+
+###
+# TOOLS
+###
+
+PUNCH_INSTALL = $(shell pwd)/bin/cots/punch.sh
+MONITORING_INSTALL = $(shell pwd)/bin/cots/monitoring.sh
+CLICKHOUSE_INSTALL = $(shell pwd)/bin/cots/clickhouse.sh
+OPENSEARCH_INSTALL = $(shell pwd)/bin/cots/opensearch.sh
+ES_KIBANA_INSTALL = $(shell pwd)/bin/cots/elasticsearch_kibana.sh
+KUBERNETES_DASHBOARD_INSTALL = $(shell pwd)/bin/cots/kubernetes_dashboard.sh
+KAFKA_INSTALL = $(shell pwd)/bin/cots/kafka.sh
+MINIO_INSTALL = $(shell pwd)/bin/cots/minio.sh
+CREATE_CLUSTER = $(shell pwd)/bin/tools/create_cluster.sh
+HOSTCTL_SVC_PROFILE = $(shell pwd)/bin/utils/hostctl_svc_profile.sh
+HOST_PROFILE = ${CLUSTER_NAME}
+GET_CREDENTIALS = $(shell pwd)/bin/utils/credentials.sh
+COREDNS_PATCH = $(shell pwd)/bin/utils/patch_coredns.sh
+CONSOLE_INSTALL = $(shell pwd)/bin/install.sh
+OFFLINE_IMAGES = $(shell pwd)/bin/tools/offline_images.sh
+OFFLINE_CHARTS = $(shell pwd)/bin/tools/offline_charts.sh
+OFFLINE_KUBE_RESOURCES = $(shell pwd)/bin/tools/offline_kube_resources.sh
+FETCH_IMG = $(shell pwd)/bin/tools/docker_save.sh
+IMAGES_DIR = $(shell pwd)/images
+LOAD_IMAGE_FROM_DIRECTORY = $(shell pwd)/bin/tools/import_images_from_directory.sh
+
+###
+# PREREQUISITES
+###
+
+HELM ?= $(shell pwd)/downloads/helm
+HELM_DIR = $(shell pwd)/downloads
+HELM_INSTALL = $(shell pwd)/bin/tools/install_helm.sh
+K3D = ${DOWNLOAD_DIR}/k3d
+K3D_INSTALL = $(shell pwd)/bin/tools/install_k3d.sh
+HOSTCTL = $(shell pwd)/downloads/hostctl
+HOSTCTL_INSTALL = $(shell pwd)/bin/tools/install_hostctl.sh
+KUBECTL = ${DOWNLOAD_DIR}/kubectl
+KUBECTL_INSTALL = $(shell pwd)/bin/tools/install_kubectl.sh
+HELPER = $(shell pwd)/bin/utils/helper.sh
+
+# Makefile properties
+.DEFAULT_GOAL := help

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash -ec -o pipefail
+
+helm: $(DOWNLOAD_DIR)/helm-install
+
+$(DOWNLOAD_DIR)/helm-install:
+	mkdir -p ${HELM_DIR}
+	TAG=v3.7.1 USE_SUDO=false HELM_INSTALL_DIR=${HELM_DIR} $(HELM_INSTALL)
+	touch $@
+
+.PHONY: k3d
+
+k3d: $(DOWNLOAD_DIR)/k3d-install
+
+$(DOWNLOAD_DIR)/k3d-install:
+	mkdir -p ${DOWNLOAD_DIR}
+	K3D_VERSION=v4.4.8 K3D_INSTALL_DIR=${DOWNLOAD_DIR} $(K3D_INSTALL)
+	touch $@
+
+hostctl: $(DOWNLOAD_DIR)/hostctl-install
+
+$(DOWNLOAD_DIR)/hostctl-install:
+	mkdir -p ${DOWNLOAD_DIR}
+	$(SETUP_ENV) && INSTALL_DIR=${DOWNLOAD_DIR} $(HOSTCTL_INSTALL)
+	touch $@
+
+.PHONY: kubectl
+
+kubectl: $(DOWNLOAD_DIR)/kubectl-install
+
+$(DOWNLOAD_DIR)/kubectl-install:
+	mkdir -p ${DOWNLOAD_DIR}
+	INSTALL_DIR=${DOWNLOAD_DIR} $(KUBECTL_INSTALL)
+	touch $@
+
+prepare: 
+	$(CONSOLE_INSTALL) \
+		--non-interactive \
+		--no-environment-patching
+
+download-images:
+	$(SETUP_ENV) && $(OFFLINE_IMAGES)
+
+download-chart: 
+	$(SETUP_ENV) && $(OFFLINE_CHARTS)
+
+download-kube-resources:
+	$(SETUP_ENV) && $(OFFLINE_KUBE_RESOURCES)

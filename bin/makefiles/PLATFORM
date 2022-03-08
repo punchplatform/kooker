@@ -1,0 +1,23 @@
+#!/usr/bin/env bash -ec -o pipefail
+
+##@ Platform management
+
+.PHONY: cluster
+
+cluster: ## Create kooker cluster
+	$(CREATE_CLUSTER)
+
+patch-coredns: 
+	CLUSTER_NAME=${CLUSTER_NAME} $(COREDNS_PATCH)
+
+.PHONY: credentials
+
+credentials: ## Get platform credentials
+	$(GET_CREDENTIALS)
+
+.PHONY: network
+
+network: ## (requires sudo) Configure network aliases for kubernetes services
+	@$(SETUP_ENV) && $(HOSTCTL_SVC_PROFILE)
+	@cat .dev-hosts | sudo $(HOSTCTL) replace ${HOST_PROFILE} -q
+	@rm .dev-hosts

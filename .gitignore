@@ -4,3 +4,4 @@ build/punch/deploy-vars.yaml
 **/.vscode/**
 kubectl
 coredns.yaml
+images/
