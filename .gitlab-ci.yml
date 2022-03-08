@@ -21,7 +21,7 @@ variables:
   TZ: "Europe/Paris"
   # for helm download
   VERIFY_CHECKSUM: "false"
-
+  CLUSTER_NAME: punchplatform-${CI_PIPELINE_ID}
 cache: {}
 
 services:
@@ -46,6 +46,6 @@ make-start:
   script:
     - apk update
     - apk add bash make curl unzip jq gettext
-    - bash -c "make clean;"
+    - bash -c "make clean CLUSTER_NAME=${CLUSTER_NAME};"
     - . bin/gitlab/kubectl.sh
-    - bash -c "make CI=true start; make CI=true clean;"
+    - bash -c "make CLUSTER_NAME=${CLUSTER_NAME} CI=true start; make CLUSTER_NAME=${CLUSTER_NAME} CI=true clean;"

@@ -33,8 +33,9 @@ start: ## Start and configure PConsole with all required services
 		cluster \
 		prepare \
 		load-images-from-directory \
-		deploy-cots \
-		network
+		deploy-cots
+	@echo "To expose services, use: make network;"
+	@echo "To get credentials, use: make credentials;"
 
 ##@ Stop and remove kooker
 

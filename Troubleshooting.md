@@ -38,9 +38,6 @@ In case something does not work after full deployment (see README.md `make start
 ## Useful debug commands
 
 
-## 
-
-
 ### Viewing logs from punch operator service
 
 	kubectl logs -f --tail=-1 -n punchoperator-system -l control-plane=controller-manager
