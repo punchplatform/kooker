@@ -38,7 +38,7 @@ prepare:
 		--no-environment-patching
 
 download-images:
-	$(SETUP_ENV) && $(OFFLINE_IMAGES)
+	$(SETUP_ENV) && IMAGES_DIR=${DOWNLOAD_IMG_DIR} && $(OFFLINE_IMAGES) 
 
 download-chart: 
 	$(SETUP_ENV) && $(OFFLINE_CHARTS)

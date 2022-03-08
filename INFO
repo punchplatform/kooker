@@ -4,15 +4,21 @@
 # BUILD
 ###
 
-DOWNLOAD_DIR ?= $(shell pwd)/downloads
-DOWNLOAD_IMG_DIR ?= ${DOWNLOAD_DIR}/images/*
-DOWNLOAD_CHART_DIR ?= ${DOWNLOAD_DIR}/charts/*
-WITH_COTS ?= true
-
-PROFILE ?= $(shell pwd)/bin/profiles/profile-defaults.sh
-CLUSTER_NAME ?= kooker
 SETUP_ENV = . $(shell realpath ${PROFILE})
 CONSOLE_ENV = . $(shell pwd)/activate.sh
+HOST_PROFILE = ${CLUSTER_NAME}
+
+###
+# OVERRIDEABLE
+###
+
+DOWNLOAD_DIR ?= $(shell pwd)/downloads
+DOWNLOAD_IMG_DIR ?= ${DOWNLOAD_DIR}/images
+DOWNLOAD_CHART_DIR ?= ${DOWNLOAD_DIR}/charts
+IMAGES_DIR ?= $(shell pwd)/images
+WITH_COTS ?= true
+PROFILE ?= $(shell pwd)/bin/profiles/profile-defaults.sh
+CLUSTER_NAME ?= kooker
 IMG ?= busybox
 
 ###
@@ -29,7 +35,6 @@ KAFKA_INSTALL = $(shell pwd)/bin/cots/kafka.sh
 MINIO_INSTALL = $(shell pwd)/bin/cots/minio.sh
 CREATE_CLUSTER = $(shell pwd)/bin/tools/create_cluster.sh
 HOSTCTL_SVC_PROFILE = $(shell pwd)/bin/utils/hostctl_svc_profile.sh
-HOST_PROFILE = ${CLUSTER_NAME}
 GET_CREDENTIALS = $(shell pwd)/bin/utils/credentials.sh
 COREDNS_PATCH = $(shell pwd)/bin/utils/patch_coredns.sh
 CONSOLE_INSTALL = $(shell pwd)/bin/install.sh
@@ -37,7 +42,6 @@ OFFLINE_IMAGES = $(shell pwd)/bin/tools/offline_images.sh
 OFFLINE_CHARTS = $(shell pwd)/bin/tools/offline_charts.sh
 OFFLINE_KUBE_RESOURCES = $(shell pwd)/bin/tools/offline_kube_resources.sh
 FETCH_IMG = $(shell pwd)/bin/tools/docker_save.sh
-IMAGES_DIR = $(shell pwd)/images
 LOAD_IMAGE_FROM_DIRECTORY = $(shell pwd)/bin/tools/import_images_from_directory.sh
 
 ###

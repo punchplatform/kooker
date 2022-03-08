@@ -35,6 +35,7 @@ start: ## Start and configure PConsole with all required services
 		load-images-from-directory \
 		deploy-cots \
 		network
+
 ##@ Stop and remove kooker
 
 .PHONY: stop
@@ -42,6 +43,14 @@ start: ## Start and configure PConsole with all required services
 stop: ## kooker uninstall
 	-$(K3D) cluster delete ${CLUSTER_NAME}
 	rm -rf build activate.sh
+
+##@ Reset repository
+
+.PHONY: clean
+
+clean: ## flush all downloaded artifacts
+	-@make stop > /dev/null 2>&1
+	rm -rf ${DOWNLOAD_DIR}
 
 ##@ Download all kooker dependencies locally
 

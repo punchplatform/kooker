@@ -46,8 +46,8 @@ fi
 
 
 
-for IMG_FILE in "${@}" ; do
-
+for IMG_FILE in ${@}/* ; do
+    
     SKIP_RELOAD=0
 
     IMG_BASENAME="$(basename "$IMG_FILE")"
