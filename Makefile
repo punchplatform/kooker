@@ -21,6 +21,8 @@ include bin/makefiles/PLATFORM
 include bin/makefiles/TOOLS
 include bin/makefiles/DEPLOYMENT
 
+export
+
 ##@ Start kooker
 
 .PHONY: start
