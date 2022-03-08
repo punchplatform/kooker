@@ -19,6 +19,8 @@ variables:
   DEBIAN_FRONTEND: noninteractive
   GIT_CLEAN_FLAGS: -ffdx -e .build/
   TZ: "Europe/Paris"
+  # for helm download
+  VERIFY_CHECKSUM: "false"
 
 cache: {}
 
