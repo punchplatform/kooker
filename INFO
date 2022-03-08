@@ -48,7 +48,6 @@ LOAD_IMAGE_FROM_DIRECTORY = $(shell pwd)/bin/tools/import_images_from_directory.
 # CI
 ###
 
-SETUP_KUBECONFIG = $(shell pwd)/bin/gitlab/kubeconfig.sh
 CI ?= false
 
 ###

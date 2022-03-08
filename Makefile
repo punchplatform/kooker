@@ -49,7 +49,7 @@ stop: ## kooker uninstall
 .PHONY: clean
 
 clean: ## flush all downloaded artifacts
-	-@make stop > /dev/null 2>&1
+	-@$(MAKE) stop > /dev/null 2>&1
 	rm -rf ${DOWNLOAD_DIR}
 
 ##@ Download all kooker dependencies locally
