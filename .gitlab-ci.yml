@@ -45,5 +45,6 @@ make-start:
     - docker-runner
   script:
     - apk add bash make curl unzip jq
+    - . bin/gitlab/kubectl.sh
     - . bin/gitlab/kubeconfig.sh
     - bash -c "make start; make clean;"
