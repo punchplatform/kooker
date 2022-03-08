@@ -44,7 +44,8 @@ make-start:
   tags:
     - docker-runner
   script:
-    - apk add bash make curl unzip jq
+    - apk update
+    - apk add bash make curl unzip jq gettext
     - bash -c "make clean;"
     - . bin/gitlab/kubectl.sh
     - bash -c "make CI=true start; make CI=true clean;"
