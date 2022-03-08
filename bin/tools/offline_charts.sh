@@ -14,7 +14,7 @@ ${HELM} repo add jetstack https://charts.jetstack.io || true
 
 
 if [ ${PROMETHEUS_USE_OPERATOR} == false ] ; then
-	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	${HELM} repo add prometheus-community https://prometheus-community.github.io/helm-charts
 fi
 
 ${HELM} repo update
