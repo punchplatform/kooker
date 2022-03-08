@@ -31,6 +31,11 @@ else
 	--k3s-server-arg '--kubelet-arg=image-gc-high-threshold=100' \
 	--k3s-server-arg '--kubelet-arg=eviction-hard=imagefs.available<1%,nodefs.available<1%' \
 	--k3s-server-arg '--kubelet-arg=eviction-minimum-reclaim=imagefs.available=1%,nodefs.available=1%'
+
+	if [ ${CI} = true ]; then
+		$(${SETUP_KUBECONFIG})
+	fi
+
 	${KUBECTL} config use-context k3d-${CLUSTER_NAME} 
 	${KUBECTL} wait nodes --all --for=condition=ready --timeout=120s 
 	make patch-coredns CLUSTER_NAME=${CLUSTER_NAME}

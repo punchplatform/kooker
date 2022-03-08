@@ -45,6 +45,13 @@ FETCH_IMG = $(shell pwd)/bin/tools/docker_save.sh
 LOAD_IMAGE_FROM_DIRECTORY = $(shell pwd)/bin/tools/import_images_from_directory.sh
 
 ###
+# CI
+###
+
+SETUP_KUBECONFIG = $(shell pwd)/bin/gitlab/kubeconfig.sh
+CI ?= false
+
+###
 # PREREQUISITES
 ###
 
