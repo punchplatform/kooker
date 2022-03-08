@@ -20,13 +20,6 @@ variables:
   GIT_CLEAN_FLAGS: -ffdx -e .build/
   TZ: "Europe/Paris"
 
-  PUNCH_GITHUB_USER: "${PUNCH_GITHUB_USER}"
-  PUNCH_GITHUB_TOKEN: "${PUNCH_GITHUB_TOKEN}"
-
-  DOCKER_PRIVATE_REGISTRY_1: ghcr.io
-
-  VERSION: ${CI_COMMIT_REF_NAME}
-
 cache: {}
 
 services:
@@ -49,4 +42,6 @@ make-start:
   tags:
     - docker-runner
   script:
-    - make start
+    - apk add bash make
+    - bash -c "make start"
+    - bash -c "make clean"
