@@ -17,8 +17,6 @@ USAGES:
     - make network
 (GET ENDPOINTS & CREDENTIALS)
     - make credentials
-(PUSH RESOURCES)
-    - make setup-platform
 (ADVANCE)
     # Deploy a clean cluster with minio exposed within your host network
     - make cluster deploy-minio network
