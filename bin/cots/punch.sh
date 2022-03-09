@@ -16,30 +16,6 @@ echo ""
 echo "Preparing for punch services deployment ..."
 echo ""
 
-
-mkdir -p ${HELM_VARSFILE_DIR}
-cat > ${HELM_VARSFILE} <<- EOF
-application:
-  tenant: ${PUNCHPLATFORM_TENANT}
-  file_size: 500MB
-metadata:
-  elasticsearch:
-    http_hosts:
-      - host: ${ELASTIC_SERVICE_NAME}.${ELASTIC_NAMESPACE}
-        port: 9200
-        scheme: http
-    security:
-      credentials:
-        username: ${ES_USER}
-        password: ${ES_PASSWORD}
-
-data:
-  minio:
-    host: http://${MINIO_SERVICE_NAME}:${MINIO_EXPOSURE_PORT}
-    access_key: ${MINIO_ACCESS_KEY}
-    secret_key: ${MINIO_SECRET_KEY}
-EOF
-
 #Deployment of central punch services (operator, artifacts manager)
 ${HELM} upgrade \
   --install cert-manager \
@@ -82,6 +58,15 @@ ${HELM} upgrade \
   --namespace ${PUNCH_ARTEFACT_NAMESPACE} \
   ${CHARTS_DIR}/artifacts-${PUNCH_ARTIFACTS_SERVICE_VERSION}.tgz \
   --set image.name=${PUNCH_ARTIFACT_IMG} \
+  --set metadata.elasticsearch.http_hosts[0].host=${ELASTIC_SERVICE_NAME}.${ELASTIC_NAMESPACE} \
+  --set metadata.elasticsearch.http_hosts[0].port=9200 \
+  --set metadata.elasticsearch.http_hosts[0].scheme=http \
+  --set metadata.elasticsearch.index_name=kooker-artifacts-metadata \
+  --set metadata.elasticsearch.security.credentials.username=${ES_USER} \
+  --set metadata.elasticsearch.security.credentials.password=${ES_PASSWORD} \
+  --set data.minio.access_key=${MINIO_ACCESS_KEY} \
+  --set data.minio.secret_key=${MINIO_SECRET_KEY} \
+  --set data.minio.host=http://${MINIO_SERVICE_NAME}:${MINIO_EXPOSURE_PORT} \
   --create-namespace \
   --wait
 
