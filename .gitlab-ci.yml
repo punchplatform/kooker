@@ -29,6 +29,7 @@ services:
 
 stages:
   - make-start
+  - sync-repo
   
 # -----------------------------------------------------------------------------------
 # JOBS
@@ -49,3 +50,14 @@ make-start:
     - bash -c "make clean CLUSTER_NAME=${CLUSTER_NAME};"
     - . bin/gitlab/kubectl.sh
     - bash -c "make CLUSTER_NAME=${CLUSTER_NAME} CI=true start; make CLUSTER_NAME=${CLUSTER_NAME} CI=true clean;"
+
+Sync Github:
+  image: alpine/git:v2.32.0
+  stage: sync-repo
+  tags: 
+    - docker-runner
+  script:
+    - git remote add github https://${PUNCH_GITHUB_USER}:${PUNCH_GITHUB_TOKEN}@github.com/punchplatform/kooker.git
+    - git push github
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
