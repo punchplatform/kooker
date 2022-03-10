@@ -52,10 +52,13 @@ make-start:
     - bash -c "make CLUSTER_NAME=${CLUSTER_NAME} CI=true start; make CLUSTER_NAME=${CLUSTER_NAME} CI=true clean;"
 
 Sync Github:
-  image: alpine/git:v2.32.0
+  image: alpine:3.15
   stage: sync-repo
   tags: 
     - docker-runner
+  before_script:
+    - apk update
+    - apk add git
   script:
     - git remote add github https://${PUNCH_GITHUB_USER}:${PUNCH_GITHUB_TOKEN}@github.com/punchplatform/kooker.git
     - git push github
