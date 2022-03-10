@@ -42,7 +42,7 @@ export KIBANA_VERSION=7.8.0
 # export MINIO_NAMESPACE=object-store
 # export MINIO_IMG=quay.io/minio/minio:RELEASE.2020-12-18T03:27:42Z
 # export MINIO_CLI_IMG=minio/mc:RELEASE.2021-10-07T04-19-58Z
-# export MINIO_SECRET_KEY=K@st2020*
+# export MINIO_SECRET_KEY=password
 # export MINIO_ACCESS_KEY=minio
 
 ## PUNCH ENV 
@@ -51,7 +51,7 @@ export KIBANA_VERSION=7.8.0
 export PUNCH_VERSION=7.0.1-SNAPSHOT
 export PUNCH_OPERATOR_VERSION=1.0.7
 # export PUNCH_SYSTEM_NAMESPACE=punchoperator-system
-# export PUNCH_ARTEFACT_NAMESPACE=punch-gateway-ns
+# export PUNCH_ARTIFACTS_NAMESPACE=punch-artifacts
 # export PUNCH_OPERATOR_IMG=ghcr.io/punchplatform/operator:${PUNCH_OPERATOR_VERSION}
 # export PUNCH_ARTIFACT_IMG=ghcr.io/punchplatform/artifacts-server:${PUNCH_VERSION}
 # export PUNCH_RESOURCECTL_IMG=ghcr.io/punchplatform/resourcectl:${PUNCH_VERSION}

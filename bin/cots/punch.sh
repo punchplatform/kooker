@@ -27,7 +27,7 @@ ${HELM} upgrade \
 
 # Creat namespaces if not exist
 ${KUBECTL} create namespace ${PUNCH_SYSTEM_NAMESPACE} > /dev/null 2>&1 || true
-${KUBECTL} create namespace ${PUNCH_ARTEFACT_NAMESPACE} > /dev/null 2>&1 || true
+${KUBECTL} create namespace ${PUNCH_ARTIFACTS_NAMESPACE} > /dev/null 2>&1 || true
 
 echo ""
 echo "Deploying Punch Kube operator and CRDs..."
@@ -55,8 +55,8 @@ echo ""
 
 ${HELM} upgrade \
   --install artifacts \
-  --namespace ${PUNCH_ARTEFACT_NAMESPACE} \
-  ${CHARTS_DIR}/artifacts-${PUNCH_ARTIFACTS_SERVICE_VERSION}.tgz \
+  --namespace ${PUNCH_ARTIFACTS_NAMESPACE} \
+  ${CHARTS_DIR}/artifacts-server-${PUNCH_ARTIFACTS_SERVICE_VERSION}.tgz \
   --set image.name=${PUNCH_ARTIFACT_IMG} \
   --set metadata.elasticsearch.http_hosts[0].host=${ELASTIC_SERVICE_NAME}.${ELASTIC_NAMESPACE} \
   --set metadata.elasticsearch.http_hosts[0].port=9200 \
@@ -67,11 +67,12 @@ ${HELM} upgrade \
   --set data.minio.access_key=${MINIO_ACCESS_KEY} \
   --set data.minio.secret_key=${MINIO_SECRET_KEY} \
   --set data.minio.host=http://${MINIO_SERVICE_NAME}:${MINIO_EXPOSURE_PORT} \
+  --set application.tenant=${PUNCHPLATFORM_TENANT} \
   --create-namespace \
   --wait
 
 ## In case services are not of type LoadBalancer, patch those to LoadBalancer
-patchSVCAndWait svc/artifacts-service ${PUNCH_ARTEFACT_NAMESPACE} 2>&1 > /dev/null
+patchSVCAndWait svc/artifacts-server ${PUNCH_ARTIFACTS_NAMESPACE} 2>&1 > /dev/null
 
 
 echo ""
@@ -95,7 +96,7 @@ spec:
   initContainerImage: ${PUNCH_RESOURCECTL_IMG}
   services:
   - type: dependencies
-    url: http://artifacts-service.${PUNCH_ARTEFACT_NAMESPACE}:4245
+    url: http://artifacts-server.${PUNCH_ARTIFACTS_NAMESPACE}:4245
     secretRefs: []
   transformRules:
 

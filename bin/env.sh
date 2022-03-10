@@ -77,7 +77,7 @@ KOOKER_DOWNLOADS="${KOOKER_DIR}/downloads"
 : ${MINIO_EXPOSURE_PORT:=9002}
 : ${MINIO_IMG:="quay.io/minio/minio:RELEASE.2021-10-13T00-23-17Z"}
 : ${MINIO_CLI_IMG:="minio/mc:RELEASE.2021-10-07T04-19-58Z"}
-: ${MINIO_SECRET_KEY:="K@st2020*"}
+: ${MINIO_SECRET_KEY:="password"}
 : ${MINIO_ACCESS_KEY:="minio"}
 
 #### OPENSEARCH ####
@@ -100,7 +100,7 @@ KOOKER_DOWNLOADS="${KOOKER_DIR}/downloads"
 
 #### PUNCH ####
 : ${PUNCH_SYSTEM_NAMESPACE:="punchoperator-system"}
-: ${PUNCH_ARTEFACT_NAMESPACE:="punch-gateway-ns"}
+: ${PUNCH_ARTIFACTS_NAMESPACE:="punch-artifacts"}
 : ${MINIO_NAMESPACE:="object-store"}
 : ${ELASTIC_NAMESPACE:="doc-store"}
 : ${ELASTICSEARCH_EXTERNAL_API_URL:="elasticsearch.${CLUSTER_NAME}:9200"}

@@ -5,7 +5,7 @@ set -o pipefail
 
 source bin/env.sh
 
-ARTEFACT_HOST=$(${KUBECTL} get svc artifacts-service -n ${PUNCH_ARTEFACT_NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null) || true
+ARTIFACTS_SERVER_HOST=$(${KUBECTL} get svc artifacts-server -n ${PUNCH_ARTIFACTS_NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null) || true
 ES_HOST=$(${KUBECTL} get svc punchplatform-es-http -n ${ELASTIC_NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null) || true
 KB_HOST=$(${KUBECTL} get svc punchplatform-kb-http -n ${ELASTIC_NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null) || true
 MINIO_HOST=$(${KUBECTL} get svc minio -n ${MINIO_NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null) || true
@@ -17,7 +17,7 @@ GRAFANA_HOST=$(${KUBECTL} get svc grafana -n ${MONITORING_NAMESPACE} -o jsonpath
 PROMETHEUS_HOST=$(${KUBECTL} get svc prometheus -n ${MONITORING_NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null) || true
 
 cat > .dev-hosts << EOF
-${ARTEFACT_HOST} artifacts-service.${CLUSTER_NAME}
+${ARTIFACTS_SERVER_HOST} artifacts-server.${CLUSTER_NAME}
 ${ES_HOST} elasticsearch.${CLUSTER_NAME}
 ${KB_HOST} kibana.${CLUSTER_NAME}
 ${MINIO_HOST} minio.${CLUSTER_NAME}

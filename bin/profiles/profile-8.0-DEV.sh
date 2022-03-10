@@ -42,7 +42,7 @@
 # export MINIO_NAMESPACE=object-store
 # export MINIO_IMG=quay.io/minio/minio:RELEASE.2021-10-13T00-23-17Z
 # export MINIO_CLI_IMG=minio/mc:RELEASE.2021-10-07T04-19-58Z
-# export MINIO_SECRET_KEY=K@st2020*
+# export MINIO_SECRET_KEY=password
 # export MINIO_ACCESS_KEY=minio
 
 ## PUNCH ENV 
@@ -58,7 +58,7 @@ export PUNCH_OPERATOR_VERSION=${PUNCH_IMAGES_TAG}
 #export PUNCH_ARTIFACTS_SERVICE_VERSION=7.0.2-SNAPSHOT
 
 # export PUNCH_SYSTEM_NAMESPACE=punchoperator-system
-# export PUNCH_ARTEFACT_NAMESPACE=punch-gateway-ns
+# export PUNCH_ARTIFACTS_NAMESPACE=punch-artifacts
 
 # Target :m 8.0-DEV . Pour l'instant operateur 7.
 # export PUNCH_OPERATOR_IMG=ghcr.io/punchplatform/operator:1.1.0   

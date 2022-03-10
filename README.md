@@ -34,7 +34,7 @@ This command will :
 
 - Create a k3d cluster named 'kooker'
 - Deploy basic COTS : Elasticsearch, Kibana, Kafka, Minio, Prometheus, Grafana, Kubernetes Dashboard and Clickhouse
-- Deploy Punch components : Artefact Server & Punch Operator
+- Deploy Punch components : Artifacts Server & Punch Operator
 - Load Elastisearch templates 
 - configure your /etc/hosts to allow direct access to the delpoyed services (this step will ask you your sudoer password)
 
@@ -53,7 +53,7 @@ make network
 make credentials
 ```
 
-Then, open your navigator and browse to the `ARTEFACT SERVER` url and import the provided example artifacts `examples/test-parsers-1.0.0-artefact.zip` by clicking on the `Upload artifacts` button
+Then, open your navigator and browse to the `ARTIFACTS SERVER` url and import the provided example artifacts `examples/test-parsers-1.0.0-artifact.zip` by clicking on the `Upload artifacts` button
 
 Finally, execute your punchline using the command below: 
 

@@ -20,7 +20,7 @@ bcyn=$'\e[1;36m'
 clrend=$'\e[0m'
 
 cat << EOF 
-${bred}ARTEFACT SERVER${clrend} --> ${bcyn}http://artifacts-service.${CLUSTER_NAME}:4245${clrend}
+${bred}ARTIFACTS SERVER${clrend} --> ${bcyn}http://artifacts-server.${CLUSTER_NAME}:4245${clrend}
 ${bred}GRAFANA${clrend} --> ${bcyn}http://grafana.${CLUSTER_NAME}:3000${clrend} - ${GRAFANA_USER}/ ${GRAFANA_PASSWORD}
 ${bred}PROMETHEUS${clrend} --> ui: ${bcyn}http://prometheus.${CLUSTER_NAME}:9090${clrend} / datasource: ${bcyn}http://prometheus.${MONITORING_NAMESPACE}:9090${clrend}
 ${bred}CLICKHOUSE HTTP/TCP${clrend} --> ${bcyn}http://clickhouse.${CLUSTER_NAME}:8123 / http://clickhouse.${CLUSTER_NAME}:9000${clrend} - clickhouse_operator / clickhouse_operator_password

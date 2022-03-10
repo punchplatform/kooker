@@ -42,7 +42,7 @@
 # export MINIO_NAMESPACE=object-store
 # export MINIO_IMG=quay.io/minio/minio:RELEASE.2021-10-13T00-23-17Z
 # export MINIO_CLI_IMG=minio/mc:RELEASE.2021-10-07T04-19-58Z
-# export MINIO_SECRET_KEY=K@st2020*
+# export MINIO_SECRET_KEY=password
 # export MINIO_ACCESS_KEY=minio
 
 ## PUNCH ENV 
@@ -56,7 +56,7 @@
 
 
 # export PUNCH_SYSTEM_NAMESPACE=punchoperator-system
-# export PUNCH_ARTEFACT_NAMESPACE=punch-gateway-ns
+# export PUNCH_ARTIFACTS_NAMESPACE=punch-artifacts
 
 # export PUNCH_IMAGES_TAG:=${PUNCH_VERSION}
 
