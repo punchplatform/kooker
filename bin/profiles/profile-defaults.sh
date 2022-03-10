@@ -62,7 +62,7 @@
 
 
 # export PUNCH_OPERATOR_IMG=ghcr.io/punchplatform/operator:${PUNCH_OPERATOR_VERSION}
-#export PUNCH_ARTIFACT_IMG=ghcr.io/punchplatform/artifacts-server:${PUNCH_IMAGES_TAG}
+# export PUNCH_ARTIFACT_IMG=ghcr.io/punchplatform/artifacts-server:${PUNCH_IMAGES_TAG}
 
 # export PUNCH_RESOURCECTL_IMG=ghcr.io/punchplatform/resourcectl:${PUNCH_IMAGES_TAG}
 # export PUNCH_JAVASTREAM_IMG=ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}

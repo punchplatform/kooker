@@ -1,8 +1,8 @@
-downloads/
+downloads
 activate.sh
-build/punch/deploy-vars.yaml
 **/.vscode/**
 kubectl
 coredns.yaml
-images/
+images
 .idea
+build
