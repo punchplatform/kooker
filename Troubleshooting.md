@@ -40,7 +40,7 @@ In case something does not work after full deployment (see README.md `make start
 
 ### Viewing logs from punch operator service
 
-	kubectl logs -f --tail=-1 -n punchoperator-system -l control-plane=controller-manager
+	kubectl logs -f --tail=-1 -n punchoperator-system -l control-plane=operator-controller-manager
 
 
 ### Viewing logs from artifacts service
