@@ -20,10 +20,23 @@ KOOKER_DOWNLOADS="${KOOKER_DIR}/downloads"
 
 ### K3D ###
 
-: ${K3S_IMG:="docker.io/rancher/k3s:v1.21.3-k3s1"}
-: ${K3D_PROXY_IMG:="docker.io/rancher/k3d-proxy:4.4.8"}
-: ${K3D_TOOLS_IMG:="docker.io/rancher/k3d-tools:4.4.8"}
-: ${PAUSE_IMG:="docker.io/rancher/pause:3.1"}
+K3_IMGS=(docker.io/rancher/k3s:v1.21.3-k3s1 \
+	docker.io/rancher/k3d-proxy:4.4.8 \
+	docker.io/rancher/k3d-tools:4.4.8 \
+	docker.io/rancher/pause:3.1 \
+	rancher/local-path-provisioner:v0.0.19 \
+	rancher/klipper-lb:v0.2.0 \
+	rancher/coredns-coredns:1.8.3 \
+	rancher/metrics-server:v0.3.6 \
+	rancher/klipper-helm:v0.6.1-build20210616 \
+	rancher/library-traefik:2.4.8 \
+	rancher/library-busybox:1.32.1 \
+	k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.2.4 \
+	jimmidyson/configmap-reload:v0.5.0 \
+	quay.io/prometheus/node-exporter:v1.3.0 \
+	quay.io/prometheus/prometheus:v2.31.1 \
+	prom/pushgateway:v1.4.2 )
+
 
 #### CLICKHOUSE #####
 : ${CLICKHOUSE_OPERATOR_IMG:="altinity/clickhouse-operator:0.16.0"}
@@ -62,8 +75,8 @@ KOOKER_DOWNLOADS="${KOOKER_DIR}/downloads"
 
 #### KAFKA ####
 : ${KAFKA_NAMESPACE:="processing"}
-: ${STRIMZI_OPERATOR_IMG:="quay.io/strimzi/operator:0.26.0"}
-: ${KAFKA_IMG:="quay.io/strimzi/kafka:0.26.0-kafka-3.0.0"}
+: ${STRIMZI_OPERATOR_IMG:="quay.io/strimzi/operator:0.28.0"}
+: ${KAFKA_IMG:="quay.io/strimzi/kafka:0.28.0-kafka-3.1.0"}
 
 #### KUBERNETES SYSTEM ####
 : ${KUBERNETES_DASHBOARD_NAMESPACE:="kubernetes-dashboard"}

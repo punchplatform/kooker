@@ -28,7 +28,7 @@ elif clusterExists "${CLUSTER_NAME}" ; then
 ## If not exists, load images for offline mode
 else
 	if [ ${OFFLINE} = true ] ; then
-		for img in ${K3S_IMG} ${K3D_PROXY_IMG} ${K3D_TOOLS_IMG} ${PAUSE_IMG}
+		for img in "${K3_IMGS[@]}" ;
 		do 
 			echo "Docker load $img"
 			IMG_STRIP_FORWARD_SLASH=$(echo ${img} | sed 's/^\///;s/\///g')

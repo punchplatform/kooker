@@ -34,6 +34,14 @@ In case something does not work after full deployment (see README.md `make start
 	kubectl get pod -A -l app=artifacts      # Should be running
 	
 
+### Check all pods status
+
+	kubectl get pods -A
+
+### Detect all missing images blocking pods
+
+	kubectl get pods -A -o yaml | sed -n 's/.*Back-off pulling image "\(.*\)".*/\1/p'
+
 
 ## Useful debug commands
 

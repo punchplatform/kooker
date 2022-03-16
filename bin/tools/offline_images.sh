@@ -7,10 +7,14 @@ source bin/env.sh
 
 if [ ${OFFLINE} = false ] ; then
   
-  make fetch-image IMG=${K3S_IMG}
-  make fetch-image IMG=${K3D_PROXY_IMG}
-  make fetch-image IMG=${K3D_TOOLS_IMG}
-  make fetch-image IMG=${PAUSE_IMG}
+
+  for IMG in "${K3_IMGS[@]}" ; 
+  do
+    make fetch-image
+  done
+
+
+
   make fetch-image IMG=${KUBERNETES_DASHBOARD_IMG}
   
   make fetch-image IMG=${CERT_MANAGER_CONTROLLER_IMG}
@@ -22,6 +26,8 @@ if [ ${OFFLINE} = false ] ; then
   make fetch-image IMG=${METRICS_SCRAPER_IMG}
   make fetch-image IMG=${PROMETHEUS_OPERATOR_IMG}
   make fetch-image IMG=${PROMETHEUS_IMG}
+
+  make fetch-image IMG=prom/pushgateway:v1.4.2
   make fetch-image IMG=${GRAFANA_IMG}
   
   make fetch-image IMG=${KAFKA_IMG}
