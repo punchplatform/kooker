@@ -84,6 +84,10 @@ make stop
 
 ## Going further
 
+### REST API
+
+See the link: https://punchplatform.github.io/kooker
+
 ### Offline mode
 
 Kooker can be also be used without internet access. 
