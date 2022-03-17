@@ -28,15 +28,33 @@ spec:
       - id: punchlet
         table: logs
         columns:
-          - name: log
+          - name: data
             type: string
   - id: punchlet
     kind: function
     type: punchlet_function
     settings:
-      punchlet_grok_pattern_dirs:
-        - com/mycompany/sample/groks
-      punchlet_json_resources:
-        - com/mycompany/sample/resources/color_codes.json
+      resources:
+        - name: custom_groks
+          url: com/mycompany/sample/groks/pattern.grok
+          type: file
+          format: grok
+        - name: color_codes 
+          url: com/mycompany/sample/resources/color_codes.json
+          type: file
+          format: json
       punchlets:
         - com/mycompany/sample/parser.punch
+        - com/mycompany/sample/enrich.punch
+    out:
+      - id: printer
+        table: logs
+        columns:
+          - name: data
+          - name: log
+  - id: printer
+    kind: function
+    type: punchlet_function
+    settings:
+      punchlet_code: "{print(root);}"
+      
