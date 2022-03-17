@@ -93,7 +93,10 @@ PROMETHEUS_IMGS=(
 #### KAFKA ####
 : ${KAFKA_NAMESPACE:="processing"}
 : ${STRIMZI_OPERATOR_IMG:="quay.io/strimzi/operator:0.28.0"}
-: ${KAFKA_IMG:="quay.io/strimzi/kafka:0.28.0-kafka-3.0.0"}
+KAFKA_IMGS=( \
+	quay.io/strimzi/kafka:0.28.0-kafka-3.0.0 \
+	quay.io/strimzi/kafka:0.28.0-kafka-3.1.0 \
+)
 
 #### KUBERNETES SYSTEM ####
 : ${KUBERNETES_DASHBOARD_NAMESPACE:="kubernetes-dashboard"}

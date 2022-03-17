@@ -26,14 +26,13 @@ if [ ${OFFLINE} = false ] ; then
 
   make fetch-image IMG=${GRAFANA_IMG}
   
-  make fetch-image IMG=${KAFKA_IMG}
   make fetch-image IMG=${STRIMZI_OPERATOR_IMG}
   
 
   make fetch-image IMG=${MINIO_IMG}
   make fetch-image IMG=${MINIO_CLI_IMG}
   
-  for IMG in "${PROMETHEUS_IMGS[@]}" "${CLICKHOUSE_IMGS[@]}" ; 
+  for IMG in "${PROMETHEUS_IMGS[@]}" "${CLICKHOUSE_IMGS[@]}" "${KAFKA_IMGS[@]}" ; 
   do
     make fetch-image
   done
