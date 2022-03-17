@@ -9,12 +9,13 @@ metadata:
 spec:
   dependencies:
     - punch-parsers:org.thales.punch:punch-simple-punchlets:1.1.0
+
   dag:
     - id: input
       kind: source
       type: kafka_source
       load_control:
-        throughput: 100
+        throughput: 10000
         max_pending_row_number: 1000
         row_timeout_secs: 30
       settings:
@@ -45,7 +46,7 @@ spec:
       kind: function
       settings:
         punchlets:
-          - org/thales/punch/common/input.punch
+        - org/thales/punch/common/input.punch
       out:
         - id: elasticsearch_sink
           table: logs
@@ -71,19 +72,21 @@ spec:
         http_hosts:
           - host: localhost
             port: 9200
-        batch_interval: 5000
-        batch_size: 1
+        bulk_size: 1000
         request_timeout: 20s
-        index_type: daily
-        index_prefix: testv8-
-        document_json_column: log
-        document_id_column: _ppf_id
-        extra_fields:
-          - type: date
-            document_field: '@timestamp'
-            format: iso
+        index: 
+          type: daily
+          column: log
+          prefix: punchv8-
+        document:
+          json_column: log
+          id_column: _ppf_id
+          extra_fields:
+            - type: date
+              name: '@timestamp'
+              format: yyyy-MM-dd'T'HH:mm:ss.SSSZZ
         bulk_failure_action: fail
-        document_failure_action: forward_all
+        document_failure_action: fail
   containers:
     applicationContainer:
       env:

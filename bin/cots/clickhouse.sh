@@ -14,7 +14,12 @@ fi
 
 ${KUBECTL} create ns ${CLICKHOUSE_NAMESPACE} 2>/dev/null || true
 
-KUBECTL=${KUBECTL} OPERATOR_IMAGE=${CLICKHOUSE_OPERATOR_IMG} OPERATOR_NAMESPACE=${CLICKHOUSE_NAMESPACE} ${KUBE_RESOURCES_DIR}/clickhouse/clickhouse-operator-install.sh | bash 2>/dev/null || true
+# https://github.com/Altinity/clickhouse-operator/blob/master/docs/operator_installation_details.md
+
+
+KUBECTL=${KUBECTL} OPERATOR_IMAGE=${CLICKHOUSE_OPERATOR_IMG} ${KUBECTL} apply --namespace="${CLICKHOUSE_NAMESPACE}" -f "${KUBE_RESOURCES_DIR}/clickhouse/clickhouse-operator-install-bundle.yaml"
+
+echo "Clickhouse deployment in progress..."
 
 ${KUBECTL} wait deployments --all --for=condition=available --timeout=180s -n ${CLICKHOUSE_NAMESPACE}
 
@@ -40,6 +45,7 @@ spec:
           containers:
             - name: clickhouse
               image: ${CLICKHOUSE_IMG}
+              imagePullPolicy: IfNotPresent
 EOF
 
 ${KUBECTL} wait pods --all --for=condition=ready --timeout=240s -n ${CLICKHOUSE_NAMESPACE}

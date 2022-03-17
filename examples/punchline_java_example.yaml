@@ -2,7 +2,7 @@
 apiVersion: punchline.gitlab.thalesdigital.io/v2
 kind: StreamPunchline
 metadata:
-  name: punchline-sample
+  name: streampl-java-example
 spec: 
   containers:
     applicationContainer:

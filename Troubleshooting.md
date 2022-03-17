@@ -124,22 +124,14 @@ Get the latest offset still in a topic
 
 	docker run -d -p 3000:3000 grafana/grafana-oss
 
+### Restricting outbound trafic from k3d
 
-### Metrics
+	# IN THIS ORDER !!
 
-app_name ne devrait pas etre positionné automatiquement (trop générique)
-'created' acked
+	sudo iptables -I DOCKER-USER --source 172.0.0.0/8 -m state --state NEW  -j DROP
+	sudo iptables -I DOCKER-USER --source 172.0.0.0/8 --dest 172.0.0.0/8 -j RETURN
 
+	# To remove rules:
 
-
-## END TO END
-
-	make PROFILE=bin/profiles/profile-8.0-DEV.sh start
-	. activate.sh
-	kubectl apply -f examples/ltr_lmc
-	kkafka ./kafka-topics.sh --list  --bootstrap-server localhost:9092
-
-
-Needs standalone:
-
-	punchplatform-log-injector.sh -c injector -n 1000000 -t 1000
+	sudo iptables -D DOCKER-USER --source 172.0.0.0/8 -m state --state NEW  -j DROP
+	sudo iptables -D DOCKER-USER --source 172.0.0.0/8 --dest 172.0.0.0/8 -j RETURN

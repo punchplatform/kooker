@@ -1,0 +1,30 @@
+---
+# APPLY prerequisites first
+apiVersion: platform.gitlab.thalesdigital.io/v2
+kind: Platform
+metadata:
+  name: platform
+spec:
+  serviceAccount: admin-user
+  imagePullPolicy: IfNotPresent
+  initContainerImage: ghcr.io/punchplatform/resourcectl:7.0.1-SNAPSHOT
+  services:
+  - type: dependencies
+    url: http://artifacts-service.punch-system:4242
+    secretRefs:
+    - name: dependencies-basic-auth
+      mountPath: /var/run/platform/secrets/dependencies/basic-auth
+    - name: dependencies-tls
+      mountPath: /var/run/platform/secrets/dependencies/tls
+  - type: elastic_input
+    secretRefs:
+    - name: elastic-basic-auth
+      mountPath: /var/run/platform/secrets/elastic_input/basic-auth
+    - name: elastic-tls
+      mountPath: /var/run/platform/secrets/elastic_input/tls
+  - type: elastic_batch_input
+    secretRefs:
+    - name: elastic-basic-auth
+      mountPath: /var/run/platform/secrets/elastic_batch_input/basic-auth
+    - name: elastic-tls
+      mountPath: /var/run/platform/secrets/elastic_batch_input/tls

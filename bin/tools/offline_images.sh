@@ -8,10 +8,11 @@ source bin/env.sh
 if [ ${OFFLINE} = false ] ; then
   
 
-  for IMG in "${K3_IMGS[@]}" ; 
+  for IMG in "${KUBE_SYSTEM_IMGS[@]}" ; 
   do
     make fetch-image
   done
+
 
 
 
@@ -24,10 +25,7 @@ if [ ${OFFLINE} = false ] ; then
 
 
   make fetch-image IMG=${METRICS_SCRAPER_IMG}
-  make fetch-image IMG=${PROMETHEUS_OPERATOR_IMG}
-  make fetch-image IMG=${PROMETHEUS_IMG}
 
-  make fetch-image IMG=prom/pushgateway:v1.4.2
   make fetch-image IMG=${GRAFANA_IMG}
   
   make fetch-image IMG=${KAFKA_IMG}
@@ -37,8 +35,11 @@ if [ ${OFFLINE} = false ] ; then
   make fetch-image IMG=${MINIO_IMG}
   make fetch-image IMG=${MINIO_CLI_IMG}
   
-  make fetch-image IMG=${CLICKHOUSE_OPERATOR_IMG}
-  make fetch-image IMG=${CLICKHOUSE_IMG}
+  for IMG in "${PROMETHEUS_IMGS[@]}" "${CLICKHOUSE_IMGS[@]}" ; 
+  do
+    make fetch-image
+  done
+
   make fetch-image IMG=${ELASTIC_OPERATOR_IMG}
   make fetch-image IMG=${ELASTIC_IMG}
   make fetch-image IMG=${KIBANA_IMG}

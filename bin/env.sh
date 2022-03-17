@@ -20,11 +20,15 @@ KOOKER_DOWNLOADS="${KOOKER_DIR}/downloads"
 
 ### K3D ###
 
-K3_IMGS=(docker.io/rancher/k3s:v1.21.3-k3s1 \
+K3_IMGS=( \
+	docker.io/rancher/k3s:v1.21.3-k3s1 \
 	docker.io/rancher/k3d-proxy:4.4.8 \
 	docker.io/rancher/k3d-tools:4.4.8 \
-	docker.io/rancher/pause:3.1 \
+ )
+
+KUBE_SYSTEM_IMGS=(\
 	rancher/local-path-provisioner:v0.0.19 \
+	rancher/pause:3.1 \
 	rancher/klipper-lb:v0.2.0 \
 	rancher/coredns-coredns:1.8.3 \
 	rancher/metrics-server:v0.3.6 \
@@ -33,16 +37,21 @@ K3_IMGS=(docker.io/rancher/k3s:v1.21.3-k3s1 \
 	rancher/library-busybox:1.32.1 \
 	k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.2.4 \
 	jimmidyson/configmap-reload:v0.5.0 \
-	quay.io/prometheus/node-exporter:v1.3.0 \
-	quay.io/prometheus/prometheus:v2.31.1 \
-	prom/pushgateway:v1.4.2 )
+ )
 
 
 #### CLICKHOUSE #####
-: ${CLICKHOUSE_OPERATOR_IMG:="altinity/clickhouse-operator:0.16.0"}
+: ${CLICKHOUSE_OPERATOR_VERSION:="0.17.0"}
+: ${CLICKHOUSE_OPERATOR_IMG:="altinity/clickhouse-operator:${CLICKHOUSE_OPERATOR_VERSION}"}
 : ${CLICKHOUSE_VERSION:="21.7"}
 : ${CLICKHOUSE_IMG:="yandex/clickhouse-server:${CLICKHOUSE_VERSION}"}
 : ${CLICKHOUSE_NAMESPACE:="clickhouse"}
+
+CLICKHOUSE_IMGS=( \
+	${CLICKHOUSE_OPERATOR_IMG} \
+	${CLICKHOUSE_IMG} \
+	altinity/metrics-exporter:${CLICKHOUSE_OPERATOR_VERSION} \
+)
 
 #### MONITORING #####
 : ${MONITORING_NAMESPACE:="monitoring"}
@@ -54,6 +63,14 @@ K3_IMGS=(docker.io/rancher/k3s:v1.21.3-k3s1 \
 : ${PROMETHEUS_OPERATOR_IMG:="quay.io/prometheus-operator/prometheus-operator:${PROMETHEUS_OPERATOR_VERSION}"}
 : ${PROMETHEUS_VERSION:="v2.22.1"}
 : ${PROMETHEUS_IMG:="quay.io/prometheus/prometheus:${PROMETHEUS_VERSION}"}
+
+PROMETHEUS_IMGS=(
+	${PROMETHEUS_OPERATOR_IMG} \
+	${PROMETHEUS_IMG} \
+	quay.io/prometheus/node-exporter:v1.3.0 \
+	quay.io/prometheus/prometheus:v2.31.1 \
+	prom/pushgateway:v1.4.2 \
+  )	
 
 : ${GRAFANA_VERSION:="7.5.2"}
 : ${GRAFANA_IMG:="grafana/grafana:${GRAFANA_VERSION}"}
@@ -76,7 +93,7 @@ K3_IMGS=(docker.io/rancher/k3s:v1.21.3-k3s1 \
 #### KAFKA ####
 : ${KAFKA_NAMESPACE:="processing"}
 : ${STRIMZI_OPERATOR_IMG:="quay.io/strimzi/operator:0.28.0"}
-: ${KAFKA_IMG:="quay.io/strimzi/kafka:0.28.0-kafka-3.1.0"}
+: ${KAFKA_IMG:="quay.io/strimzi/kafka:0.28.0-kafka-3.0.0"}
 
 #### KUBERNETES SYSTEM ####
 : ${KUBERNETES_DASHBOARD_NAMESPACE:="kubernetes-dashboard"}
@@ -139,6 +156,11 @@ K3_IMGS=(docker.io/rancher/k3s:v1.21.3-k3s1 \
 : ${PUNCH_JAVASTREAM_IMG:="ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}"}
 : ${PUNCH_SPARKLINE_IMG:="ghcr.io/punchplatform/sparkline:${PUNCH_IMAGES_TAG}"}
 
+PUNCH_DEVELOPMENT_IMGS=( \
+	${PUNCH_SIMULATOR_IMG} \
+	${PUNCH_JAVASTREAM_IMG} \
+	${PUNCH_SPARKLINE_IMG} \
+)
 
 
 : ${PUNCH_HELM_VERSION:=${PUNCH_VERSION}}

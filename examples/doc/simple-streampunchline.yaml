@@ -1,0 +1,51 @@
+---
+apiVersion: punchline.gitlab.thalesdigital.io/v2
+kind: StreamPunchline
+metadata:
+  name: stream-punchline-sample
+spec: 
+
+ ###############################################################
+ #
+ #    This example application uses a test data generator node
+ #    that sends a fixed set of data to a printer node
+ #
+ ###############################################################
+
+  # Here we provide only specific settings for our punchline
+  #   more settings are available and can be set through platform annotation
+  #   see "Common Punch CRDs sections in Punchplatform documentation"
+  containers:
+    applicationContainer:
+      image: ghcr.io/punchplatform/punchline-java:8.0-dev
+      env:
+      - name: JDK_JAVA_OPTIONS
+        value: "-Xms100m -Xmx450m"
+      resources:
+        limits:
+          # max 1/10th of a cpu
+          cpu: 0.1
+          # max 500 MB of ram. Note that you may need a little above
+          #     your JVM heap size (configured to 450m above)
+          memory: 500M     
+    
+  dag:
+  - id: generator
+    kind: source
+    type: generator_source
+    settings:
+      messages:
+      - my first log
+      - My second message log
+      - And finally a third one
+    out:
+      - id: punchlet
+        table: logs
+        columns:
+          - name: log
+            type: string
+  - id: punchlet
+    kind: function
+    type: punchlet_function
+    settings:
+      punchlet_code: "{ print(root); }"

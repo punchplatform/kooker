@@ -2,7 +2,7 @@
 apiVersion: punchline.gitlab.thalesdigital.io/v2
 kind: BatchPunchline
 metadata:
-  name: punchline-python-sample
+  name: batchpl-python-sample
 spec: 
   containers:
     applicationContainer:

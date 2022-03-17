@@ -1,0 +1,16 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: punchlines-pod-monitoring
+  namespace: monitoring
+spec:
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - interval: 10s
+    port: "metrics"
+    path: "/metrics"
+  selector:
+    matchLabels:
+      metricsscrapetargetgroup: 'javastreamline'

@@ -1,0 +1,16 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: punchlines-monitoring
+  namespace: monitoring
+spec:
+  namespaceSelector:
+    any: true
+  endpoints:
+  - interval: 1s
+    port: "metrics"
+    path: "/metrics"
+  selector:
+    matchLabels:
+      metricsscrapetargetgroup: 'javastreamline'
