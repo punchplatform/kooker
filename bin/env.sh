@@ -156,10 +156,11 @@ PROMETHEUS_IMGS=(
 : ${PUNCH_JAVASTREAM_IMG:="ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}"}
 : ${PUNCH_SPARKLINE_IMG:="ghcr.io/punchplatform/sparkline:${PUNCH_IMAGES_TAG}"}
 
+
+# Useful images to have on local docker, and not only in the K8s
 PUNCH_DEVELOPMENT_IMGS=( \
 	${PUNCH_SIMULATOR_IMG} \
 	${PUNCH_JAVASTREAM_IMG} \
-	${PUNCH_SPARKLINE_IMG} \
 )
 
 
