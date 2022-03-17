@@ -8,12 +8,10 @@ source bin/env.sh
 if [ ${OFFLINE} = false ] ; then
   
 
-  for IMG in "${KUBE_SYSTEM_IMGS[@]}" ; 
+  for IMG in "${K3_IMGS[@]}" "${KUBE_SYSTEM_IMGS[@]}" ; 
   do
     make fetch-image
   done
-
-
 
 
   make fetch-image IMG=${KUBERNETES_DASHBOARD_IMG}
