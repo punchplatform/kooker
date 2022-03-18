@@ -161,9 +161,6 @@ KAFKA_IMGS=( \
 : ${PUNCH_SPARKLINE_IMG:="ghcr.io/punchplatform/punchline-spark:${PUNCH_IMAGES_TAG}"}
 
 
-ghcr.io/punchplatform/punchline-python:8.0-dev
-
-
 # Useful images to have on local docker, and not only in the K8s
 PUNCH_DEVELOPMENT_IMGS=( \
 	${PUNCH_SIMULATOR_IMG} \
