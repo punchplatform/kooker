@@ -47,7 +47,7 @@
 
 ## PUNCH ENV 
 
-export PUNCHPLATFORM_TENANT=default
+export PUNCHPLATFORM_DEFAULT_NAMESPACE=default
 export PUNCH_SYSTEM_NAMESPACE=punchoperator-system
 export PUNCH_ARTIFACTS_NAMESPACE=punch-artifacts
 export PUNCH_OPERATOR_IMG=ghcr.io/punchplatform/operator:1.0-SNAPSHOT

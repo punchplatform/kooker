@@ -47,7 +47,7 @@
 
 ## PUNCH ENV 
 
-# export PUNCHPLATFORM_TENANT=default
+# export PUNCHPLATFORM_DEFAULT_NAMESPACE=default
 
 export PUNCH_VERSION=8.0-dev
 export PUNCH_IMAGES_TAG=8.0-dev

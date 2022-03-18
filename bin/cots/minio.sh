@@ -85,6 +85,6 @@ spec:
             - |
               set -e
               /usr/bin/mc config host add myminio http://minio.${MINIO_NAMESPACE}:9002 ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY}
-              /usr/bin/mc mb myminio/${PUNCHPLATFORM_TENANT}
+              /usr/bin/mc mb myminio/${PUNCHPLATFORM_DEFAULT_NAMESPACE}
       restartPolicy: Never
 EOF

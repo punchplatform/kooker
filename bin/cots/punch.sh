@@ -67,7 +67,7 @@ ${HELM} upgrade \
   --set data.minio.access_key=${MINIO_ACCESS_KEY} \
   --set data.minio.secret_key=${MINIO_SECRET_KEY} \
   --set data.minio.host=http://${MINIO_SERVICE_NAME}:${MINIO_EXPOSURE_PORT} \
-  --set application.tenant=${PUNCHPLATFORM_TENANT} \
+  --set application.tenant=${PUNCHPLATFORM_DEFAULT_NAMESPACE} \
   --create-namespace \
   --wait
 
@@ -76,15 +76,15 @@ patchSVCAndWait svc/artifacts-server ${PUNCH_ARTIFACTS_NAMESPACE} 2>&1 > /dev/nu
 
 
 echo ""
-echo "Initializing '${PUNCHPLATFORM_TENANT}' namespace and associated configuration items to enable running punchlines..."
+echo "Initializing '${PUNCHPLATFORM_DEFAULT_NAMESPACE}' namespace and associated configuration items to enable running punchlines..."
 echo ""
 
 
 # Initialize central namespace for 'punch' operator
-${KUBECTL} create namespace ${PUNCHPLATFORM_TENANT} > /dev/null 2>&1 || true
+${KUBECTL} create namespace ${PUNCHPLATFORM_DEFAULT_NAMESPACE} > /dev/null 2>&1 || true
 
 
-${KUBECTL} -n ${PUNCHPLATFORM_TENANT} apply -f- <<EOF
+${KUBECTL} -n ${PUNCHPLATFORM_DEFAULT_NAMESPACE} apply -f- <<EOF
 ---
 apiVersion: platform.gitlab.thalesdigital.io/v2
 kind: Platform
@@ -124,10 +124,10 @@ spec:
       match: $.spec.dag[?(@.type == lumberjack_sink)].settings
       set:
         - values:
-            host: lmr-input-service.${PUNCHPLATFORM_TENANT} 
+            host: lmr-input-service.${PUNCHPLATFORM_DEFAULT_NAMESPACE} 
 EOF
 
-${KUBECTL} -n ${PUNCHPLATFORM_TENANT} apply -f- <<EOF
+${KUBECTL} -n ${PUNCHPLATFORM_DEFAULT_NAMESPACE} apply -f- <<EOF
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
