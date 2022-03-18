@@ -63,7 +63,7 @@ Sync Github:
     - apk update
     - apk add git
   script:
-    - git remote add github https://${PUNCH_GITHUB_USER}:${PUNCH_GITHUB_TOKEN}@github.com/punchplatform/kooker.git
+    - git remote add github https://${PUNCH_GITHUB_USER}:${PUNCH_GITHUB_TOKEN}@github.com/punchplatform/kooker.git || true
     - git push github HEAD:main
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
