@@ -1,6 +1,6 @@
 {
   // The parsed log is stored as Json under the <stream><data_field> of the punchlet
-  // Default parsers assume the Storm stream is "logs" and the first field in the
+  // Default parsers assume the table is "logs" and the first field in the
   // PunchBolt configuration is "log" 
   String xml = root:[logs][log];
 

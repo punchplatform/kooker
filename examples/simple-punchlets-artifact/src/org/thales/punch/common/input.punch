@@ -5,7 +5,7 @@
       This is a reference configuration item developed for DAVE 6.1.1 release - 10/10/2020 by CVF
   
   
-     The SyslogSpout sends that information using dedicated Storm
+     The SyslogSpout sends that information using dedicated
      fields. Make sure you subscribe to these fields in your topology 
      configuration.
    
@@ -20,7 +20,7 @@
 
   // To protect the raw log from alteration, and to allow archiving of this raw log without 
   // the associated parsed or enrichment, the raw log is moved to a
-  // separate storm field ('raw_log'), that may be appended later to the main json document (before Elasticsearch indexing for example).
+  // separate field ('raw_log'), that may be appended later to the main json document (before Elasticsearch indexing for example).
   [logs][raw_log] = [logs][log];
   [logs][log][raw_log] = [logs][raw_log];
 

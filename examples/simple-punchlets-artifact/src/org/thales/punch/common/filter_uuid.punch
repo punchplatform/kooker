@@ -27,13 +27,13 @@ public class FilterUUid extends Punchlet {
 	}
 
 	//
-	// This function is executed whenever a log traverse, or when Storm wakes us up
+	// This function is executed whenever a log traverse, or when punchline wakes us up
 	// periodically, in which case the root tuple is empty. 
 	//
 	public void execute(Tuple root) {
 		
 	
-        // First check if we are ticked by Storm
+        // First check if we are ticked by the punchline engine
         if (root.isEmpty()) {
             // get all expired aggregation tuple at once
             Map<String, Byte> expired = map.rotate();

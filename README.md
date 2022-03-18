@@ -37,16 +37,16 @@ This command will :
 - Create a k3d cluster named 'kooker'
 - Deploy basic COTS : Elasticsearch, Kibana, Kafka, Minio, Prometheus, Grafana, Kubernetes Dashboard and Clickhouse
 - Deploy Punch components : Artifacts Server & Punch Operator
-- Load Elastisearch templates 
-- configure your /etc/hosts to allow direct access to the delpoyed services (this step will ask you your sudoer password)
+- Load Elasticsearch templates 
+- configure your /etc/hosts to allow direct access to the deployed services (this step will ask you your sudoer password)
 
 After a successful installation, you will be able to launch your first punchline, which generates arbitrary data on stdout:  
 
 ```sh
-kubectl apply -f examples/stormline_example.yaml -n kast
+kubectl apply -f examples/punchline_java_example.yaml -n kast
 ```
 
-To run a the same manifest with external resources dependencies, run: 
+To run the same manifest with external resources dependencies, run: 
 
 ```sh
 # at least (once - requires sudo)
@@ -65,7 +65,7 @@ kubectl apply -f examples/punchline_java_resource_example.yaml -n kast
 
 ## Tooltips
 
-The PConsole provides a set of commands to interact with your deployed kubernetes cluster. The `start` command is a wrapper of some of them but you can use them independently if necessary. 
+The PConsole provides a set of commands to interact with your deployed kubernetes cluster. The `start` command is a wrapper of some of them, but you can use them independently if necessary. 
 
 ```sh
 ### prints helper 
@@ -115,7 +115,7 @@ make CLUSTER_NAME=mycluster start
 ### Update default configuration
 
 Kooker comes with a default configuration.
-To override any of them, update the file `bin/profiles/profile-defaults.sh`, by setting your desired value or derivate this profile and specify it like this when running make: 
+To override any of them, update the file `bin/profiles/profile-defaults.sh`, by setting your desired value or extends this profile and specify it like this when running make: 
 
 ```sh
 make PROFILE=bin/profiles/profile-8.0-DEV.sh start

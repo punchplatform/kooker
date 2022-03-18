@@ -65,7 +65,7 @@
 # export PUNCH_ARTIFACT_IMG=ghcr.io/punchplatform/artifacts-server:${PUNCH_IMAGES_TAG}
 
 # export PUNCH_RESOURCECTL_IMG=ghcr.io/punchplatform/resourcectl:${PUNCH_IMAGES_TAG}
-# export PUNCH_JAVASTREAM_IMG=ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}
-# export PUNCH_SPARKLINE_IMG=ghcr.io/punchplatform/sparkline:${PUNCH_IMAGES_TAG}
+# export PUNCH_PUNCHLINE_JAVA_IMG=ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}
+# export PUNCH_PUNCHLINE_SPARK_IMG=ghcr.io/punchplatform/punchline-spark:${PUNCH_IMAGES_TAG}
 # export PUNCH_ES_HOUSEKEEPING_IMG=ghcr.io/punchplatform/es-housekeeping:${PUNCH_IMAGES_TAG}
 # export PUNCH_S3_HOUSEKEEPING_IMG=ghcr.io/punchplatform/archive-housekeeping:${PUNCH_IMAGES_TAG}

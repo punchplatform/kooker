@@ -70,7 +70,7 @@ PROMETHEUS_IMGS=(
 	quay.io/prometheus/node-exporter:v1.3.0 \
 	quay.io/prometheus/prometheus:v2.31.1 \
 	prom/pushgateway:v1.4.2 \
-  )	
+  )
 
 : ${GRAFANA_VERSION:="7.5.2"}
 : ${GRAFANA_IMG:="grafana/grafana:${GRAFANA_VERSION}"}
@@ -156,9 +156,10 @@ KAFKA_IMGS=( \
 : ${PUNCH_S3_HOUSEKEEPING_IMG:="ghcr.io/punchplatform/archive-housekeeping:${PUNCH_IMAGES_TAG}"}
 : ${PUNCH_SIMULATOR_IMG:="ghcr.io/punchplatform/operator:${PUNCH_INJECTOR_VERSION}"}
 
-: ${PUNCH_JAVASTREAM_IMG:="ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}"}
+: ${PUNCH_PUNCHLINE_JAVA_IMG:="ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}"}
+: ${PUNCH_PUNCHLINE_SPARK_IMG:="ghcr.io/punchplatform/punchline-spark:${PUNCH_IMAGES_TAG}"}
 : ${PUNCH_PYTHONBATCH_IMG:="ghcr.io/punchplatform/punchline-python:${PUNCH_IMAGES_TAG}"}
-: ${PUNCH_SPARKLINE_IMG:="ghcr.io/punchplatform/punchline-spark:${PUNCH_IMAGES_TAG}"}
+
 
 
 # Useful images to have on local docker, and not only in the K8s
