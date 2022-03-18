@@ -157,14 +157,20 @@ KAFKA_IMGS=( \
 : ${PUNCH_SIMULATOR_IMG:="ghcr.io/punchplatform/operator:${PUNCH_INJECTOR_VERSION}"}
 
 : ${PUNCH_JAVASTREAM_IMG:="ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}"}
-: ${PUNCH_SPARKLINE_IMG:="ghcr.io/punchplatform/sparkline:${PUNCH_IMAGES_TAG}"}
+: ${PUNCH_PYTHONBATCH_IMG:="ghcr.io/punchplatform/punchline-python:${PUNCH_IMAGES_TAG}"}
+: ${PUNCH_SPARKLINE_IMG:="ghcr.io/punchplatform/punchline-spark:${PUNCH_IMAGES_TAG}"}
+
+
+ghcr.io/punchplatform/punchline-python:8.0-dev
 
 
 # Useful images to have on local docker, and not only in the K8s
 PUNCH_DEVELOPMENT_IMGS=( \
 	${PUNCH_SIMULATOR_IMG} \
 	${PUNCH_JAVASTREAM_IMG} \
+	${PUNCH_PYTHONBATCH_IMG} \
 )
+#     ${PUNCH_SPARKLINE_IMG \
 
 
 : ${PUNCH_HELM_VERSION:=${PUNCH_VERSION}}
