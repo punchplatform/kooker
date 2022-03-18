@@ -16,6 +16,8 @@ Clickhouse, Elastic, etc .. so that you can start punch applications in minutes.
 
 ## Quick start
 
+> :warning: you may need to do a: `docker system prune && systemctl restart docker.service` before playing this guide
+
 !!! warn
 
     Sometimes, you may need to do a: `docker system prune && systemctl restart docker.service` before playing this guide.
