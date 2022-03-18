@@ -163,6 +163,7 @@ KAFKA_IMGS=( \
 
 # Useful images to have on local docker, and not only in the K8s
 PUNCH_DEVELOPMENT_IMGS=( \
+	docker.io/library/busybox:latest \
 	${PUNCH_SIMULATOR_IMG} \
 	${PUNCH_JAVASTREAM_IMG} \
 	${PUNCH_PYTHONBATCH_IMG} \
