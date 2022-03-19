@@ -35,7 +35,7 @@ This command will :
 
 > :warning: In case of docker issue on linux try running: `docker system prune && systemctl restart docker.service` then replay the make start command.
 
-If you have issues, refer to the {% troubleshooting TROUBLESHOOTING.md %}. 
+If you have issues, refer to the [troubleshooting](TROUBLESHOOTING.md). 
 
 ## Launch A Punchline
 
