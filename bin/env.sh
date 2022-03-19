@@ -70,7 +70,7 @@ PROMETHEUS_IMGS=(
 	quay.io/prometheus/node-exporter:v1.3.0 \
 	quay.io/prometheus/prometheus:v2.31.1 \
 	prom/pushgateway:v1.4.2 \
-  )	
+  )
 
 : ${GRAFANA_VERSION:="7.5.2"}
 : ${GRAFANA_IMG:="grafana/grafana:${GRAFANA_VERSION}"}
@@ -138,7 +138,7 @@ KAFKA_IMGS=( \
 : ${ELASTIC_NAMESPACE:="doc-store"}
 : ${ELASTICSEARCH_EXTERNAL_API_URL:="elasticsearch.${CLUSTER_NAME}:9200"}
 
-: ${PUNCHPLATFORM_TENANT:="default"}
+: ${PUNCHPLATFORM_DEFAULT_NAMESPACE:="default"}
 
 : ${PUNCH_VERSION:="8.0-dev"}
 : ${PUNCH_IMAGES_TAG:=${PUNCH_VERSION}}
@@ -156,15 +156,20 @@ KAFKA_IMGS=( \
 : ${PUNCH_S3_HOUSEKEEPING_IMG:="ghcr.io/punchplatform/archive-housekeeping:${PUNCH_IMAGES_TAG}"}
 : ${PUNCH_SIMULATOR_IMG:="ghcr.io/punchplatform/operator:${PUNCH_INJECTOR_VERSION}"}
 
-: ${PUNCH_JAVASTREAM_IMG:="ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}"}
-: ${PUNCH_SPARKLINE_IMG:="ghcr.io/punchplatform/sparkline:${PUNCH_IMAGES_TAG}"}
+: ${PUNCH_PUNCHLINE_JAVA_IMG:="ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}"}
+: ${PUNCH_PUNCHLINE_SPARK_IMG:="ghcr.io/punchplatform/punchline-spark:${PUNCH_IMAGES_TAG}"}
+: ${PUNCH_PYTHONBATCH_IMG:="ghcr.io/punchplatform/punchline-python:${PUNCH_IMAGES_TAG}"}
+
 
 
 # Useful images to have on local docker, and not only in the K8s
 PUNCH_DEVELOPMENT_IMGS=( \
+	docker.io/library/busybox:latest \
 	${PUNCH_SIMULATOR_IMG} \
 	${PUNCH_JAVASTREAM_IMG} \
+	${PUNCH_PYTHONBATCH_IMG} \
 )
+#     ${PUNCH_SPARKLINE_IMG \
 
 
 : ${PUNCH_HELM_VERSION:=${PUNCH_VERSION}}

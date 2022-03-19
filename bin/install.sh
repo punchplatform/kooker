@@ -66,7 +66,7 @@ function kkafka () {
       echo "Usage:    kkafka <command> <args> ..."
       echo "            Will run this command inside kafka binaries folder in the kooker broker pod"
       echo ""
-      echo "       e.g.:  kkfaka ls   # => Will list commands in kafka binary folder"
+      echo "       e.g.:  kkafka ls   # => Will list commands in kafka binary folder"
       echo ""
 
     } 1>& 2

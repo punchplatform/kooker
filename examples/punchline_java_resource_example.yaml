@@ -2,7 +2,7 @@
 apiVersion: punchline.gitlab.thalesdigital.io/v2
 kind: StreamPunchline
 metadata:
-  name: punchline-java-resource-sample
+  name: punchline-with-resource-example
   annotations:
     punchplatform.thalesdigital.io/platform: platform
 spec: 

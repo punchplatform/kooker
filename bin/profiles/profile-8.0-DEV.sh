@@ -47,7 +47,7 @@
 
 ## PUNCH ENV 
 
-# export PUNCHPLATFORM_TENANT=default
+# export PUNCHPLATFORM_DEFAULT_NAMESPACE=default
 
 export PUNCH_VERSION=8.0-dev
 export PUNCH_IMAGES_TAG=8.0-dev
@@ -65,6 +65,6 @@ export PUNCH_OPERATOR_VERSION=${PUNCH_IMAGES_TAG}
 
 #export PUNCH_ARTIFACT_IMG=ghcr.io/punchplatform/artifacts-server:${PUNCH_IMAGES_TAG}
 #export PUNCH_RESOURCECTL_IMG=ghcr.io/punchplatform/resourcectl:${PUNCH_IMAGES_TAG}
-export PUNCH_STORMLINE_IMG=ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}
-export PUNCH_SPARKLINE_IMG=ghcr.io/punchplatform/sparkline:7.0.2-SNAPSHOT
+export PUNCH_PUNCHLINE_JAVA_IMG=ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}
+export PUNCH_PUNCHLINE_SPARK_IMG=ghcr.io/punchplatform/punchline-spark:${PUNCH_IMAGES_TAG}
 

@@ -8,7 +8,7 @@ source bin/env.sh
 if [ ${OFFLINE} = false ] ; then
   
 
-  for IMG in "${K3_IMGS[@]}" "${KUBE_SYSTEM_IMGS[@]}" ; 
+  for IMG in "${K3_IMGS[@]}" "${KUBE_SYSTEM_IMGS[@]}" ;
   do
     make fetch-image
   done
@@ -25,14 +25,14 @@ if [ ${OFFLINE} = false ] ; then
   make fetch-image IMG=${METRICS_SCRAPER_IMG}
 
   make fetch-image IMG=${GRAFANA_IMG}
-  
+
   make fetch-image IMG=${STRIMZI_OPERATOR_IMG}
   
 
   make fetch-image IMG=${MINIO_IMG}
   make fetch-image IMG=${MINIO_CLI_IMG}
   
-  for IMG in "${PROMETHEUS_IMGS[@]}" "${CLICKHOUSE_IMGS[@]}" "${KAFKA_IMGS[@]}" ; 
+  for IMG in "${PROMETHEUS_IMGS[@]}" "${CLICKHOUSE_IMGS[@]}" "${KAFKA_IMGS[@]}" "${PUNCH_DEVELOPMENT_IMGS[@]}"  ;
   do
     make fetch-image
   done
@@ -47,8 +47,8 @@ if [ ${OFFLINE} = false ] ; then
   make fetch-image IMG=${PUNCH_ARTIFACT_IMG}
   make fetch-image IMG=${PUNCH_RESOURCECTL_IMG}
   
-  make fetch-image IMG=${PUNCH_JAVASTREAM_IMG}
-  #make fetch-image IMG=${PUNCH_SPARKLINE_IMG}
+  make fetch-image IMG=${PUNCH_PUNCHLINE_JAVA_IMG}
+  make fetch-image IMG=${PUNCH_PUNCHLINE_SPARK_IMG}
   make fetch-image IMG=${PUNCH_SIMULATOR_IMG}
 
   #make fetch-image IMG=${PUNCH_ES_HOUSEKEEPING_IMG}
