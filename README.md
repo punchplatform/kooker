@@ -16,35 +16,32 @@ Clickhouse, Elastic, etc .. so that you can start punch applications in minutes.
 
 ## Quick start
 
-> :warning: you may need to do a: `docker system prune && systemctl restart docker.service` before playing this guide
+> :info: This guide assumes you have internet access.
 
-!!! warn
-
-    Sometimes, you may need to do a: `docker system prune && systemctl restart docker.service` before playing this guide.
-
-To deploy a local Kubernetes cluster with basic COTS and Punch components simply run : 
+To deploy a local Kubernetes cluster with the several COTS and Punch services up and ready simply execute: 
 
 ```sh
 make start
 ```
 
-!!! info 
-
-    You need to have internet access
-
 This command will : 
 
 - Create a k3d cluster named 'kooker'
-- Deploy basic COTS : Elasticsearch, Kibana, Kafka, Minio, Prometheus, Grafana, Kubernetes Dashboard and Clickhouse
-- Deploy Punch components : Artifacts Server & Punch Operator
-- Load Elastisearch templates 
-- configure your /etc/hosts to allow direct access to the delpoyed services (this step will ask you your sudoer password)
+- Deploy Elasticsearch, Kibana, Kafka, Minio, Prometheus, Grafana, Kubernetes Dashboard and Clickhouse.
+- Deploy the Punch components : Artifacts Server & Punch Operator
+- Load the required Elastisearch templates 
+- Optionally configure your /etc/hosts to allow direct access to the dployed services. This step will prompt you to provide your sudoer password.
 
-After a successful installation, you will be able to launch your first punchline, which generates arbitrary data on stdout:  
+> :warning: In case of docker issue on linux try running: `docker system prune && systemctl restart docker.service` before playing this guide.
+
+## Launch A Punchline
+
+You can now launch a punchline. Try the sample one that generates arbitrary data on stdout, then stays idle. 
 
 ```sh
-kubectl apply -f examples/stormline_example.yaml -n kast
+kubectl apply -f examples/stormline_example.yaml -n default
 ```
+
 
 To run a the same manifest with external resources dependencies, run: 
 
