@@ -17,7 +17,7 @@ Clickhouse, Elastic, etc .. so that you can start punch applications in minutes.
 
 ## Quick start
 
-> :info: This guide assumes you have internet access.
+> :information_source: This guide assumes you have internet access.
 
 To deploy a local Kubernetes cluster with the several COTS and Punch services up and ready simply execute: 
 
@@ -45,7 +45,7 @@ You can now launch a punchline. Try the sample one that generates arbitrary data
 kubectl apply -f examples/punchline_java_example.yaml
 ```
 
-> :info: this command submit a kuberneted CRD file to the punch operator. In turn the punch operator starts a pod using a particular strategy. In this simple example, the punchline is an ever running streaming application and the operator will automatically execute it as part of a deployment. If you try to kill the corresponding pod, it will automatically be restarted by kubernetes. 
+> :information_source: this command submit a kuberneted Custom Resource Definition file to the punch operator. In turn the punch operator starts a pod using a particular strategy. In this simple example, the punchline is an ever-running streaming application and the operator will automatically execute it as part of a kubernets deployment. If you try to kill the corresponding pod, it will automatically be restarted by kubernetes. 
 
 You can chek it is running as follow:
 ```sh
@@ -59,7 +59,7 @@ To stop it:
 kubectl delete -f examples/punchline_java_example.yaml
 ```
 
-> :info: the default namespace is used to run the example. 
+> :information_source: the default namespace is used to run the example. 
 
 ## Check the UIs
 
@@ -101,7 +101,7 @@ NAME                                                              READY   STATUS
 punchline-with-resource-example-17fa0f2c968f88fe-6d5ccd67cb695z   1/1     Running   0          2m37s
 ```
 
-> :info: try without the artifact loaded into the artifact server, you will notice your punchline stays in error condition.  
+> :information_source: try without the artifact loaded into the artifact server, you will notice your punchline stays in error condition.  
 
 ## Tooltips
 
