@@ -16,7 +16,6 @@ spec:
       format: "2006-01-02T15:04:05-0700"
   templateSpec:
     containers:
-      MonitoringInterval: 3s
       serviceAccount: admin-user
       applicationContainer:
         image: busybox  
