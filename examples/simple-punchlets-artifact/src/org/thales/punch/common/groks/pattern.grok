@@ -1,3 +1,0 @@
-# For the sake of the example, here is the URI simply redefined. 
-
-SAMPLEURI %{URIPROTO:proto}://(?:%{USER:user}(?::[^@]*)?@)?(?:%{URIHOST:host})?(?:%{URIPATHPARAM:path})?
