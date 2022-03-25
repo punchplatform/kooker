@@ -5,7 +5,7 @@ metadata:
   annotations:
     prometheus.io/scrape: 'true'
     prometheus.io/port: '7773'
-    punchplatform.thalesdigital.io/platform: platform
+    punchplatform.io/platform: platform
 spec:
   dependencies:
     - punch-parsers:org.thales.punch:punch-simple-punchlets:1.1.0

@@ -5,7 +5,7 @@ metadata:
   annotations:
     prometheus.io/scrape: 'true'
     prometheus.io/port: '7770'
-    punchplatform.thalesdigital.io/platform: platform
+    punchplatform.io/platform: platform
 spec:
   dag:
     - id: input
