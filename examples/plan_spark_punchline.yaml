@@ -1,5 +1,5 @@
 ---
-apiVersion: scheduler.gitlab.thalesdigital.io/v2
+apiVersion: scheduler.punchplatform.io/v2
 kind: Plan
 metadata:
   name: sp

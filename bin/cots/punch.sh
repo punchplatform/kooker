@@ -86,7 +86,7 @@ ${KUBECTL} create namespace ${PUNCHPLATFORM_DEFAULT_NAMESPACE} > /dev/null 2>&1 
 
 ${KUBECTL} -n ${PUNCHPLATFORM_DEFAULT_NAMESPACE} apply -f- <<EOF
 ---
-apiVersion: platform.gitlab.thalesdigital.io/v2
+apiVersion: platform.punchplatform.io/v2
 kind: Platform
 metadata:
   name: platform
