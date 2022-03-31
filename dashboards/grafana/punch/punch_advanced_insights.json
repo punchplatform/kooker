@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 6,
-  "iteration": 1648726285690,
+  "id": 7,
+  "iteration": 1648718970443,
   "links": [],
   "panels": [
     {
@@ -26,23 +26,24 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {},
+        "defaults": {
+          "unit": "ns"
+        },
         "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 7,
-        "w": 24,
+        "h": 8,
+        "w": 8,
         "x": 0,
         "y": 0
       },
       "hiddenSeries": false,
-      "id": 9,
+      "id": 6,
       "legend": {
         "avg": false,
         "current": false,
-        "hideZero": true,
         "max": false,
         "min": false,
         "show": true,
@@ -60,38 +61,30 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:87",
-          "alias": "/.*Failures.*/",
-          "bars": true,
-          "color": "#C4162A"
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum by (app_name,namespace,node_id)(rate(punchline_dag_node_row_acked_num_total{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"}[$__rate_interval]))",
-          "format": "time_series",
-          "instant": false,
+          "expr": "punchline_dag_node_cpu_time_ns_sum{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"} / punchline_dag_node_cpu_time_ns_count{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"}",
           "interval": "",
           "legendFormat": "{{namespace}} - {{app_name}} - {{node_id}}",
-          "refId": "ACKS"
+          "refId": "A"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Acks per second",
+      "title": "CPU Time",
       "tooltip": {
         "shared": true,
         "sort": 0,
         "value_type": "individual"
       },
+      "transformations": [],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -102,8 +95,7 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:57",
-          "format": "short",
+          "format": "ns",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -111,7 +103,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:58",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -138,17 +129,16 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 7
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 0
       },
       "hiddenSeries": false,
-      "id": 10,
+      "id": 2,
       "legend": {
         "avg": false,
         "current": false,
-        "hideZero": true,
         "max": false,
         "min": false,
         "show": true,
@@ -166,33 +156,24 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:87",
-          "alias": "/.*Failures.*/",
-          "bars": true,
-          "color": "#C4162A"
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum by (app_name,namespace,node_id)(rate(punchline_dag_node_row_failed_num_total{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"}[$__rate_interval]))",
-          "format": "time_series",
-          "hide": false,
+          "expr": "punchline_dag_node_row_pending_num{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"}",
           "interval": "",
           "legendFormat": "{{namespace}} - {{app_name}} - {{node_id}}",
-          "refId": "FAILS"
+          "refId": "A"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Fails per second",
+      "title": "Pending Rows",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -208,7 +189,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:57",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -217,7 +197,104 @@
           "show": true
         },
         {
-          "$$hashKey": "object:58",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 4,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "punchline_dag_node_row_traversal_time_ms_sum{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"} / punchline_dag_node_row_traversal_time_ms_count{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"}",
+          "interval": "",
+          "legendFormat": "{{namespace}} - {{app_name}} - {{node_id}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Traversal Time",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:146",
+          "format": "ms",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:147",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -244,36 +321,180 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgba(158, 158, 158, 0.44)",
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ns"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 10,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "limit": 10,
+          "values": true
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.5.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "max by (app_name,namespace,node_id) (punchline_dag_node_cpu_time_ns_sum{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"} / punchline_dag_node_cpu_time_ns_count{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"})",
+          "interval": "",
+          "legendFormat": "{{namespace}} - {{app_name}} - {{node_id}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "CPU Time (Max)",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {}
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "displayName": " $__cell_0",
+          "mappings": [],
+          "max": 10000,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 5000
+              },
+              {
+                "color": "red",
+                "value": 10000
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
+      "id": 8,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "limit": 10,
+          "values": true
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "7.5.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "punchline_dag_node_row_pending_num{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"}",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{namespace}} - {{app_name}} - {{node_id}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Pending Rows",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "last"
+            ]
+          }
+        }
+      ],
+      "type": "gauge"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "displayName": " $__cell_0",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
                 "value": null
               },
               {
                 "color": "red",
-                "value": 0.0001
+                "value": 80
               }
             ]
           },
-          "unit": "/s"
+          "unit": "ms"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 11,
-        "w": 6,
-        "x": 0,
-        "y": 14
+        "h": 16,
+        "w": 8,
+        "x": 16,
+        "y": 8
       },
-      "id": 5,
+      "id": 9,
       "options": {
         "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
           "fields": "",
+          "limit": 10,
           "values": true
         },
         "text": {},
@@ -283,210 +504,22 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "max by (app_name,namespace) (rate(punchline_dag_node_row_failed_num_total{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"}[$__rate_interval]))",
-          "format": "time_series",
+          "expr": "max by (app_name,namespace,node_id) (punchline_dag_node_row_traversal_time_ms_sum{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"} / punchline_dag_node_row_traversal_time_ms_count{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"})",
           "interval": "",
-          "legendFormat": "{{namespace}} - {{app_name}}",
+          "legendFormat": "{{namespace}} - {{app_name}} - {{node_id}}",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "FAIL Rate (Max)",
+      "title": "Traversal Time (Max)",
       "transformations": [
         {
           "id": "reduce",
           "options": {}
         }
       ],
-      "transparent": true,
       "type": "stat"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "displayName": "$__cell_0",
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgba(179, 179, 179, 0.3)",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 0.0001
-              }
-            ]
-          },
-          "unit": "/s"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 6,
-        "x": 6,
-        "y": 14
-      },
-      "id": 6,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": true
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.5.2",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "max by (app_name,namespace) (rate(punchline_dag_node_row_acked_num_total{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"}[$__rate_interval]))",
-          "format": "time_series",
-          "interval": "",
-          "legendFormat": "{{namespace}} - {{app_name}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "ACK Rate (Max)",
-      "transformations": [
-        {
-          "id": "reduce",
-          "options": {}
-        }
-      ],
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 11,
-        "x": 12,
-        "y": 14
-      },
-      "id": 3,
-      "options": {
-        "frameIndex": 0,
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "7.5.2",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "punchline_dag_node_row_failed_num_total{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"}",
-          "format": "table",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "FAIL"
-        },
-        {
-          "exemplar": true,
-          "expr": "punchline_dag_node_row_acked_num_total{namespace=~\"${ns}\",app_name=~\"${app}\",node_id=~\"${cpt}\"}",
-          "format": "table",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "ACK"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Fails and Acks / Component",
-      "transformations": [
-        {
-          "id": "groupBy",
-          "options": {
-            "fields": {
-              "Value #ACK": {
-                "aggregations": [
-                  "last"
-                ],
-                "operation": "aggregate"
-              },
-              "Value #FAIL": {
-                "aggregations": [
-                  "last"
-                ],
-                "operation": "aggregate"
-              },
-              "app_name": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "namespace": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "node_id": {
-                "aggregations": [],
-                "operation": "groupby"
-              }
-            }
-          }
-        },
-        {
-          "id": "merge",
-          "options": {}
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "Value #ACK (last)": "Acks (Total)",
-              "Value #FAIL (last)": "Fails (Total)",
-              "app_name": "Applications",
-              "namespace": "Namespace",
-              "node_id": "Node ID"
-            }
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "table"
     }
   ],
   "refresh": "5s",
@@ -498,6 +531,37 @@
   ],
   "templating": {
     "list": [
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": null,
+        "definition": "punchline_dag_node_row_acked_num_total",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Namespace",
+        "multi": false,
+        "name": "ns",
+        "options": [],
+        "query": {
+          "query": "punchline_dag_node_row_acked_num_total",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "/.*[^_]namespace=\"(.*?)\".*/",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
       {
         "allValue": ".*",
         "current": {
@@ -559,47 +623,16 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
-      },
-      {
-        "allValue": ".*",
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": null,
-        "definition": "punchline_dag_node_row_acked_num_total",
-        "description": null,
-        "error": null,
-        "hide": 0,
-        "includeAll": true,
-        "label": "Namespace",
-        "multi": false,
-        "name": "ns",
-        "options": [],
-        "query": {
-          "query": "punchline_dag_node_row_acked_num_total",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": "/.*[^_]namespace=\"(.*?)\".*/",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
       }
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "[Applications Monitoring] Ack Fail Rates Dashboard",
-  "uid": "czS3iOSnz",
-  "version": 10
+  "title": "[Applications Monitoring] Advanced insights",
+  "uid": "AXjlcxynz",
+  "version": 6
 }
