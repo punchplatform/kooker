@@ -91,13 +91,17 @@ kind: Platform
 metadata:
   name: platform
 spec:
-  serviceAccount: admin-user
-  imagePullPolicy: IfNotPresent
-  initContainerImage: ${PUNCH_RESOURCECTL_IMG}
-  services:
-  - type: dependencies
-    url: http://artifacts-server.${PUNCH_ARTIFACTS_NAMESPACE}:4245
-    secretRefs: []
+  defaults:
+    spec:
+      containers:
+        serviceAccount: admin-user
+        applicationContainer:
+          imagePullPolicy: Always
+        resourcesInitContainer:
+          image: ${PUNCH_RESOURCECTL_IMG}
+          imagePullPolicy: IfNotPresent
+          resourcesProviderUrl: http://artifacts-server.${PUNCH_ARTIFACTS_NAMESPACE}:4245
+          secretRefs: []
   transformRules:
 
     # All kafka_source and kafka_sink nodes bootstrap.servers
