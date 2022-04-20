@@ -54,7 +54,7 @@ kubectl get pods -A -o yaml | sed -n 's/.*Back-off pulling image "\(.*\)".*/\1/p
 ### Viewing logs from punch operator service
 
 ```sh
-kubectl logs -f --tail=-1 -n punchoperator-system |
+kubectl logs -f --tail=-1 -n punchoperator-system \
     -l control-plane=operator-controller-manager
 ```
 
