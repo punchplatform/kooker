@@ -5,6 +5,25 @@ set -o pipefail
 
 source bin/env.sh
 
+if [[ $PORT_FORWARD == 'true' ]]; then
+
+cat > .dev-hosts << EOF
+127.0.0.1 artifacts-server.${CLUSTER_NAME}
+127.0.0.1 elasticsearch.${CLUSTER_NAME}
+127.0.0.1 kibana.${CLUSTER_NAME}
+127.0.0.1 minio.${CLUSTER_NAME}
+127.0.0.1 opensearch-dashboard.${CLUSTER_NAME}
+127.0.0.1 opensearch${CLUSTER_NAME}
+127.0.0.1 kubernetes-dashboard.${CLUSTER_NAME}
+127.0.0.1 clickhouse.${CLUSTER_NAME}
+127.0.0.1 grafana.${CLUSTER_NAME}
+127.0.0.1 prometheus.${CLUSTER_NAME}
+EOF
+
+bin/utils/port_forward.sh
+
+else
+
 ARTIFACTS_SERVER_HOST=$(${KUBECTL} get svc artifacts-server -n ${PUNCH_ARTIFACTS_NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null) || true
 ES_HOST=$(${KUBECTL} get svc punchplatform-es-http -n ${ELASTIC_NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null) || true
 KB_HOST=$(${KUBECTL} get svc punchplatform-kb-http -n ${ELASTIC_NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null) || true
@@ -28,5 +47,8 @@ ${CLICKHOUSE_HOST} clickhouse.${CLUSTER_NAME}
 ${GRAFANA_HOST} grafana.${CLUSTER_NAME}
 ${PROMETHEUS_HOST} prometheus.${CLUSTER_NAME}
 EOF
+
+fi
+
 
 make credentials

@@ -4,6 +4,13 @@
 # BUILD
 ###
 
+# Install realpath if not installed
+ifeq (, $(shell which realpath))
+$(info realpath is not installed, installing it...)
+TMP := $(shell cd ./bin/realpath ; make)
+TMP :=
+endif
+
 SETUP_ENV = . $(shell realpath ${PROFILE})
 CONSOLE_ENV = . $(shell pwd)/activate.sh
 HOST_PROFILE = ${CLUSTER_NAME}
@@ -20,6 +27,11 @@ WITH_COTS ?= true
 PROFILE ?= $(shell pwd)/bin/profiles/profile-defaults.sh
 CLUSTER_NAME ?= kooker
 IMG ?= busybox
+
+# Define PORT_FORWARD for macOS
+ifeq (${OSTYPE}, $(wildcard darwin*))
+    PORT_FORWARD ?= true
+endif
 
 ###
 # TOOLS

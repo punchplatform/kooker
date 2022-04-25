@@ -3,13 +3,6 @@
 # Setting SHELL to bash allows bash commands to be executed by recipes.
 # Options are set to exit when a recipe line exits non-zero or a piped command fails.
 
-# Check if realpath is installed, install it if it is not
-ifeq (, $(shell which realpath))
-$(info realpath is not installed, installing it...)
-TMP := $(shell cd ./bin/realpath ; make)
-TMP :=
-endif
-
 include INFO
 include bin/makefiles/PLATFORM
 include bin/makefiles/TOOLS
