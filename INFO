@@ -29,8 +29,10 @@ CLUSTER_NAME ?= kooker
 IMG ?= busybox
 
 # Define PORT_FORWARD for macOS
-ifeq (${OSTYPE}, $(wildcard darwin*))
+ifeq ($(UNAME),Darwin)
     PORT_FORWARD ?= true
+else 
+    PORT_FORWARD ?= false    
 endif
 
 ###
