@@ -139,7 +139,7 @@ metadata:
   name: admin-user
 rules:
 - apiGroups: [""]
-  resources: ["pods", "pods/log", "services", "configmaps"]
+  resources: ["pods", "pods/log", "services", "configmaps", "persistentvolumeclaims"]
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 ---
 apiVersion: v1
