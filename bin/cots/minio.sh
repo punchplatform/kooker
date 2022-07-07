@@ -66,25 +66,3 @@ spec:
 EOF
 
 ${KUBECTL} wait deployments --all --for=condition=available --timeout=300s -n ${MINIO_NAMESPACE}
-
-${KUBECTL} -n ${MINIO_NAMESPACE} apply -f- <<EOF
----
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: create-bucket
-spec:
-  template:
-    spec:
-      containers:
-        - name: create-bucket-tenant
-          image: ${MINIO_CLI_IMG}
-          command:
-            - sh
-            - -c
-            - |
-              set -e
-              /usr/bin/mc config host add myminio http://minio.${MINIO_NAMESPACE}:9002 ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY}
-              /usr/bin/mc mb myminio/${PUNCHPLATFORM_DEFAULT_NAMESPACE}
-      restartPolicy: Never
-EOF
