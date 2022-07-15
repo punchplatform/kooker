@@ -11,10 +11,18 @@ if [ $DEBUG = true ] ; then
   set -x
 fi
 
+cat << EOF
 
-echo ""
-echo "Preparing for punch services deployment ..."
-echo ""
+####################################################################################
+#
+#  PUNCHPLATFORM services deployment ...
+#
+####################################################################################
+
+EOF
+
+IMG_PATTERN='cert-manager|punch|pause' make load-images-from-directory
+
 
 #Deployment of central punch services (operator, artifacts manager)
 ${HELM} upgrade \

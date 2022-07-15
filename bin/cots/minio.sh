@@ -9,6 +9,20 @@ if [ $DEBUG = true ] ; then
   set -x
 fi
 
+
+cat << EOF
+
+####################################################################################
+#
+#  MINIO deployment ...
+#
+####################################################################################
+
+EOF
+
+IMG_PATTERN='minio' make load-images-from-directory
+
+
 ${KUBECTL} create ns ${MINIO_NAMESPACE} > /dev/null 2>&1 || true
 
 ${KUBECTL} -n ${MINIO_NAMESPACE} apply -f- <<EOF

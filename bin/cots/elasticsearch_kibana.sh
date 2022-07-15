@@ -9,6 +9,20 @@ if [ $DEBUG = true ] ; then
   set -x
 fi
 
+
+cat << EOF
+
+####################################################################################
+#
+#  ELASTIC deployment ...
+#
+####################################################################################
+
+EOF
+
+IMG_PATTERN='elastic' make load-images-from-directory
+
+
 # https://www.elastic.co/guide/en/cloud-on-k8s/1.8/k8s-deploy-eck.html
 
 # by default in elastic-system namespace

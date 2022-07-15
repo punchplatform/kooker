@@ -12,6 +12,19 @@ if [ $DEBUG = true ] ; then
   set -x
 fi
 
+cat << EOF
+
+####################################################################################
+#
+#  OPENSEARCH deployment ...
+#
+####################################################################################
+
+EOF
+
+IMG_PATTERN='opensearch' make load-images-from-directory
+
+
 ${KUBECTL} create ns ${OPENSEARCH_NAMESPACE} 2>/dev/null || true
 
 ${KUBECTL} apply -n ${OPENSEARCH_NAMESPACE} -f- <<EOF

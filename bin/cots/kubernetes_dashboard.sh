@@ -9,6 +9,19 @@ if [ $DEBUG = true ] ; then
   set -x
 fi
 
+cat << EOF
+
+####################################################################################
+#
+#  KUBERNETES DASHBOARD deployment ...
+#
+####################################################################################
+
+EOF
+
+IMG_PATTERN='kubernetesui|rancher' make load-images-from-directory
+
+
 # install dashboard (not necessary)
 ${KUBECTL} apply \
   -f ${KUBE_RESOURCES_DIR}/dashboard \

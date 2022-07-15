@@ -10,6 +10,19 @@ if [ $DEBUG = true ] ; then
   set -x
 fi
 
+cat << EOF
+
+####################################################################################
+#
+#  PROMETHEUS/GRAFANA monitoring stack deployment ...
+#
+####################################################################################
+
+EOF
+
+IMG_PATTERN='prom|kube-state|configmap-reload|klipper-lb|grafana' make load-images-from-directory
+
+
 # create monitoring namespace
 ${KUBECTL} create ns ${MONITORING_NAMESPACE} 2>/dev/null || true
 

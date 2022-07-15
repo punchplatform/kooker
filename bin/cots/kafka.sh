@@ -10,6 +10,19 @@ if [ $DEBUG = true ] ; then
   set -x
 fi
 
+cat << EOF
+
+####################################################################################
+#
+#  KAFKA deployment ...
+#
+####################################################################################
+
+EOF
+
+IMG_PATTERN='strimzi|pause' make load-images-from-directory
+
+
 ${KUBECTL} create namespace ${KAFKA_NAMESPACE} > /dev/null 2>&1 || true
 
 ${KUBECTL} apply -f ${KUBE_RESOURCES_DIR}/kafka

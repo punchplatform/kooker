@@ -8,9 +8,24 @@ source bin/env.sh
 # script inspired from the getting started guide: 
 #   https://github.com/Altinity/clickhouse-operator/blob/0.16.0/docs/quick_start.md
 
+
+
+cat << EOF
+
+####################################################################################
+#
+#  CLICKHOUSE deployment ...
+#
+####################################################################################
+
+EOF
+
 if [ $DEBUG = true ] ; then
   set -x
 fi
+
+IMG_PATTERN='altinity|clickhouse' make load-images-from-directory
+
 
 ${KUBECTL} create ns ${CLICKHOUSE_NAMESPACE} 2>/dev/null || true
 

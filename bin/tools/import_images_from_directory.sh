@@ -74,6 +74,10 @@ for IMG_FILE in ${@}/* ; do
         fi
 
 
+        if ! [[ "$IMG_MANIFEST" =~ ${IMG_PATTERN:=.*} ]] ; then
+            continue
+        fi
+
         # Now check if this image exist on target cluster, with same hash
 
         IMG_HASH=$(cut -f1 -d,  <<< "${IMG_MANIFEST}")
@@ -102,7 +106,8 @@ for IMG_FILE in ${@}/* ; do
 
     if [ "$SKIP_RELOAD" -eq 0 ] ; then
         echo "Importing '${IMG_FILE}' ..."
-        ${K3D} image import "${IMG_FILE}" --cluster ${CLUSTER_NAME}
+        cat "${IMG_FILE}" | docker exec -i "${CLUSTER_MASTER_DOCKER_SHA}" ctr image import -
+        #${K3D} image import "${IMG_FILE}" --cluster ${CLUSTER_NAME}
     fi
 
     echo "${IMG_MANIFEST}" > "${MANIFEST_FILE}"

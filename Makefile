@@ -19,15 +19,22 @@ start: ## Start and configure PConsole with all required services
 		download \
 		cluster \
 		prepare \
-		load-images-from-directory \
 		deploy-cots \
 		network
+#		load-images-from-directory \
 
 ##@ Stop and remove kooker
 
 .PHONY: stop
 
-stop: k3d ## kooker uninstall
+stop: k3d ## stop the cluster without uninstalling it
+	-$(K3D) cluster stop ${CLUSTER_NAME}
+	-echo "Your cluster is stopped and has retained its data. For full destruction, use 'destroy' or 'clean' with make."
+
+
+.PHONY: destroy
+
+destroy: k3d ## kooker cluster uninstall (WARNING : removes all data !!!)
 	-$(K3D) cluster delete ${CLUSTER_NAME}
 	rm -rf build activate.sh
 
@@ -35,8 +42,8 @@ stop: k3d ## kooker uninstall
 
 .PHONY: clean
 
-clean: ## flush all downloaded artifacts
-	-@$(MAKE) stop > /dev/null 2>&1
+clean: ## destroys the kooker cluster, all its data and flush all downloaded artifacts
+	-@$(MAKE) destroy > /dev/null 2>&1
 	rm -rf ${DOWNLOAD_DIR}
 
 ##@ Download all kooker dependencies locally
