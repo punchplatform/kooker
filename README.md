@@ -9,18 +9,14 @@ that you can start punch applications in minutes.
 ## Requirements
 
 - Docker engine installed
+> :information_source Ubuntu => sudo apt install docker.io
 
-    # Note: on Ubuntu => sudo apt install docker.io
-    # On Rocky => sudo yum install epel-release.noarch ; sudo yum update ;  
+> :information_source Rocky => sudo yum install epel-release.noarch ; sudo yum update ;  
 - curl
 - realpath
 - unzip
 - bash
 - jq
-
-
-
-
 
 ## Quick start
 
@@ -192,15 +188,17 @@ make PROFILE=bin/profiles/profile-8.0-DEV.sh start
 
 #### First on an online machine
 
-  # This follows https://www.linuxtechi.com/install-docker-and-docker-compose-rocky-linux/
+  > :information_source This follows https://www.linuxtechi.com/install-docker-and-docker-compose-rocky-linux/
 
+```sh
   sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
   sudo dnf install docker-ce --allowerasing -y
-  
+ ``` 
 
-  # https://github.com/taw00/howto/blob/master/howto-setup-a-local-yum-dnf-repository.md
+  > :information_source https://github.com/taw00/howto/blob/master/howto-setup-a-local-yum-dnf-repository.md
 
 
+```sh
   sudo dnf install createrepo_c
   cd kooker/offline_kooker
   createrepo_c .
@@ -208,15 +206,18 @@ make PROFILE=bin/profiles/profile-8.0-DEV.sh start
   repotrack docker-ce   # This downloads everything
   repotrack docker-ce-cli 
 
-  cat <<- EOF > /home/cedric/kooker/off/local-docker.repo
+  cat <<- EOF > ~/kooker/off/local-docker.repo
     [local-docker] 
     name=Local docker
-    baseurl=file:///home/cedric/kooker/off
+    baseurl=file://~/kooker/off
     enabled=1
     gpgcheck=0
   EOF
+```
 
 #### Then on offline machine
 
-  sudo cp /home/cedric/kooker/off/local-docker.repo /etc/yum.repos.d/
+```sh
+  sudo cp ~/kooker/off/local-docker.repo /etc/yum.repos.d/
   sudo yum install docker-ce --allowerasing --nobest --disablerepo="*" --enablerepo="local-docker"
+```
