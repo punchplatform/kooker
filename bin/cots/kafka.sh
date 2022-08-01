@@ -25,7 +25,7 @@ IMG_PATTERN='strimzi|pause' make load-images-from-directory
 
 ${KUBECTL} create namespace ${KAFKA_NAMESPACE} > /dev/null 2>&1 || true
 
-${KUBECTL} apply -f ${KUBE_RESOURCES_DIR}/kafka
+${KUBECTL} apply -f ${KUBE_RESOURCES_DIR}/kafka -n ${KAFKA_NAMESPACE}
 
 # We cannot apply a 'Kafka' resource until it is actually deployed...
 

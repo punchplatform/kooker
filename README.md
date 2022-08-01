@@ -9,9 +9,9 @@ that you can start punch applications in minutes.
 ## Requirements
 
 - Docker engine installed
-> :information_source Ubuntu => sudo apt install docker.io
+> :information_source: Ubuntu => sudo apt install docker.io
 
-> :information_source Rocky => sudo yum install epel-release.noarch ; sudo yum update ;  
+> :information_source: Rocky => sudo yum install epel-release.noarch ; sudo yum update ;  
 - curl
 - realpath
 - unzip
@@ -165,6 +165,14 @@ offline platform at the root directory of your Kooker installation directory and
 make OFFLINE=true start
 ```
 
+### Development version
+
+Kooker can be launched with Punch development version, execute :
+
+```sh
+make PUNCH_VERSION=8.0-dev start
+```
+
 ### Deploy only components
 
 If your `KUBECONFIG` is already configured to access a kubernetes cluster with proper *RBAC*, you can deploy only the
@@ -188,14 +196,14 @@ make PROFILE=bin/profiles/profile-8.0-DEV.sh start
 
 #### First on an online machine
 
-  > :information_source This follows https://www.linuxtechi.com/install-docker-and-docker-compose-rocky-linux/
+  > :information_source: This follows https://www.linuxtechi.com/install-docker-and-docker-compose-rocky-linux/
 
 ```sh
   sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
   sudo dnf install docker-ce --allowerasing -y
  ``` 
 
-  > :information_source https://github.com/taw00/howto/blob/master/howto-setup-a-local-yum-dnf-repository.md
+  > :information_source: https://github.com/taw00/howto/blob/master/howto-setup-a-local-yum-dnf-repository.md
 
 
 ```sh
