@@ -24,6 +24,7 @@ K3_IMGS=( \
 	docker.io/rancher/k3s:v1.21.3-k3s1 \
 	docker.io/rancher/k3d-proxy:4.4.8 \
 	docker.io/rancher/k3d-tools:4.4.8 \
+	docker.io/rancher/pause:3.1
 	rancher/pause:3.1
  )
 
@@ -157,7 +158,7 @@ KAFKA_IMGS=( \
 : ${PUNCH_RESOURCECTL_IMG:="ghcr.io/punchplatform/resourcectl:${PUNCH_IMAGES_TAG}"}
 : ${PUNCH_ES_HOUSEKEEPING_IMG:="ghcr.io/punchplatform/es-housekeeping:${PUNCH_IMAGES_TAG}"}
 : ${PUNCH_S3_HOUSEKEEPING_IMG:="ghcr.io/punchplatform/archive-housekeeping:${PUNCH_IMAGES_TAG}"}
-: ${PUNCH_SIMULATOR_IMG:="ghcr.io/punchplatform/operator:${PUNCH_INJECTOR_VERSION}"}
+: ${PUNCH_SIMULATOR_IMG:="ghcr.io/punchplatform/simulator:${PUNCH_INJECTOR_VERSION}"}
 
 : ${PUNCH_PUNCHLINE_JAVA_IMG:="ghcr.io/punchplatform/punchline-java:${PUNCH_IMAGES_TAG}"}
 : ${PUNCH_PUNCHLINE_SPARK_IMG:="ghcr.io/punchplatform/punchline-spark:${PUNCH_IMAGES_TAG}"}

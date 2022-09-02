@@ -1,0 +1,98 @@
+{
+  // Add to the Json parsed_document going through some informations about the parsing step.
+  // Doing this here is questionable, you could do it in every punchlet but then you will generate
+  // lots of information that will take room on ElasticSearch disks.
+  Tuple raw_document = [logs][log][raw_log];
+  if (raw_document.isEmpty()) {
+    throw new PunchRuntimeException("expect to receive the input log under [logs][log][raw_log]");
+  }
+  // This will throw a PunchRuntime exception in case the message field does not exists or is not a string
+  String message = raw_document.asString();
+
+  Tuple parsed_document = [logs][log]; // The result document
+  parsed_document:[message] = raw_document;
+  remove(raw_document);
+  parsed_document:[lmc][parse][ts] = date("iso").get();
+  parsed_document:[lmc][parse][host][name] = getHostName();
+  parsed_document:[lmc][parse][host][ip] = getHostIp();
+
+  // A temporary tuple is used to be filled with the grok pattern matching.
+  Tuple tmp;
+  
+  
+  // Fill the tmp tuple with timestamp, facility, host parts of the input syslog string,
+  // now available in the message variable.
+  // The rest is the business part, specific to the log type. That part is put in
+  // [logs][data] in order for the subsequent punchlet to deal with techno specific parsing.
+
+  // Here we try first to match the pattern 'timestamp <facility.severity> host' (facility is optional).
+  // If that fails we giv a try for '<facility.severity> timestamp host' 
+
+  // There is a possibility (by using default configuration) to have a <priority> instead of a facility
+  // Reminder : Priority = ( facility x 8 ) + severity
+  // In order to preserve the data normalisation, if we detect a priority, the parser will automatically try to convert it into a <facility.severity>
+
+  if (message.startsWith("<")) {
+
+    // Check facility.severity | priority
+    if (grok("%{SYSLOGFACILITY}").on(message)) {
+      // Case facility.severity 
+      if (!grok("%{SYSLOGFACILITY} %{SYSLOGTIMESTAMP:tmp:[rep][ts]} ?%{SYSLOGHOST:tmp:[rep][host]} %{GREEDYDATA:root:[logs][data]}").on(message)) {
+         throw new PunchRuntimeException("parsing error : not a recognized \"<facility.severity> timestamp host\" syslog header");
+      }
+      
+    } else {
+      
+      // Case priority
+      if (!grok("%{SYSLOGPRIORITY:tmp:[data]}%{SYSLOGTIMESTAMP:tmp:[rep][ts]} ?%{SYSLOGHOST:tmp:[rep][host]} %{GREEDYDATA:root:[logs][data]}").on(message)) {
+         throw new PunchRuntimeException("parsing error : not a recognized \"<priority>timestamp host\" syslog header");
+      }
+      
+//      move(tmp:[data]).into(root:[logs][log][alarm_sev]);
+
+      // Normalize <priority> into <facility.severity>
+      try {
+        final int priority = Integer.parseInt(tmp:[data][priority].asString());
+        final int facility = ( priority / 8 );
+        final int severity = priority - ( facility * 8 );
+
+        root:[logs][log][alarm][facility] = facility;
+        root:[logs][log][alarm][sev] = severity;
+      }
+      catch(NumberFormatException e) {
+        // Nothing to do ?
+      }
+
+    }
+
+
+
+  } else {
+    if (!grok("%{SYSLOGTIMESTAMP:tmp:[rep][ts]} (?:%{SYSLOGFACILITY} )?%{SYSLOGHOST:tmp:[rep][host]} %{GREEDYDATA:root:[logs][data]}").on(message)) {
+       throw new PunchRuntimeException("parsing error : not a recognized \"timestamp (<facility>) host\" syslog header");
+    }
+  }
+
+  // The grok operator worked. Set the reporter part timestamp
+  if (tmp:[rep][ts]) {
+    try {
+      date("iso", "MMM dd HH:mm:ss").on(tmp:[rep][ts]).into(parsed_document:[rep][ts]);
+    } catch (java.lang.Exception e) {
+      date("iso", "MMM  d HH:mm:ss").on(tmp:[rep][ts]).into(parsed_document:[rep][ts]);
+    }
+  }
+
+  if (tmp:[rep][host]) {
+    if (grok("^%{IPV4}").on(tmp:[rep][host])) {
+      parsed_document:[rep][host][ip] = tmp:[rep][host];
+    } else if (grok("^%{IPV6}").on(tmp:[rep][host])) {
+      // TODO deal with IPV6
+      parsed_document:[rep][host][name] = tmp:[rep][host];
+    } else {
+      parsed_document:[rep][host][name] = tmp:[rep][host];
+    }
+  }
+
+  parsed_document:[obs][host][name] = parsed_document:[rep][host][name];
+  parsed_document:[obs][host][ip]   = parsed_document:[rep][host][ip];
+}

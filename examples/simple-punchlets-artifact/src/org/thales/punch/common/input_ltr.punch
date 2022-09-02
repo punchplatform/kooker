@@ -1,0 +1,11 @@
+{
+
+  //
+  // The log enters the Lmc. Assign it a unique id. As you can see,
+  // this is optional. It makes log replay after failures idempotent,
+  // and is also used by detection punchlet to make a detected event chained
+  // to the corresponding log. 
+  //
+  [logs][es_id] = getUniqueMessageId();
+  [logs][timestamp] = date("iso").get();
+}

@@ -1,0 +1,9 @@
+{
+  // The parsed log is stored as Json under the <stream><data_field> of the punchlet
+  // Default parsers assume the Storm stream is "logs" and the first field in the
+  // PunchBolt configuration is "log" 
+
+  // Put the raw log under "raw_log"
+  [logs][raw_log] = [logs][log];
+
+}

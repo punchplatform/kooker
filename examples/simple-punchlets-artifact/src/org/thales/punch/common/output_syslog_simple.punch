@@ -1,0 +1,12 @@
+{
+  // The parsed log is stored as Json under the <stream><data_field> of the punchlet
+  // Default parsers assume the Storm stream is "logs" and the first field in the
+  // PunchBolt configuration is "log" 
+  Tuple input = root:[logs][log]; 
+ 
+  String kv = toKv().on(input);
+  //
+  // All done, we only need to overwrite the root document with that String.
+  //
+  root:[logs][log] = kv;
+}

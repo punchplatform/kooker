@@ -1,0 +1,93 @@
+apiVersion: punchline.gitlab.thalesdigital.io/v2
+kind: StreamPunchline
+metadata:
+  name: lmc-elasticsearch
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '7773'
+    punchplatform.thalesdigital.io/platform: platform
+spec:
+  dependencies:
+    - punch-parsers:org.thales.punch:punch-simple-punchlets:1.1.0
+  dag:
+    - id: input
+      kind: source
+      type: kafka_source
+      load_control:
+        throughput: 100
+        max_pending_row_number: 1000
+        row_timeout_secs: 30
+      settings:
+        bootstrap.servers: localhost:9092
+        topics: ref-test-01-lmr
+        value.format: lumberjack
+        start_offset_strategy: last_committed
+      out:
+        - id: parser
+          table: logs
+          columns:
+            - name: log
+              type: string
+            - name: _ppf_remote_host
+              type: string
+            - name: _ppf_remote_port
+              type: int
+            - name: _ppf_local_host
+              type: string
+            - name: _ppf_local_port
+              type: int
+            - name: _ppf_timestamp
+              type: string
+            - name: _ppf_id
+              type: string
+    - id: parser
+      type: punchlet_function
+      kind: function
+      settings:
+        punchlets:
+          - org/thales/punch/common/input.punch
+      out:
+        - id: elasticsearch_sink
+          table: logs
+          columns:
+            - name: log
+              type: string
+            - name: _ppf_remote_host
+              type: string
+            - name: _ppf_remote_port
+              type: int
+            - name: _ppf_local_host
+              type: string
+            - name: _ppf_local_port
+              type: int
+            - name: _ppf_timestamp
+              type: string
+            - name: _ppf_id
+              type: string
+    - id: elasticsearch_sink
+      type: elasticsearch_sink
+      kind: function
+      settings:
+        http_hosts:
+          - host: localhost
+            port: 9200
+        batch_interval: 5000
+        batch_size: 1
+        request_timeout: 20s
+        index_type: daily
+        index_prefix: testv7-1-
+        document_json_column: log
+        document_id_column: _ppf_id
+        extra_fields:
+          - type: date
+            document_field: '@timestamp'
+            format: iso
+        bulk_failure_action: fail
+        document_failure_action: forward_all
+  containers:
+    applicationContainer:
+      env:
+        - name: JDK_JAVA_OPTIONS
+          value: -Xms100m -Xmx450m
+          exit_conditions: null
+      image: ghcr.io/punchplatform/punchline-java:8.0-dev

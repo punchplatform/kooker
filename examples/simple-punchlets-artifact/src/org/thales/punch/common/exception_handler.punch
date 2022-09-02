@@ -1,0 +1,75 @@
+{
+    // This punchlet is particular. It is executed if one of the
+    // regular punchlet raises an exception. 
+    //
+    // It gives you the opportunity to format the error document that will
+    // end-up in the final ElasticSearch. 
+
+    // In this example, we check if the failed document had some timestamp,
+    // and if so we include them into the error tuple. That will allow visualising
+    // the error logs  and the correctly parsed logs on the same Kibana dashboards.
+
+    //
+    // In terms of Storm streams and fields errors are emitted on __ppf_error_xyz stream.
+    // The xyz is the data stream configured in your topology. In order not to depend
+    // on this value here, we use the  getSingleChild() method that returns the unique
+    // sub-tuple of a punch tuple, whatever be its name. 
+    //
+    Tuple errorStream = root.getSingleChild();
+    root = errorStream.get("_ppf_error");
+
+    // note here a punch language characteristics: these statements have
+    // no effect if the right side is not defined.
+    [lmc][input][ts] = [kv][logs__log__lmc__input__ts];
+    [lmc][parse][ts] = [kv][log__log__lmc__parse__ts];
+    [obs][ts] = [lmc][input][ts];
+    // which means we must check if it succeeded or not. 
+    if (![lmc][parse][ts] ) {
+        [lmc][parse][ts] = date("iso").get();
+    }
+
+
+    if ([kv][logs__local_timestamp]) {
+        errorStream:[_ppf_err_ts]=[kv][logs__local_timestamp];
+    } else  if ([lmc][input][ts] ) {
+        errorStream:[_ppf_err_ts]=[lmc][input][ts];
+    } else {
+        errorStream:[_ppf_err_ts]=[lmc][parse][ts];
+    }
+
+
+    // We try to retrieve the raw log and put it in the dedicated storm stream field
+    if ([kv][logs__raw_log]) {
+        errorStream:[_ppf_err_raw]=[kv][logs__raw_log];
+    } else if ([kv][root_state_at_punchlet_start__logs__log]) {
+        errorStream:[_ppf_err_raw]=[kv][logs__raw_log];
+    }
+
+    if ([kv][logs__es_index]) {
+        errorStream:[_ppf_err_target_backend] = [kv][logs__es_index];
+        remove([kv][logs__es_index]);
+    } else if (world:[meta][tenant]) {
+        String elasticsearch_date = date("yyyy.MM.dd").get();
+        errorStream:[_ppf_err_target_backend] =  world:[meta][tenant] + "-events-" + elasticsearch_date;
+    } else {
+        String elasticsearch_date = date("yyyy.MM.dd").get();
+        errorStream:[_ppf_err_target_backend] = "unknown-events-" + elasticsearch_date;
+    }
+
+
+
+    errorStream:[_ppf_err_uuid]=[kv][logs__local_uuid];
+
+    // to avoid storing too many copies of the log, we remove copies from the escaped error document
+    remove([kv][logs__raw_log]);
+    remove([kv][root_state_at_punchlet_start__logs__log]);
+
+    // in addition we get the original log, tenant, type and vendor. 
+    // Again this are safe punch statements, even if the right-hand sided
+    // values are undefined. In that case the statements have no effect. 
+    [message] = [kv][logs__log__message];
+    [vendor] = [kv][logs__log__vendor];
+    [tenant] = [kv][logs__log__tenant];
+    [channel] = [kv][logs__log__channel];
+    [type] = "error";
+}

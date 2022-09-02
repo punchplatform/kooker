@@ -1,0 +1,4 @@
+{
+  Tuple flat = toFlatTuple().on(root:[logs][log]);
+  root:/ = flat;
+}

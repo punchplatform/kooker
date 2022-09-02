@@ -1,0 +1,54 @@
+ import org.apache.storm.utils.RotatingMap;
+
+//
+// This punchlet uses the complete API, and does not rely on the simplified
+// form, i.e. a simple "{ }" set of statements. 
+//
+// What this allows is to code a stateful processing.
+// In this example, we catch the unique identifier set by the syslog spout somewhere upstream.
+// This local uuid will be repeated should some failure occur upstream. 
+// What we do here is to drop these repeated logs. 
+//
+public class FilterUUid extends Punchlet {
+
+    //  We use a map structure from storm to make it easier to deal with expiration.
+    RotatingMap<String, Byte> map;
+
+	
+	// The activate method is called before receiving the first tuples.
+	// Your punchlet has been fully initialized you can access on resource file, or mapped json tuples.
+	//
+	// Here we setup a rotating map. It comes from the storm core library and is handy
+    // to efficiently store items with efficient O(1) expiration. 
+	//
+	public void activate() {
+		logger().info("activating uuid filtering punchlet");
+        this.map = new RotatingMap<String, Byte>(3);
+	}
+
+	//
+	// This function is executed whenever a log traverse, or when Storm wakes us up
+	// periodically, in which case the root tuple is empty. 
+	//
+	public void execute(Tuple root) {
+		
+	
+        // First check if we are ticked by Storm
+        if (root.isEmpty()) {
+            // get all expired aggregation tuple at once
+            Map<String, Byte> expired = map.rotate();
+            logger().debug("flush uuid map {}", expired.size());
+            return;
+        }
+
+        Tuple content = root.getSingleChild();
+        String uuid = content:[local_uuid];
+        if (map.containsKey(uuid)) {
+        	logger().warn("detected duplicated uuid=\"{}\" log=\"{}\"", uuid, content.toString());
+        	root.empty();
+        } else {
+        	logger().trace("forwarding uuid {}", uuid);
+        }
+ 		map.put(uuid, (byte)1);
+	}
+}
