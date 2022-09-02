@@ -27,7 +27,8 @@ if [ ${OFFLINE} = false ] ; then
     
         chmod +x ${KUBE_RESOURCES_DIR}/clickhouse/clickhouse-operator-install.sh
 
-    wget https://strimzi.io/install/latest?namespace=${KAFKA_NAMESPACE} -O ${KUBE_RESOURCES_DIR}/kafka/strimzi.yaml
+    wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/${STRIMZI_VERSION}/strimzi-cluster-operator-${STRIMZI_VERSION}.yaml -O ${KUBE_RESOURCES_DIR}/kafka/strimzi.yaml
+    sed -i -e '/namespace:/s/myproject/'${KAFKA_NAMESPACE}'/g' ${KUBE_RESOURCES_DIR}/kafka/strimzi.yaml
 
     wget https://raw.githubusercontent.com/kubernetes/dashboard/${KUBERNETES_DASHBOARD_VERSION}/aio/deploy/recommended.yaml -O ${KUBE_RESOURCES_DIR}/dashboard/recommended.yaml
     sed -i -e '/imagePullPolicy/s/Always/IfNotPresent/g' ${KUBE_RESOURCES_DIR}/dashboard/recommended.yaml

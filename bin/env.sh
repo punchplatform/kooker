@@ -95,11 +95,12 @@ PROMETHEUS_IMGS=(
 #### KAFKA ####
 ### NOTE: this must match resources in downloads/kafka
 : ${KAFKA_NAMESPACE:="processing"}
-: ${STRIMZI_OPERATOR_IMG:="quay.io/strimzi/operator:0.29.0"}
+: ${STRIMZI_VERSION:="0.29.0"}
+: ${STRIMZI_OPERATOR_IMG:="quay.io/strimzi/operator:${STRIMZI_VERSION}"}
 KAFKA_IMGS=( \
-	quay.io/strimzi/kafka:0.29.0-kafka-3.0.0 \
-	quay.io/strimzi/kafka:0.29.0-kafka-3.1.0 \
-	quay.io/strimzi/kafka:0.29.0-kafka-3.2.0 \
+	quay.io/strimzi/kafka:${STRIMZI_VERSION}-kafka-3.0.0 \
+	quay.io/strimzi/kafka:${STRIMZI_VERSION}-kafka-3.1.0 \
+	quay.io/strimzi/kafka:${STRIMZI_VERSION}-kafka-3.2.0 \
 )
 
 #### KUBERNETES SYSTEM ####
@@ -144,7 +145,7 @@ KAFKA_IMGS=( \
 
 : ${PUNCHPLATFORM_DEFAULT_NAMESPACE:="default"}
 
-: ${PUNCH_VERSION:="8.0.0"}
+: ${PUNCH_VERSION:="8.0.1"}
 : ${PUNCH_IMAGES_TAG:=${PUNCH_VERSION}}
 
 : ${PUNCH_OPERATOR_VERSION:=${PUNCH_VERSION}}
