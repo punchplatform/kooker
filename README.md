@@ -118,7 +118,7 @@ punchline-with-resource-example-17fa0f2c968f88fe-6d5ccd67cb695z   1/1     Runnin
 
 ## Tooltips
 
-The Makefile file provides a set of commands to interact with your deployed kubernetes cluster. The `start` command is a
+The Makefile file provides a set of commands to interact with your deployed kubernetes cluster. The `start` command
 wraps some of them, but you can use them independently if necessary.
 
 ```sh
