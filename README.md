@@ -34,6 +34,7 @@ This command will :
 - Deploy Elasticsearch, Kibana, Kafka, Minio, Prometheus, Grafana, Kubernetes Dashboard and Clickhouse.
 - Deploy the Punch components : the Artifacts Server & Punch Operator
 - Load the required Elasticsearch templates
+- Download kubectl, helm, hostctl and k3d in the ./downloads/ directory, and install them. Note that they won't be automtically added to your environment path.
 - Optionally configure your /etc/hosts to allow direct access to the deployed services. This step will prompt you to
   provide your sudoer password.
 
@@ -44,8 +45,8 @@ If you have issues, refer to the [troubleshooting](TROUBLESHOOTING.md).
 
 ## Launch A Punchline
 
-You can now launch a punchline. Try one of the sample ones, that you can find in
-the [starters' repository](https://github.com/punchplatform/starters). It that generates arbitrary data on stdout, then
+You can now launch a punchline. Try one of the samples, that you can find in
+the [starters repository](https://github.com/punchplatform/starters). It that generates arbitrary data on stdout, then
 stays idle.
 
 ```sh
@@ -57,14 +58,14 @@ kubectl apply -f punchlines/java/punchline_java.yaml
 > an ever-running streaming application and the operator will automatically execute it as part of a kubernetes
 > deployment. If you try to kill the corresponding pod, it will automatically be restarted by kubernetes.
 
-You can check it is running as follows:
+You can check if it is running using the following command:
 ```sh
 $ kubectl get pods
 NAME                                                     READY   STATUS    RESTARTS   AGE
 streampl-java-example-17fa0b3476d7945b-fd5fbdc8d-mhdzp   1/1     Running   0          7s
 ```
 
-To stop it:
+To stop it use the following command:
 ```sh
 kubectl delete -f punchlines/java/punchline_java.yaml
 ```
@@ -117,11 +118,11 @@ punchline-with-resource-example-17fa0f2c968f88fe-6d5ccd67cb695z   1/1     Runnin
 
 ## Tooltips
 
-The Makefile provides a set of commands to interact with your deployed kubernetes cluster. The `start` command is a
-wrapper of some of them, but you can use them independently if necessary.
+The Makefile file provides a set of commands to interact with your deployed kubernetes cluster. The `start` command is a
+wraps some of them, but you can use them independently if necessary.
 
 ```sh
-### prints helper 
+### print helper 
 make help
 
 ### create a kubernetes context for your cluster and switch default context to the newly created one
@@ -130,7 +131,7 @@ make cluster
 ### configure local /etc/hosts to have access to your components locally (requires sudo)
 make network 
 
-### prints all deployed endpoints and associated credentials
+### print all deployed endpoints and associated credentials
 make credentials
 
 ### delete k3d cluster
@@ -152,13 +153,14 @@ Then use port forwarding to expose the service you need.
 
 ### Offline mode
 
-Kooker can be also be used without internet access. On a machine with internet access, execute :
+Kooker can also be used without internet access. In that case, you will need to download the dependencies on another
+machine that has internet access, execute:
 
 ```sh
 make download 
 ```
 
-It will download all the online resources locally in the `download` directory. Copy that `download` directory to your
+This command will download all the online resources locally in the `download` directory. Copy that `download` directory to your
 offline platform at the root directory of your Kooker installation directory and run :
 
 ```sh
@@ -167,7 +169,7 @@ make OFFLINE=true start
 
 ### Development version
 
-Kooker can be launched with Punch development version, execute :
+Kooker can be launched with a development version of Punch, execute:
 
 ```sh
 make PUNCH_VERSION=8.0-dev start
@@ -175,8 +177,8 @@ make PUNCH_VERSION=8.0-dev start
 
 ### Deploy only components
 
-If your `KUBECONFIG` is already configured to access a kubernetes cluster with proper *RBAC*, you can deploy only the
-punch adds-on by using the command:
+If your `KUBECONFIG` is already configured to access a kubernetes cluster with proper *RBAC*, you can deploy a
+punch add-on on its own in a kubernetes cluster using the command:
 
 ```sh
 make CLUSTER_NAME=mycluster start
