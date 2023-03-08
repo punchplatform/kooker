@@ -1,0 +1,145 @@
+{{- $fullname := include "kafka.fullname" . -}}
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: {{ $fullname }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kafka.labels" . | nindent 4 }}
+spec:
+  kafka:
+    replicas: {{ .Values.kafka.replicaCount | int }}
+    version: {{ .Values.kafka.version }}
+{{- if .Values.kafka.authorization.type }}
+    authorization:
+{{ toYaml .Values.kafka.authorization | indent 6 }}
+{{- end }}
+    listeners:
+    - name: local
+      port: 9093
+      type: internal
+      tls: true
+    - name: external
+      port: 9092
+      type: internal
+      tls: false
+    logging:
+      type: inline
+      loggers:
+        kafka.root.logger.level: {{ .Values.kafka.logLevel }}
+        log4j.logger.org.apache.kafka: {{ .Values.kafka.logLevel }}
+        log4j.logger.kafka.controller: {{ .Values.kafka.logLevel }}
+        log4j.logger.kafka.log.LogCleaner: {{ .Values.kafka.logLevel }}
+        log4j.logger.state.change.logger: {{ .Values.kafka.logLevel }}
+        log4j.appender.CONSOLE.layout.ConversionPattern: "{\"time\": \"%d{ISO8601}\", \"level\": \"%p\", \"message\":\"{%m}\", \"class\":\"%c\", \"thread\": \"%t\"}%n"
+    config:
+{{ toYaml .Values.kafka.config | indent 6  }}
+    jvmOptions:
+{{ toYaml .Values.kafka.jvmOptions | indent 6  }}
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: {{ $fullname }}-metrics
+          key: kafka-metrics-config.yaml
+    resources:
+{{ toYaml .Values.kafka.resources | indent 6 }}
+    storage:
+{{ toYaml .Values.kafka.storage | indent 6 }}
+    template:
+      kafkaContainer:
+        securityContext:
+{{ toYaml .Values.kafka.securityContext | indent 10 }}
+      pod:
+        metadata:
+          labels:
+            domain: {{ .Values.domain }}
+          annotations:
+{{ toYaml .Values.kafka.annotations | indent 12 }}
+        securityContext:
+{{ toYaml .Values.kafka.podSecurityContext | indent 10 }}
+        tolerations:
+{{ toYaml .Values.kafka.tolerations | indent 10 }}
+        affinity:
+{{ toYaml .Values.kafka.affinity | indent 10 }}
+  zookeeper:
+    replicas: {{ .Values.zk.replicaCount }}
+    logging:
+      type: inline
+      loggers:
+        zookeeper.root.logger: {{ .Values.zk.logLevel }}
+        log4j.appender.CONSOLE.layout.ConversionPattern: "{\"time\": \"%d{ISO8601}\", \"level\": \"%p\", \"message\":\"%m\", \"class\":\"%c\", \"thread\": \"%t\"}%n"
+    config:
+{{ toYaml .Values.zk.config | indent 6 }}
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: {{ $fullname }}-metrics
+          key: zookeeper-metrics-config.yaml
+    jvmOptions:
+{{ toYaml .Values.zk.jvmOptions | indent 6  }}
+    resources:
+{{ toYaml .Values.zk.resources | indent 6 }}
+    storage:
+{{ toYaml .Values.zk.storage | indent 6 }}  
+    template:
+      zookeeperContainer:
+        securityContext:
+{{ toYaml .Values.zk.securityContext | indent 10 }}
+      pod:
+        metadata:
+          labels:
+            domain: {{ .Values.domain }}
+          annotations:
+{{ toYaml .Values.zk.annotations | indent 12 }}
+        securityContext:
+{{ toYaml .Values.zk.podSecurityContext | indent 10 }}
+        tolerations:
+{{ toYaml .Values.zk.tolerations | indent 10 }}
+        affinity:
+{{ toYaml .Values.zk.affinity | indent 10 }}
+
+{{- if .Values.entityOperator.enabled }}
+  entityOperator:
+    topicOperator:
+      jvmOptions:
+{{ toYaml .Values.entityOperator.jvmOptions | indent 8  }}
+      resources:
+{{ toYaml .Values.entityOperator.resources | indent 8 }}
+    userOperator:
+      jvmOptions:
+{{ toYaml .Values.entityOperator.jvmOptions | indent 8  }}
+      resources:
+{{ toYaml .Values.entityOperator.resources | indent 8 }}
+    template:
+      topicOperatorContainer:
+        securityContext:
+{{ toYaml .Values.entityOperator.securityContext | indent 10 }}
+      userOperatorContainer:
+        securityContext:
+{{ toYaml .Values.entityOperator.securityContext | indent 10 }}
+      tlsSidecarContainer:
+        securityContext:
+{{ toYaml .Values.entityOperator.securityContext | indent 10 }}
+      pod:
+        securityContext:
+{{ toYaml .Values.entityOperator.podSecurityContext | indent 10 }}
+{{- end }}
+
+{{- if .Values.kafkaExporter.enabled }}
+  kafkaExporter:
+    resources:
+{{ toYaml .Values.kafkaExporter.resources | indent 6 }}
+    template:
+      container:
+        securityContext:
+{{ toYaml .Values.kafkaExporter.securityContext | indent 10 }}
+      pod:
+        metadata:
+          annotations:
+{{ toYaml .Values.kafkaExporter.annotations | indent 12 }}
+        securityContext:
+{{ toYaml .Values.kafkaExporter.podSecurityContext | indent 10 }}
+{{- end }}

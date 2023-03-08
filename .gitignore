@@ -1,0 +1,17 @@
+*.orig
+downloads
+charts/*
+!charts/kooker-kafka
+!charts/kooker-kubernetes-dashboard-rbac
+!charts/kooker-post-install
+activate.sh
+**/.vscode/**
+kubectl
+coredns.yaml
+images
+.idea
+build
+.dev-hosts
+logs
+data
+.kpack

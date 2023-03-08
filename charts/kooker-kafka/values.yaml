@@ -1,0 +1,169 @@
+---
+
+domain: punch
+
+kafka:
+  replicaCount: 1
+  version: 3.4.1
+  authorization: {}
+  #  type: simple
+  #  superUsers: ["ANONYMOUS"]
+
+  logLevel: ERROR
+
+  config:
+    controlled.shutdown.enabled: true
+    default.replication.factor: 1
+    log.retention.hours: 24
+    num.io.threads: 8
+    num.network.threads: 3
+    num.partitions: 1
+    offsets.topic.replication.factor: 1
+    queued.max.requests: 500
+    transaction.state.log.min.isr: 1
+    transaction.state.log.replication.factor: 1
+
+  jvmOptions: {}
+
+  resources:
+    requests:
+      cpu: 4
+      memory: 4G
+    limits:
+      cpu: 4
+      memory: 4G
+
+  storage:
+    type: persistent-claim
+    class: kafka-local-processing
+    size: 10Gi
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - all
+    privileged: false
+
+  annotations:
+    fluentbit.io/parser-kafka: json
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9404"
+    prometheus.io/scrape: "true"
+
+  affinity: {}
+
+  tolerations: []
+
+  podSecurityContext:
+    fsGroup: 1001
+    runAsGroup: 1001
+    runAsNonRoot: true
+    runAsUser: 1001
+
+zk:
+  replicaCount: 1
+
+  logLevel: ERROR
+
+  jvmOptions: {}
+
+  resources:
+    requests:
+      cpu: 1
+      memory: 1G
+    limits:
+      cpu: 2
+      memory: 1G
+
+  config:
+    admin.enableServer: true
+    autopurge.purgeInterval: 24
+    autopurge.snapRetainCount: 3
+    initLimit: 5
+    maxClientCnxns: 60
+    syncLimit: 2
+    tickTime: 2000
+
+  storage:
+    type: persistent-claim
+    class: zk-local-processing
+    size: 10Gi
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - all
+    privileged: false
+
+  annotations:
+    fluentbit.io/parser-zookeeper: json
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9404"
+    prometheus.io/scrape: "true"
+
+  affinity: {}
+
+  tolerations: []
+
+  podSecurityContext:
+    fsGroup: 1001
+    runAsGroup: 1001
+    runAsNonRoot: true
+    runAsUser: 1001
+
+entityOperator:
+  enabled: false
+
+  jvmOptions: {}
+
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: "100m"
+    limits:
+      memory: 256Mi
+      cpu: "1"
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - all
+    privileged: false
+
+  podSecurityContext:
+    fsGroup: 1001
+    runAsGroup: 1001
+    runAsNonRoot: true
+    runAsUser: 1001
+
+kafkaExporter:
+  enabled: false
+
+  resources:
+    requests:
+      memory: 32Mi
+      cpu: "10m"
+    limits:
+      memory: 64Mi
+      cpu: "1"
+
+  annotations:
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9404"
+    prometheus.io/scrape: "true"
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - all
+    privileged: false
+
+  podSecurityContext:
+    fsGroup: 1001
+    runAsGroup: 1001
+    runAsNonRoot: true
+    runAsUser: 1001

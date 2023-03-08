@@ -1,0 +1,24 @@
+---
+
+
+serviceAccount: admin-user
+punchVersion: 8.1.0
+
+#### Optional
+resourcesProviderUrl: http://artifacts-server.artifacts-server:4245
+
+#### Optional
+elasticsearch:
+  http_hosts:
+    - host: elasticsearch-master.doc-store
+      port: 9200
+  security:
+    credentials:
+      password: elastic
+      username: elastic
+
+#### Optional
+minio:
+  endpoint: "http://minio.object-store:9000"
+  access_key: "minioadmin"
+  secret_key: "minioadmin"

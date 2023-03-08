@@ -1,0 +1,33 @@
+---
+apiVersion: platform.punchplatform.io/v2
+kind: Platform
+metadata:
+  name: platform
+spec:
+  defaults:
+    spec:
+      containers:
+        serviceAccount: {{ .Values.serviceAccount }}
+        applicationContainer:
+          imagePullPolicy: IfNotPresent
+        resourcesInitContainer:
+          image: ghcr.io/punchplatform/resourcectl:{{ .Values.punchVersion }}
+          imagePullPolicy: IfNotPresent
+          resourcesProviderUrl: {{ .Values.resourcesProviderUrl }}
+          secretRefs: []
+  transformRules:
+    {{ if .Values.minio }}
+    s3_python:
+      match: $.spec.dag[?(@.type == s3)].settings
+      set:
+        - values: {{- .Values.minio | toYaml | trim | nindent 12 }}
+    {{- end }}
+    {{ if .Values.elasticsearch }}
+    elasticsearch_nodes:
+      match: $.spec.dag[?(@.type == elasticsearch)].settings
+      set:
+        - values: {{- .Values.elasticsearch | toYaml | trim | nindent 12 }}
+    {{- end }}
+
+
+    

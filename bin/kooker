@@ -1,0 +1,498 @@
+#!/bin/bash -ue
+#
+
+# Watchouts the variables defined here do not appear in the activate.sh or in the user profile
+# The reason we defined these two is simply to allow each (kafka|minio\elastic etc) shell to
+# properly downlad and install whatever they need at the right place. 
+export KOOKER_BIN_DIR="${KOOKER_DIR}/bin"
+export KOOKER_KPACK_DIR="${KOOKER_DIR}/kpack"
+export KOOKER_KPACK_NAME=".kpack"
+export KOOKER_KPACK="${KOOKER_KPACK_DIR}/${KOOKER_KPACK_NAME}"
+export KOOKER_RESOURCES="${KOOKER_DIR}/resources"
+
+kookerVersion="1.0.0"
+DEBUG=false
+interactive=False
+
+# Load commons functions must work for linux / mac 
+commonsLibFile="${KOOKER_BIN_DIR}/commons-lib.sh"
+. "$commonsLibFile"
+
+usage() {
+cat 1>&2 << EOF
+KOOKER
+
+    Welcome to kooker. Kooker deploys a ready to use Kubernetes cluster using
+    k3d, and deploys inside a number of useful data components (such as
+    minio, elasticsearch, kafka), as well as any additional application available
+    as docker image and helm charts. 
+
+ usage: kooker <command> <options>.
+
+    kpack <kpack_file> :
+        Set the kpack file. By default, kpack/kpack.yaml is selected.
+
+    start [<component>] [<opts...>] : 
+        
+        Without argument start all the components selected at installation time.
+      
+        If you provide no components you can choose to interactivaly select which 
+        component you need using the --interactive option. Without interactive mode, 
+        you can still specify multiple components. Otherwise the list of components 
+        as defined in the default profile configuration file will be installed.
+    
+        The additional options are the following:
+
+            --update=false   can be provided to avoid Helm repo updates
+        
+            --log-level=INFO can be provided to make kastctl more verbose
+
+            --interactive|-i : start using the interactive mode. Note that this mode
+                            is only activated the first time you start kooker.
+                            It will takes effect only after a delete command.
+
+    status [<component>] : 
+
+        Show the current status of the deployed components, or the status of the
+        selected components.
+
+    info [<component>]: 
+
+        Show components information, or only the selected components informaton.
+
+    stop [<component>] : 
+
+        Stop all deployed components, or only the selected component. 
+
+    destroy : 
+
+        Use with care: stop the cluster and destroy the contained data. 
+        Note that after this command, you can repeat the (possibly interactive) 
+        start command. 
+
+    expose : 
+
+        Expose the running services to your local network. This command requires
+        sudo privileges to patch your /etc/hosts file with the required host oinformation.
+
+
+    load-image <image> [<k3d load img opts...>] : 
+
+        Load a local image into your cluster. 
+EOF
+}
+
+function _bashComplete() {
+    local cur
+    # current completion word.
+    cur=${COMP_WORDS[COMP_CWORD]}
+
+    COMPREPLY=()   # Array variable storing the possible completions.
+
+    if [ $COMP_CWORD -eq 1 ]; then
+        shortOptions='env help start status stop info expose destroy load-image stop-cluster kpack interactive '
+        longOptions='--env --help --start --status --stop --info --expose --destroy --load-image --stop-cluster --kpack --interactive '
+
+        case "$cur" in
+        -*)
+            options=$longOptions
+            ;;
+        *)
+            options=$shortOptions
+            ;;
+        esac
+
+        COMPREPLY=( $( compgen -W "$options" -- $cur ) )
+
+    elif [ $COMP_CWORD -ge 2 ] ; then
+        case "${COMP_WORDS[1]}" in
+            kpack|--kpack)
+                _filedir
+                ;;
+            start|--start)
+              components=$(yq -r '.components[] | .alias // .name' kpack/.kpack | tr '\n' ' ')
+              components+="--update= --log-level= --interactive"
+              COMPREPLY=( $( compgen -W "$components" -- $cur ) )
+              ;;
+            
+            stop|-stop|--stop|status|-status|--status|info|-info|--info)
+              components=""
+              for component in `yq -r '.components[] | .alias // .name' kpack/.kpack`; do
+                if [ -f "${KOOKER_DOWNLOADS_DIR}/.installed-${component}" ]; then
+                  components+=${component}" "
+                fi
+              done
+              COMPREPLY=( $( compgen -W "$components" -- $cur ) )
+              ;;
+            
+        esac
+
+        return 0
+    fi
+
+    
+
+    return 0
+}
+
+
+function startComponents() {
+  if [ "${1:-}" == "all" ] ; then
+    INSTALL_ALL_FROM_KPACK=1
+    shift
+  else
+    INSTALL_ALL_FROM_KPACK=0
+  fi
+
+  # Creation of component list (if nothing was installed previously = first install)
+
+  if [ ! -n "$(find ${KOOKER_DOWNLOADS_DIR}/ -name '.installed*' | head -1)" ] && [ ${INSTALL_ALL_FROM_KPACK} -eq 0 ]; then
+    for component in `yq -r '.components[] | .alias // .name' ${KOOKER_KPACK}`; do
+      componentToInstall ${component}
+    done
+  fi 
+  for component in `yq -r '.components[] | .alias // .name' ${KOOKER_KPACK}`; do
+      if [ -f "${KOOKER_DOWNLOADS_DIR}/.installed-${component}" ]; then
+        installComponent ${component} "$@"
+      fi
+  done
+}
+
+
+function componentToInstall(){
+  local component="$1"
+  if [ "$interactive" == "True" ]; then 
+    local yn="yes"
+    read -p "Install ${component} ? [enter for yes] " yn
+    case $yn in
+          [Nn]* ) return;;
+          * ) touch ${KOOKER_DOWNLOADS_DIR}/.installed-${component}; return;;
+    esac
+  else 
+    if [[ $(yq -r ".components[] | select(.name == \"${component}\" or .alias == \"${component}\")" ${KOOKER_KPACK} | wc -c) -ne 0 ]]  ; then 
+      touch ${KOOKER_DOWNLOADS_DIR}/.installed-${component}
+    else 
+      error "${component} is not a known component, check your kpack file to have available components"
+    fi 
+  fi
+}
+
+function installComponent() {
+  local component="$1"
+  log ""
+  log "  ${gry}Initiating deployment of ${component} ..."
+  shift
+  KASTCTL_OPTS=${@:-}
+  if [[ "${KASTCTL_OPTS[*]}" != *"--log-level"* ]] ; then
+        KASTCTL_OPTS+=(--log-level ERROR)
+  fi
+  cmd="kastctl install --kpack-path ${KOOKER_KPACK_DIR} --kpack ${KOOKER_KPACK_NAME} --component=${component} --deployment-path ${KOOKER_CHARTS_DIR} ${KASTCTL_OPTS[@]}"
+  $cmd
+  if [ "$?" != 0 ]; then
+    red "✓ ${component} deployment failed"
+  else
+    green "✓ ${component} installed"
+  fi
+}
+
+function stopComponents() {
+  for component in `yq -r '.components[] | .alias // .name' ${KOOKER_KPACK}`; do
+    if [ -f "${KOOKER_DOWNLOADS_DIR}/.installed-${component}" ]; then
+      uninstallComponent ${component}
+    fi
+  done
+}
+
+function uninstallComponent() {
+  local component="$1"
+  if [[ $(yq -r ".components[] | select(.name == \"${component}\" or .alias == \"${component}\")" ${KOOKER_KPACK} | wc -c) -ne 0 ]]; then
+    log ""
+    log "  ${gry}Uninstalling ${component} ..."
+    shift
+    KASTCTL_OPTS=${@:-}
+    if [[ "${KASTCTL_OPTS[*]}" != *"--log-level"* ]] ; then
+          KASTCTL_OPTS+=(--log-level ERROR)
+    fi
+    cmd="kastctl uninstall --kpack-path ${KOOKER_KPACK_DIR} --kpack ${KOOKER_KPACK_NAME} --component=${component} --deployment-path ${KOOKER_CHARTS_DIR} ${KASTCTL_OPTS[@]}"
+    $cmd
+    red "✓ ${component} uninstalled"
+  else 
+    error "${component} is not a known component, check your kpack file to have available components"
+  fi 
+}
+
+function stopCluster() {
+    if clusterExists "${KOOKER_CLUSTER_NAME}"; then
+      k3d cluster stop ${KOOKER_CLUSTER_NAME}
+      red "✓ k3d cluster stopped"
+    fi
+}
+
+function createCluster() {
+    log ""
+    log "  ${gry}Checking k3d cluster and user context..."
+    log ""
+    if clusterExists "${KOOKER_CLUSTER_NAME}"; then
+      status=$(clusterIsRunning "${KOOKER_CLUSTER_NAME}" 2> /dev/null)
+      if [ $status -ne 1 ]; then 
+        log "  ${gry}Starting k3d cluster..."
+        log ""
+        k3d cluster start ${KOOKER_CLUSTER_NAME} | sed 's/^/\t/g'
+      fi
+    else
+      log "  ${gry}Creating k3d cluster..."
+      log ""
+      if [[ -f ${KOOKER_DIR}/registries.yaml ]]
+      then
+        k3d cluster create ${KOOKER_CLUSTER_NAME} $(getProxyEnv) \
+          --registry-config ${KOOKER_DIR}/registries.yaml \
+          -p "8080:80@loadbalancer" \
+          -p "8443:443@loadbalancer" \
+          --api-port "6443"
+      else
+        k3d cluster create ${KOOKER_CLUSTER_NAME} $(getProxyEnv) \
+          -p "8080:80@loadbalancer" \
+          -p "8443:443@loadbalancer" \
+          --api-port "6443"
+      fi
+      if [ ! $? == 0 ]; then
+          fatal "failed to create k3d cluster ${KOOKER_CLUSTER_NAME}"
+      fi
+    fi
+    kubectl config use-context k3d-${KOOKER_CLUSTER_NAME} | sed 's/^/\t/g'
+    green "✓ k3d cluster is running and kubectl context has been set."
+}
+
+#
+# Return the list of proxy envronment variables if any proxy 
+# environment variable is detected in the user environment variables.
+# Return an empty string if none is found.
+#
+function getProxyEnv() {
+    local values=$(env | grep -i proxy || true)
+    local result=""
+    if [ "${value:-}" != "" ]; then
+        for v in "${values[@]}"; do
+            result+=("--env ${E}@server:0")
+        done
+    fi
+    echo "${result[@]}" 
+}
+
+function clusterExists() {
+    k3d cluster ls -o yaml | yq -r .[].name | grep '^'${1}'$' >/dev/null
+}
+
+function clusterIsRunning() {
+    k3d cluster ls -o yaml | yq -r ".[] | select(.name == \"${1}\").serversRunning"
+}
+
+function loadImage() {
+  k3d image import -c ${KOOKER_CLUSTER_NAME} "$@"
+}
+
+function generateHostFile() {
+    # single command to retrieve etc/hosts entries
+    touch /${KOOKER_DOWNLOADS_DIR}/.dev-hosts
+    cat > /${KOOKER_DOWNLOADS_DIR}/.dev-hosts << EOF
+$(kubectl get ingress -A -o jsonpath='{range .items[*]}127.0.0.1{range .spec.rules[*]}{"\t"}{.host}{end}{"\n"}{end}')
+EOF
+}
+
+function fpunch_dump_env() {
+    env -0 | sort -z | tr '\0' '\n' | grep KOOKER 
+}
+
+function printStatusString() {
+    color=$1
+    component=$2
+    status=$3
+    printf "${wht}%-17s\t${!color}${status}${clrend}\n" "${component}"
+}
+
+function componentStatus () {
+    helmInstance=$1
+    ns=$2    
+
+    status=$(helm status "$helmInstance" -n "$ns" -o yaml 2> /dev/null| yq '.info.status')
+    if [ "$status" == "null" ] ; then
+        printStatusString red "$helmInstance" "NOT DEPLOYED"
+    elif [ "$status" != "deployed" ] ; then
+        printStatusString red "$helmInstance" "$status"
+    else
+        UNHEALTHY_CHILDREN=($(kubectl get deploy,sts -A -l app.kubernetes.io/managed-by=Helm -o yaml | yq '.items[] | select (.metadata.annotations."meta.helm.sh/release-name" == "'${helmInstance}'") | select( (.status.replicas - .status.readyReplicas) != 0) | ( .kind + "/" +.metadata.name + "/" + .metadata.namespace )'))
+        if [ ${#UNHEALTHY_CHILDREN[@]} -eq 0 ] ; then
+            printStatusString grn "$helmInstance" "READY"
+        else
+            printStatusString red "$helmInstance" "$status but NOT FULLY READY"
+            printf "\n${gry}\t\t\t\tThe following sets of pods do not possess nominal count of ready replicas:\n"
+            for badSet in "${UNHEALTHY_CHILDREN[@]}" ; do
+                tr "/" " " <<< "${badSet}" | xargs -n 3 printf "\t\t\t\t\t- %s '${red}%s${clrend}' in '${red}%s${clrend}' namespace\n"
+            done
+            echo ""
+        fi
+    fi                
+
+}
+
+#
+# Delete the cluster, including its data. This function also cleans
+# the hidden files used to keep track of what has been installed. This
+# in turn makes kooker ready again for a fresh interactive start. 
+#
+function clusterDestroy() {
+    k3d cluster delete ${KOOKER_CLUSTER_NAME};
+    rm -f ${KOOKER_DOWNLOADS_DIR}/.installed-*
+}
+
+if [ "${1:-}" == "--bashComplete" ]; then
+    echo -n "function "
+    declare -f _bashComplete
+    exit 0
+
+fi
+
+while :
+do
+    case ${1:--h} in
+        help | -h | --help | -\?)
+            usage
+            exit 0
+            ;;
+        interactive|-interactive|--interactive )
+            interactive=True;
+            shift
+            ;;
+
+        kpack|-kpack|--kpack)
+            if [[ -f ${2} ]]
+            then
+                ln -sf $(readlink -f ${2}) ${KOOKER_KPACK_DIR}/${KOOKER_KPACK_NAME}
+                echo "$(readlink -f ${2}) file has been declared as kpack file."
+                exit 0;
+            else
+              fatal "Kpack file '$2' not found."
+            fi
+            shift
+            shift
+            ;;
+        env|-env|--env)
+            echo "platform :" $(getPlatform)
+            fpunch_dump_env
+            exit 0;
+            ;;
+        info|-info|--info )
+        # Could be improve using helm list -A
+            shift
+            if [[ $# -eq 0 ]]; then 
+              components=$(yq -r '.components[] | .alias // .name' ${KOOKER_KPACK})
+            else 
+              components=$@
+            fi
+            for component in $components; do
+                ns=$(yq -r ".components[] | select(.alias == \"$component\" or .name == \"$component\").namespace" ${KOOKER_KPACK}) 
+                hosts=$(kubectl get ingress -n $ns -o jsonpath='{range .items[*]}{.spec.rules[*].host}{"\n"}{end}')
+                for host in ${hosts}; do
+                  info "✓ ${component}: http://${host}:8080"
+                done
+            done
+            exit 0
+            ;;
+        status|-status|--status )
+            shift
+            if [[ $# -eq 0 ]]; then 
+              components=$(yq -r '.components[] | .alias // .name' ${KOOKER_KPACK})
+            else 
+              components=$@
+            fi
+            for component in $components; do
+              if [ -f "${KOOKER_DOWNLOADS_DIR}/.installed-${component}" ]; then
+                ns=$(yq -r ".components[] | select(.alias == \"$component\" or .name == \"$component\").namespace" ${KOOKER_KPACK}) 
+                componentStatus "$component" "$ns"
+              fi
+            done
+            exit 0
+            ;;
+        start|-start|--start)
+            shift
+            if [[ "${1:-}" == "-i" ]] || [[ "${1:-}" == "--interactive" ]] || [[ "${1:-}" == "-interactive" ]] ; then
+                interactive=True
+                shift
+            fi
+            # Create k3d cluster
+            createCluster 
+            # Install components
+            if [[ "${1:---}" == "--"* ]]  ; then
+                startComponents "$@"
+            else 
+              interactive=False
+              components=""
+              kastctl_opts=""
+              for arg in $@; do
+                if [[ "$arg" == "--"* ]] ; then
+                  kastctl_opts+="$arg "
+                else
+                  components+="$arg "
+                fi
+              done
+              for c in $components; do
+                #create .installed-<component> file
+                componentToInstall "$c"
+                #install
+                installComponent "$c $kastctl_opts"
+              done
+              
+            fi
+            exit 0
+            ;;
+        stop|-stop|--stop)
+            shift
+            if [[ $# -eq 0 ]]; then 
+              # stop all components
+            	stopComponents
+            else 
+              for c in $@; do
+                uninstallComponent $c
+              done
+            fi
+            exit 0
+            ;;
+        stop-cluster|-stop-cluster|--stop-cluster)
+            stopCluster
+            exit 0
+            ;;
+        load-image|-load-image|--load-image)
+            loadImage "$@"
+            exit 0
+            ;;
+        expose|-expose|--expose )
+            generateHostFile
+            cat /${KOOKER_DOWNLOADS_DIR}/.dev-hosts | sudo ${KOOKER_DOWNLOADS_DIR}/hostctl replace ${KOOKER_CLUSTER_NAME} -q
+	          rm /${KOOKER_DOWNLOADS_DIR}/.dev-hosts
+            exit 0
+            ;;
+        destroy | --destroy )
+            read -p "Are you sure you want to delete the entire cluster (all data will be lost) ? [enter for yes] " yn
+            case $yn in
+                    [Nn]* ) exit 0;;
+                    * ) clusterDestroy; exit 0;;
+            esac
+            exit 0
+            ;;
+         --) # End of all options
+            shift
+            break
+            ;;
+        -*)
+            usage
+            fatal "Unknown option '$1'. Check usage."
+            ;;
+        *)  
+            usage
+            fatal "Unknown command '$1'. Check usage."
+            ;;
+    esac
+done
+
+usage
+exit 1;
