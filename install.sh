@@ -167,9 +167,6 @@ export PS1='\[\e[1;32m\]kooker:\[\e[0m\][\W]\$ '
 # These are the credentials for Opensearch/Elasticsearch APIS (see kesapi)
 export KESAPI_ESC="no:auth"
 
-# Loading standard k8s help functions (kesapi, kcurl, kkafka...)
-VERBOSE_FUNC=0 . \${KOOKER_DIR}/bin/kube_functions.sh
-
 if [[ ! -f \${KOOKER_DIR}/kpack/.kpack ]]
 then
   ln -s \${KOOKER_DIR}/kpack/kpack.yaml \${KOOKER_DIR}/kpack/.kpack
