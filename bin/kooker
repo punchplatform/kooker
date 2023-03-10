@@ -271,9 +271,9 @@ function createCluster() {
 function getProxyEnv() {
     local values=$(env | grep -i proxy || true)
     local result=""
-    if [ "${value:-}" != "" ]; then
+    if [ "${values:-}" != "" ]; then
         for v in "${values[@]}"; do
-            result+=("--env ${E}@server:0")
+            result+=("--env ${v}@server:0")
         done
     fi
     echo "${result[@]}" 
