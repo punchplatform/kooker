@@ -1,0 +1,307 @@
+components:
+- alias: kubernetes-dashboard
+  name: kube-dashboard
+  namespace: kube-dashboard
+  version:  3.0.1
+
+- name: minio
+  namespace: object-store
+  version: 3.3.0
+
+- name: artifacts-server
+  namespace: artifacts-server
+  version: 8.1.1
+  repo: punch
+
+- name: elasticsearch 
+  namespace: doc-store
+  version: 8.5.1
+  repo: elastic
+
+- name: kibana 
+  namespace: visualization
+  version: 7.17.3
+  repo: elastic
+
+- name: strimzi-kafka-operator
+  namespace: processing
+  version: 0.29.0
+  repo: strimzi
+
+- name: kafka 
+  namespace: processing
+  version: 1.3.0
+
+- name: jupypunch 
+  namespace: jupypunch
+  version: 8.1.1
+  repo: punch
+
+- alias: cert-manager
+  name: certmanager
+  version: 1.1.1+1.9.1
+  namespace: cert-manager
+
+- alias: punch-operator-crds
+  name: operator-crds
+  namespace: punchoperator-system
+  version: 8.1.1 
+  repo: punch 
+
+- alias: punch-operator
+  name: operator
+  namespace: punchoperator-system
+  version: 8.1.1 
+  repo: punch 
+
+- name: punch-board
+  namespace: punch-board
+  version: 8.1.1
+  repo: punch
+
+- name: kooker-post-install
+  namespace: default 
+  
+global:
+  pullPolicy: IfNotPresent
+  storageClassName: local-path
+  domain: punch
+  sso:
+    enabled: false
+  replicas: 1
+    
+minio:
+  _install:
+    flags:
+      wait: true
+  rootUser: punch
+  rootPassword: punchplatform
+  storageSize: 1Gi
+  replicas: 1
+  fullnameOverride: minio
+  console:
+    enabled: true
+    domain: minio.punch
+  api: 
+    ingress: true
+    domain: minio-api.punch
+  _values:
+    minio:
+      resources:
+        requests:
+          cpu: 0
+          memory: 0
+
+artifacts-server:
+  _install:
+    flags:
+      wait: true
+  _values:
+    # Set ingress class name to default k3d one (traefik), same url than kast pattern
+    ingress:
+      url: artifacts-server.punch
+      ingressClassName: ""
+    config:
+      application:
+        tenant: "default"
+      metadata: 
+        minio:
+          host: http://minio.object-store:9000
+          access_key: punch
+          secret_key: punchplatform
+      data:
+        minio:
+          host: http://minio.object-store:9000
+          access_key: punch
+          secret_key: punchplatform
+
+# Watchout, here we use 8.5.1 helm chart to install an elastic 7.10.2 (free licence & punch feedback compatible)
+# Why ? : Ingress API version from chart 7.10.2 is not supported in kube > 1.22
+#       : Cannot use a 7.16 or 7.17 elastic chart version because of https://github.com/elastic/helm-charts/issues/1492
+# Ref for values here : https://github.com/elastic/helm-charts/blob/v8.5.1/elasticsearch/values.yaml
+elasticsearch:
+  _install:
+    flags:
+      wait: true 
+  _values: 
+    replicas: 1
+    minimumMasterNodes: 1
+    esMajorVersion: 7
+    imageTag: 7.10.2
+    protocol: http
+    createCert: false
+    ingress:
+      enabled: true
+      className: ""
+      hosts:
+        - host: elasticsearch-master.punch
+          paths:
+            - path: /
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+kibana: 
+  _install:
+    flags:
+      wait: true
+  _values:
+    image: ghcr.io/punchplatform/kibana-7.10.2-datafeedback
+    imageTag: 2.1.3
+    protocol: http
+    elasticsearchHosts: "http://elasticsearch-master.doc-store:9200"
+    ingress:
+      enabled: true
+      className: ""
+      hosts:
+        - host: kibana.punch
+          paths:
+            - path: /
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+strimzi-kafka-operator: 
+  _install: 
+    flags: 
+      wait: true 
+  _values:
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+# Watchout : BETA kast helm chart
+# No ingress because TLS is enabled by default
+kafka:
+  _install:
+    flags:
+      wait: true 
+  _values: 
+    kafka:
+      version: 3.0.0
+      resources:
+        requests:
+          cpu: 0
+          memory: 0
+      storage:
+        class: local-path
+    zk:
+      resources:
+        requests:
+          cpu: 0
+          memory: 0
+      storage:
+        class: local-path
+
+jupypunch:
+  _install:
+    flags:
+      wait: false
+  _values:
+    ingress:
+      enabled: true
+      className: ""
+      url: jupypunch.punch
+      urlSparkUI: spark.punch
+    punch.artifacts.server.url: http://artifacts-server.artifacts-server:4245/
+    application:
+      image: ghcr.io/punchplatform/jupypunch:8.1.1
+      resources:
+        requests:
+          cpu: 0
+          memory: 0
+    s3ContentsManager:
+      enabled: false
+    s3:
+      access_key: punch
+      secret_key: punchplatform
+      endpoint: http://minio.object-store:9000
+    elasticsearch:
+      http_hosts:
+        - host: elasticsearch-master.doc-store
+          port: 9200
+          scheme: http
+      security:
+        credentials:
+          username: punch
+          password: punchplatform
+    kafka:
+      kafka.bootstrap.servers: kafka-kafka-bootstrap.processing:9092
+
+kubernetes-dashboard:
+  _install:
+    flags:
+      wait: true
+  _values:
+    ingress:
+      enabled: true
+      className: ""
+      url: kubernetes.punch
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+cert-manager: 
+  _install: 
+    flags: 
+      wait: true 
+  
+punch-operator-crds: 
+  _install: 
+    flags: 
+      wait: true 
+
+punch-operator: 
+  _install: 
+    flags: 
+      wait: true 
+  _values:
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+punch-board:
+  _install:
+    flags:
+      wait: true 
+  _values: 
+    image: ghcr.io/punchplatform/punch-board:8.1.1
+    imagePullSecrets: [name: admin-secret]
+    ingress:
+      enabled: true
+      className: null
+      annotations: { }
+      hosts:
+        - host: board.punch
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls: [ ]
+    config:
+      punchArtifacts: 'http://artifacts-server.artifacts-server:4245'
+
+kooker-post-install: 
+  _install: 
+    flags: 
+      wait: true 
+  _values:
+    serviceAccount: admin-user
+    punchVersion: 8.1.1
+    resourcesProviderUrl: http://artifacts-server.artifacts-server:4245
+    elasticsearch:
+      http_hosts:
+        - host: elasticsearch-master.doc-store
+          port: 9200
+      security:
+        credentials:
+          password: elastic
+          username: elastic
+    minio:
+      endpoint: "http://minio.object-store:9000"
+      access_key: "punch"
+      secret_key: "punchplatform"
