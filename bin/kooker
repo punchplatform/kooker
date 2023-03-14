@@ -229,6 +229,7 @@ function stopCluster() {
 }
 
 function createCluster() {
+    getProxyEnv
     log ""
     log "  ${gry}Checking k3d cluster and user context..."
     log ""
@@ -269,7 +270,7 @@ function createCluster() {
 # Return an empty string if none is found.
 #
 function getProxyEnv() {
-    local values=$(env | grep -i proxy || true)
+    local values=( $(env | grep -i proxy || true) )
     local result=""
     if [ "${values:-}" != "" ]; then
         for v in "${values[@]}"; do
