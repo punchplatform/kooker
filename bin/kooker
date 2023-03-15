@@ -229,7 +229,6 @@ function stopCluster() {
 }
 
 function createCluster() {
-    getProxyEnv
     log ""
     log "  ${gry}Checking k3d cluster and user context..."
     log ""
