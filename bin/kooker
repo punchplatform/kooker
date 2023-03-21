@@ -466,6 +466,7 @@ do
             exit 0
             ;;
         expose|-expose|--expose )
+            log "  ${gry}Exposing deployed services..."
             generateHostFile
             cat /${KOOKER_DOWNLOADS_DIR}/.dev-hosts | sudo ${KOOKER_DOWNLOADS_DIR}/hostctl replace ${KOOKER_CLUSTER_NAME} -q
 	          rm /${KOOKER_DOWNLOADS_DIR}/.dev-hosts

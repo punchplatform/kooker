@@ -27,6 +27,16 @@ components:
   version: 7.17.3
   repo: elastic
 
+- name: prometheus
+  namespace: monitoring
+  version: 19.3.3
+  repo: prometheus-community
+
+- name: grafana
+  namespace: monitoring
+  version: 6.51.1
+  repo: grafana
+
 - name: strimzi-kafka-operator
   namespace: processing
   version: 0.29.0
@@ -167,6 +177,28 @@ kibana:
       requests:
         cpu: 0
         memory: 0
+
+prometheus: 
+  _install:
+    flags:
+      wait: true
+  _values:
+    alertmanager:
+      enabled: false
+    prometheus-node-exporter:
+      enabled: false
+    
+grafana: 
+  _install:
+    flags:
+      wait: true
+  _values:
+    ingress:
+      enabled: true
+      hosts:
+        - grafana.punch
+    adminUser: admin
+    adminPassword: admin
 
 strimzi-kafka-operator: 
   _install: 

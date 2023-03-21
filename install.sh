@@ -77,6 +77,9 @@ function install_kastctl() {
   ${downloadsDir}/helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/ --force-update
   ${downloadsDir}/helm repo add minio https://charts.min.io/ --force-update
   ${downloadsDir}/helm repo add jetstack https://charts.jetstack.io --force-update
+  ${downloadsDir}/helm repo add prometheus-community https://prometheus-community.github.io/helm-charts --force-update
+  ${downloadsDir}/helm repo add grafana https://grafana.github.io/helm-charts --force-update
+
 
   green "✔ Kastctl and his prerequisites has been installed."
 }
