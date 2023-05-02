@@ -88,6 +88,9 @@ keycloakx:
         value: admin
       - name: KEYCLOAK_ADMIN_PASSWORD
         value: admin
+      - name: KEYCLOAK_FRONTEND_URL
+        value: http://keycloak.punch:8080/
+      
 
 minio:
   _install:
@@ -135,6 +138,15 @@ artifacts-server:
           host: http://minio.object-store:9000
           access_key: minioadmin
           secret_key: minioadmin
+      keycloak:
+        enabled: true
+        auth_server_url: http://keycloakx-http.authentication:80/
+        realm: master
+        resource: artifacts-server
+        credentials:
+          secret: liF0tzEIXGZWr0kbR9pmKJPtVpYb5752 # Fill with your client secret
+        use-resource-role-mappings: true
+        bearer-only: true
 
 kubernetes-dashboard:
   _install:
@@ -208,6 +220,14 @@ punch-board:
       tls: [ ]
     config:
       punchArtifacts: 'http://artifacts-server.artifacts-server:4245'
+      auth:
+        keycloak:
+          realm: master # Fill with your realm
+          auth-server-url: http://keycloakx-http.authentication:80/ # Fill with your keycloak url
+          resource: punch-board
+          credentials:
+            secret: Vo8HWm9O7LmcU2juCKZHi1ghNQs9kyDZ # Fill with your client secret
+
 
 kooker-post-install: 
   _install: 
