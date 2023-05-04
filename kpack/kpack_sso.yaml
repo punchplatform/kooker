@@ -12,6 +12,11 @@ components:
   version: 2.1.1
   repo: codecentric
 
+- name: ingress-nginx
+  version: 4.6.0
+  namespace: ingress
+  repo: ingress-nginx
+
 - name: minio
   namespace: object-store
   version: 5.0.7
@@ -64,6 +69,7 @@ keycloakx:
       relativePath: '/'        
     ingress: 
       enabled: true
+      ingressClassName: nginx
       rules:
       - host: keycloak.punch
         paths:
@@ -76,6 +82,8 @@ keycloakx:
       - "--http-port=8080"
       - "--hostname-strict=false"
       - "--hostname-strict-https=false"
+      - "--hostname-admin-url=https://keycloak.punch:8443/"
+      - "--hostname-url=https://keycloak.punch:8443/"
       
     extraEnv: |
       - name: JAVA_OPTS_APPEND
@@ -89,7 +97,7 @@ keycloakx:
       - name: KEYCLOAK_ADMIN_PASSWORD
         value: admin
       - name: KEYCLOAK_FRONTEND_URL
-        value: http://keycloak.punch:8080/
+        value: https://keycloak.punch:8443/
       
 
 minio:
@@ -108,7 +116,7 @@ minio:
         - minio.punch
     ingress: 
       enabled: true
-      ingressClassName: ""
+      ingressClassName: "nginx"
       hosts:
         - minio-api.punch
     resources:
@@ -124,7 +132,15 @@ artifacts-server:
     # Set ingress class name to default k3d one (traefik), same url than kast pattern
     ingress:
       url: artifacts-server.punch
-      ingressClassName: ""
+      ingressClassName: "nginx"
+      # -- enable an ingress
+      enabled: true
+      # -- ingress url
+      tls: true
+      certManagement: cert-manager
+      certManager:
+        issuerType: issuer
+        issuerName: my-ca-issuer
     config:
       application:
         tenant: "default"
@@ -144,7 +160,7 @@ artifacts-server:
         realm: master
         resource: artifacts-server
         credentials:
-          secret: liF0tzEIXGZWr0kbR9pmKJPtVpYb5752 # Fill with your client secret
+          secret: 1j8dMhmmwnvzFBlzzSGpwNzweBtUA9JS # Fill with your client secret
         use-resource-role-mappings: true
         bearer-only: true
 
@@ -161,7 +177,7 @@ kubernetes-dashboard:
       name: kubernetes-dashboard
     ingress:
       enabled: true
-      className: ""
+      className: "nginx"
       hosts: 
         - dashboard.punch
     resources:
@@ -190,6 +206,11 @@ punch-operator-crds:
     flags: 
       wait: true 
 
+ingress-nginx: 
+  _install: 
+    flags: 
+      wait: true  
+
 punch-operator: 
   _install: 
     flags: 
@@ -210,14 +231,18 @@ punch-board:
     imagePullSecrets: [name: admin-secret]
     ingress:
       enabled: true
-      className: null
-      annotations: { }
+      className: nginx
+      annotations:  
+        cert-manager.io/issuer: my-ca-issuer-board
+      tls:
+        - hosts:
+          - board.punch
+          secretName: punch-board-tls
       hosts:
         - host: board.punch
           paths:
             - path: /
               pathType: ImplementationSpecific
-      tls: [ ]
     config:
       punchArtifacts: 'http://artifacts-server.artifacts-server:4245'
       auth:
@@ -226,7 +251,7 @@ punch-board:
           auth-server-url: http://keycloakx-http.authentication:80/ # Fill with your keycloak url
           resource: punch-board
           credentials:
-            secret: Vo8HWm9O7LmcU2juCKZHi1ghNQs9kyDZ # Fill with your client secret
+            secret: jt7mlYoqUreJ5lxI0RAnVP48phTj0O8h # Fill with your client secret
 
 
 kooker-post-install: 
