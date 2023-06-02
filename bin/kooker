@@ -240,17 +240,19 @@ function createCluster() {
         k3d cluster start ${KOOKER_CLUSTER_NAME} | sed 's/^/\t/g'
       fi
     else
-      log "  ${gry}Creating k3d cluster..."
+      log "  ${gry}Creating k3d cluster without traefik..."
       log ""
       if [[ -f ${KOOKER_DIR}/registries.yaml ]]
       then
         k3d cluster create ${KOOKER_CLUSTER_NAME} $(getProxyEnv) \
           --registry-config ${KOOKER_DIR}/registries.yaml \
+          --k3s-arg "--no-deploy=traefik@server:*" \
           -p "8080:80@loadbalancer" \
           -p "8443:443@loadbalancer" \
           --api-port "6443"
       else
         k3d cluster create ${KOOKER_CLUSTER_NAME} $(getProxyEnv) \
+          --k3s-arg "--no-deploy=traefik@server:*" \
           -p "8080:80@loadbalancer" \
           -p "8443:443@loadbalancer" \
           --api-port "6443"
