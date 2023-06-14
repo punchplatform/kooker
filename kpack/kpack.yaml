@@ -100,12 +100,12 @@ minio:
     rootPassword: minioadmin
     consoleIngress:
       enabled: true
-      ingressClassName: ""
+      ingressClassName: "nginx"
       hosts:
         - minio.punch
     ingress: 
       enabled: true
-      ingressClassName: ""
+      ingressClassName: "nginx"
       hosts:
         - minio-api.punch
     resources:
@@ -121,7 +121,7 @@ artifacts-server:
     # Set ingress class name to default k3d one (traefik), same url than kast pattern
     ingress:
       url: artifacts-server.punch
-      ingressClassName: ""
+      ingressClassName: "nginx"
     config:
       application:
         tenant: "default"
@@ -153,7 +153,7 @@ elasticsearch:
     clusterHealthCheckParams: ""
     ingress:
       enabled: true
-      className: ""
+      className: "nginx"
       hosts:
         - host: elasticsearch-master.punch
           paths:
@@ -174,7 +174,7 @@ kibana:
     elasticsearchHosts: "http://elasticsearch-master.doc-store:9200"
     ingress:
       enabled: true
-      className: ""
+      className: "nginx"
       hosts:
         - host: kibana.punch
           paths:
@@ -201,6 +201,7 @@ grafana:
   _values:
     ingress:
       enabled: true
+      ingressClassName: nginx
       hosts:
         - grafana.punch
     adminUser: admin
@@ -246,7 +247,7 @@ jupypunch:
   _values:
     ingress:
       enabled: true
-      className: ""
+      className: "nginx"
       url: jupypunch.punch
       urlSparkUI: spark.punch
     punch.artifacts.server.url: http://artifacts-server.artifacts-server:4245/
@@ -287,7 +288,7 @@ kubernetes-dashboard:
       name: kubernetes-dashboard
     ingress:
       enabled: true
-      className: ""
+      className: "nginx"
       hosts: 
         - dashboard.punch
     resources:
@@ -336,7 +337,7 @@ punch-board:
     imagePullSecrets: [name: admin-secret]
     ingress:
       enabled: true
-      className: null
+      className: nginx
       annotations: { }
       hosts:
         - host: board.punch
