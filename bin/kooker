@@ -1,9 +1,9 @@
 #!/bin/bash -ue
 #
 
-# Watchouts the variables defined here do not appear in the activate.sh or in the user profile
+# Watchout, the variables defined here do not appear in the activate.sh or in the user profile
 # The reason we defined these two is simply to allow each (kafka|minio\elastic etc) shell to
-# properly downlad and install whatever they need at the right place. 
+# properly download and install whatever they need at the right place.
 export KOOKER_BIN_DIR="${KOOKER_DIR}/bin"
 export KOOKER_KPACK_DIR="${KOOKER_DIR}/kpack"
 export KOOKER_KPACK_NAME=".kpack"
@@ -36,7 +36,7 @@ KOOKER
         
         Without argument start all the components selected at installation time.
       
-        If you provide no components you can choose to interactivaly select which 
+        If you provide no components you can choose to interactively select which
         component you need using the --interactive option. Without interactive mode, 
         you can still specify multiple components. Otherwise the list of components 
         as defined in the default profile configuration file will be installed.
@@ -58,7 +58,7 @@ KOOKER
 
     info [<component>]: 
 
-        Show components information, or only the selected components informaton.
+        Show components information, or only the selected components information.
 
     stop [<component>] : 
 
@@ -73,7 +73,7 @@ KOOKER
     expose : 
 
         Expose the running services to your local network. This command requires
-        sudo privileges to patch your /etc/hosts file with the required host oinformation.
+        sudo privileges to patch your /etc/hosts file with the required host information.
 
 
     load-image <image> [<k3d load img opts...>] : 
@@ -266,7 +266,7 @@ function createCluster() {
 }
 
 #
-# Return the list of proxy envronment variables if any proxy 
+# Return the list of proxy environment variables if any proxy
 # environment variable is detected in the user environment variables.
 # Return an empty string if none is found.
 #

@@ -1,5 +1,5 @@
 #!/bin/bash -u
-# This files contains reusable, project-independant shell functions
+# This files contains reusable, project-independent shell functions
 
 ## COLORS ##
 # use printf "${red}string in red${clrend}" for example
@@ -99,7 +99,7 @@ function errorLogger() {
 
 }
 
-#this function sends outputonly  to COMMONS_LOG_FILE (if defined) OR STDOUT if not defined
+#this function sends output only to COMMONS_LOG_FILE (if defined) OR STDOUT if not defined
 function silentLog() { echo "$*" | commonsLogger; }
 function unquietableLog() { quiet="false" log $@; }
 
@@ -194,7 +194,7 @@ function error() {
     fi
     errecho $(FG RED "ERROR: ${@}") $(DIMMED "${errorContext}")
     # quand il s'agit d'une erreur ponctuelle, et non d'une redirection de flux
-    # (i.e. quand on n'a pas l'option --) on dumpe la stack bash
+    # (i.e. quand on n'a pas l'option --) on dump la stack bash
     if [ "${printStack:-}" == "true" ]; then
       bashStack | errorLogger
     fi
@@ -218,9 +218,7 @@ function fatal() {
 # the overall return status is the return status of the command
 function loggedCommand() {
   local command=("$@")
-  # on desactive le fichier de log pour éviter les doublons
-  # car on veut tout attraper à ce niveau ci (y compris les flots
-  # d'erreur non générés par des commandes normalisées...)
+  # log file is deactivated to catch everything at this level (included errors outside normalized commands scope)
   {
     unset COMMONS_LOG_FILE
     {
@@ -277,7 +275,7 @@ function tputColorCode() {
 # each time it is called,
 # this function defines 2 functions, that activate and deactivate
 # an ansi Flag using the provided code
-# the functions name will be FLAG and NOFLAG wher FLAG is parameter 1
+# the functions name will be FLAG and NOFLAG where FLAG is parameter 1
 # if function FLAG is provided any parameters, then the ANSI flag
 # will be applied, then parameters echoed, then NOFLAG called
 # e.g.
@@ -326,7 +324,7 @@ function FG() {
   shift
   if [ $# -ne 0 ]; then
     echo -n "$@"
-    # we are in the case where parameters to echo are provided explicitely
+    # we are in the case where parameters to echo are provided explicitly
     # which pin the color is to be applied only to the provided parameters
     # therefore we restore automatically the default color at the end of the provided
     # parameters :
@@ -348,7 +346,7 @@ function BG() {
   shift
   if [ $# -ne 0 ]; then
     echo -n "$@"
-    # we are in the case where parameters to echo are provided explicitely
+    # we are in the case where parameters to echo are provided explicitly
     # which pin the color is to be applied only to the provided parameters
     # therefore we restore automatically the default color at the end of the provided
     # parameters :

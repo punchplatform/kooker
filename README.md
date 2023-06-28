@@ -7,7 +7,7 @@ In short: Kooker deploys a Kubernetes cluster together with services such as Kaf
 Elastic, Minio, Clickhouse.. using a tool called *kastctl* so that you can start 
 kubernetes applications in minutes on any laptop as long as you have docker installed.
 
-Kooker is developped by the Punch Team with best effort support and is not included officially 
+Kooker is developed by the Punch Team with best-effort support and is not included officially 
 in Punch product. We encourage you to contribute.  
 
 ## Kooker Essential Design
@@ -21,7 +21,7 @@ simply execute a bunch of disparate helm charts), Kooker uses a tool called *kas
 
 Kastctl is developed by the (Kast) Thales teams and is a lightweight helm executor. The benefit
 is to let you define your platform blueprint using a single simpler yaml file called *kpack.yaml*. 
-Kastctl is publicly available as a (macos|linux|windows) application and will be automatically
+Kastctl is publicly available as a (macOS|linux|windows) application and will be automatically
 downloaded at startup time.
 
 ## Getting Started
@@ -75,17 +75,17 @@ configuration file if the *kooker kpack* command has never been used. Have a loo
 
 ### Interactively Install What you Want
 
-Instead you can type in: 
+Instead, you can type in: 
 ```sh
 kooker --interactive start
 ```
-The same kpack.yaml file is used but you will be prompted to install only the components that 
+The same kpack.yaml file is used, but you will be prompted to install only the components that 
 you need from it. 
 
 ### Define You Own Profile 
 
 You can define your own kpack.yaml file to include only the components you want. This requires
-a kastcl documentation guide that is planned soon. 
+a kastctl documentation guide that is planned soon. 
 
 In order to use your kpack file run the following command:
 
@@ -103,7 +103,7 @@ is only used during the cluster creation.
 Here are the Kooker users :
 
 - Punch dev team : to develop and test Punch application, and to deploy third party components locally (elastic, Kafka ..)
-- Punch and Kast professonal services: to reproduce and investigate production issues.
+- Punch and Kast professional services: to reproduce and investigate production issues.
 - Any users which need a lightweight kube, and to deploy his own apps on it.
 
 Note that Thales users benefit from access to Kast private image and helm charts repositories. 
