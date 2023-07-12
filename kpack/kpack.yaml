@@ -88,7 +88,14 @@ global:
   sso:
     enabled: false
   replicas: 1
-    
+  
+ingress-nginx: 
+  _install:
+    flags:
+      wait: true
+      wait-for-jobs: true
+      #timeout: (default 5m0s)
+
 minio:
   _install:
     flags:
