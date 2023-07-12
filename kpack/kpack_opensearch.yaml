@@ -247,7 +247,7 @@ opensearch:
                 - "admin"
               hosts: []
               users: 
-                - punchlinesuser
+                - "punchlinesuser"
               and_backend_roles: []
               description: "Maps admin to all_access"
 
@@ -475,8 +475,8 @@ opensearch-dashboards:
         opensearch_security.cookie.secure: false
         opensearch.requestHeadersWhitelist: [authorization, securitytenant]
         #opensearch_security.openid.verify_hostnames: false
-        #opensearch.username: kibanaserver
-        #opensearch.password: punch-kibanaserver
+        opensearch.username: kibanaserver
+        opensearch.password: punch-kibanaserver
 
         #opensearch.requestHeadersWhitelist: ["securitytenant","Authorization"]
 
