@@ -1,0 +1,704 @@
+components:
+
+- name: ingress-nginx
+  version: 4.6.0
+  namespace: ingress
+  repo: ingress-nginx
+
+- name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+  version:  6.0.0
+  repo: kubernetes-dashboard
+
+- name: kooker-kubernetes-dashboard-rbac
+  namespace: kubernetes-dashboard 
+
+- name: minio
+  namespace: object-store
+  version: 5.0.7
+  repo: minio
+
+- name: artifacts-server
+  namespace: artifacts-server
+  version: 8.1-dev
+  repo: punch
+
+- name: opensearch
+  version: 1.2.5
+  namespace: doc-store
+  repo: opensearch
+
+- name: opensearch-dashboards
+  version: 2.9.0
+  namespace: visualization
+  repo: opensearch
+
+- name: prometheus
+  namespace: monitoring
+  version: 19.3.3
+  repo: prometheus-community
+
+- name: grafana
+  namespace: monitoring
+  version: 6.51.1
+  repo: grafana
+
+- name: strimzi-kafka-operator
+  namespace: processing
+  version: 0.29.0
+  repo: strimzi
+
+- name: kooker-kafka
+  namespace: processing
+
+- name: jupypunch 
+  namespace: jupypunch
+  version: 8.1-dev
+  repo: punch
+
+- name: cert-manager
+  version: v1.11.0
+  namespace: cert-manager
+  repo: jetstack
+
+- alias: punch-operator-crds
+  name: operator-crds
+  namespace: punchoperator-system
+  version: 8.1-dev 
+  repo: punch 
+
+- alias: punch-operator
+  name: operator
+  namespace: punchoperator-system
+  version: 8.1-dev 
+  repo: punch 
+
+- name: punch-board
+  namespace: punch-board
+  version: 8.1-dev
+  repo: punch
+
+- name: kooker-post-install
+  namespace: default 
+  
+global:
+  pullPolicy: IfNotPresent
+  storageClassName: local-path
+  domain: punch
+  sso:
+    enabled: false
+  replicas: 1
+    
+minio:
+  _install:
+    flags:
+      wait: true
+  _values:
+    replicas: 1
+    mode: standalone
+    rootUser: minioadmin
+    rootPassword: minioadmin
+    consoleIngress:
+      enabled: true
+      ingressClassName: "nginx"
+      hosts:
+        - minio.punch
+    ingress: 
+      enabled: true
+      ingressClassName: "nginx"
+      hosts:
+        - minio-api.punch
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+artifacts-server:
+  _install:
+    flags:
+      wait: true
+  _values:
+    # Set ingress class name to default k3d one (traefik), same url than kast pattern
+    ingress:
+      url: artifacts-server.punch
+      ingressClassName: "nginx"
+    config:
+      application:
+        tenant: "default"
+      metadata: 
+        minio:
+          host: http://minio.object-store:9000
+          access_key: minioadmin
+          secret_key: minioadmin
+      data:
+        minio:
+          host: http://minio.object-store:9000
+          access_key: minioadmin
+          secret_key: minioadmin
+
+
+
+opensearch:
+  _install:
+    flags:
+      wait: true
+  _values:
+    imageTag: 1.3.8
+    replicas: 1
+    config:
+      opensearch.yml:
+        cluster.name: opensearch-cluster
+
+        # Bind to all interfaces because we don't know what IP address Docker will assign to us.
+        network.host: 0.0.0.0
+
+        # # minimum_master_nodes need to be explicitly set when bound on a public IP
+        # # set to 1 to allow single node clusters
+        # discovery.zen.minimum_master_nodes: 1
+
+        # Setting network.host to a non-loopback address enables the annoying bootstrap checks. "Single-node" mode disables them again.
+        # discovery.type: single-node
+
+        # Start OpenSearch Security Demo Configuration
+        # WARNING: revise all the lines below before you go into production
+        plugins:
+          security:
+            ssl:
+              transport:
+                pemcert_filepath: esnode.pem
+                pemkey_filepath: esnode-key.pem
+                pemtrustedcas_filepath: root-ca.pem
+                enforce_hostname_verification: false
+              http:
+                enabled: false
+                pemcert_filepath: esnode.pem
+                pemkey_filepath: esnode-key.pem
+                pemtrustedcas_filepath: root-ca.pem
+            allow_unsafe_democertificates: true
+            allow_default_init_securityindex: true
+            authcz:
+              admin_dn:
+                - CN=kirk,OU=client,O=client,L=test, C=de
+            audit.type: internal_opensearch
+            enable_snapshot_restore_privilege: true
+            check_snapshot_restore_write_privileges: true
+            restapi:
+              roles_enabled: ["all_access", "security_rest_api_access"]
+            system_indices:
+              enabled: true
+              indices:
+                [
+                  ".opendistro-alerting-config",
+                  ".opendistro-alerting-alert*",
+                  ".opendistro-anomaly-results*",
+                  ".opendistro-anomaly-detector*",
+                  ".opendistro-anomaly-checkpoints",
+                  ".opendistro-anomaly-detection-state",
+                  ".opendistro-reports-*",
+                  ".opendistro-notifications-*",
+                  ".opendistro-notebooks",
+                  ".opendistro-asynchronous-search-response*",
+                ]
+  
+    securityConfig:
+      config:
+        data:
+          config.yml: |
+            ---
+            _meta:
+              type: "config"
+              config_version: 2
+
+            config:
+              dynamic:
+                authc:
+                  basic_internal_auth_domain:
+                    http_enabled: true
+                    transport_enabled: true
+                    order: 0
+                    http_authenticator:
+                      type: basic
+                      challenge: true
+                    authentication_backend:
+                      type: internal
+          roles_mapping.yml: | 
+            ---
+            # In this file users, backendroles and hosts can be mapped to OpenSearch Security roles.
+            # # Permissions for OpenSearch roles are configured in roles.yml
+
+            _meta:
+              type: "rolesmapping"
+              config_version: 2
+
+            kibana_user:
+              reserved: false
+              hidden: false
+              backend_roles:
+                - "kibanauser"
+              hosts: []
+              users: []
+              and_backend_roles: []
+              description: "Maps kibanauser to kibana_user"
+
+            all_access:
+              reserved: true
+              hidden: false
+              backend_roles:
+                - "admin"
+              hosts: []
+              users: 
+                - punchlinesuser
+              and_backend_roles: []
+              description: "Maps admin to all_access"
+
+            readall:
+              reserved: true
+              hidden: false
+              backend_roles:
+                - "readall"
+              hosts: []
+              users: []
+              and_backend_roles: []
+
+            kibana_server:
+              reserved: true
+              hidden: false
+              backend_roles: []
+              hosts: []
+              users:
+                - "kibanaserver"
+              and_backend_roles: []
+
+            maintainer:
+              reserved: false
+              hidden: false
+              backend_roles:
+                - "maintainer"
+              hosts: []
+              users: []
+              and_backend_roles: []
+              description: "Maintainer group role mapping"
+
+            operator:
+              reserved: false
+              hidden: false
+              backend_roles:
+                - "operator"
+              hosts: []
+              users: []
+              and_backend_roles: []
+              description: "Operator group role mapping"
+          roles.yml: | 
+            ---
+            _meta:
+              type: "roles"
+              config_version: 2
+            maintainer:
+              reserved: false
+              hidden: false
+              description: "Provides permissions for maintainer group"
+              cluster_permissions:
+                - cluster_composite_ops
+                - cluster_monitor
+                - manage_snapshots
+              index_permissions:
+                - index_patterns:
+                    - '*'
+                  fls: []
+                  masked_fields: []
+                  allowed_actions:
+                    - unlimited
+              tenant_permissions: []
+            operator:
+              reserved: false
+              hidden: false
+              description: "Provides permissions for operator group"
+              cluster_permissions:
+                - cluster_composite_ops_ro
+              index_permissions:
+                - index_patterns:
+                    - '*'
+                  fls: []
+                  masked_fields: []
+                  allowed_actions:
+                    - unlimited
+              tenant_permissions: []
+          internal_users.yml: | 
+            ---
+            # This is the internal user database
+            # The hash value is a bcrypt hash and can be generated with plugin/tools/hash.sh
+
+            _meta:
+              type: "internalusers"
+              config_version: 2
+
+            admin:
+              hash: "$2y$12$gBwLqKf/AV1RMXnnrRBiS.pv.zHmTJMTh5twwAWJstTz33XL6S6C6"
+              reserved: true
+              backend_roles:
+                - "admin"
+              description: "admin user"
+
+            kibanaserver:
+              hash: "$2y$12$nByyNcqCUdh6G.OcDO9VZuT47XeVa8ziRUZjxaX9BtqbzBqSX7Jay"
+              reserved: true
+              description: "kibanaserver user"
+
+            punchlinesuser:
+              hash: "$2y$12$ztwO4A2GJYuj5XBet.a25uz5WIOshpIKmsbINdx2NSI5gOefo9jKy"
+              reserved: false
+              description: "user for punchlines authentication"
+          action_groups.yml: |
+            ---
+            _meta:
+              type: "actiongroups"
+              config_version: 2
+          tenants.yml: |
+            ---
+            _meta:
+              type: "tenants"
+              config_version: 2
+            ## Demo tenants
+            admin_tenant:
+              reserved: false
+              description: "Demo tenant for admin user"
+              
+          audit.yml: |
+            ---
+            _meta:
+              type: "audit"
+              config_version: 2
+            config:
+              enabled: true
+              audit:
+                enable_rest: true
+                disabled_rest_categories:
+                - "AUTHENTICATED"
+                - "GRANTED_PRIVILEGES"
+                enable_transport: true
+                disabled_transport_categories:
+                - "AUTHENTICATED"
+                - "GRANTED_PRIVILEGES"
+                ignore_users:
+                - "kibanaserver"
+                ignore_requests: []
+                resolve_bulk_requests: false
+                log_request_body: true
+                resolve_indices: true
+                exclude_sensitive_headers: true
+              compliance:
+                enabled: true
+                internal_config: true
+                external_config: false
+                read_metadata_only: true
+                read_watched_fields: {}
+                read_ignore_users:
+                - "kibanaserver"
+                write_metadata_only: true
+                write_log_diffs: false
+                write_watched_indices: []
+                write_ignore_users:
+                - "kibanaserver"
+          nodes_dn.yml: |
+            ---
+            _meta:
+              type: "nodesdn"
+              config_version: 2
+          whitelist.yml: |
+            ---
+            _meta:
+              type: "whitelist"
+              config_version: 2
+            config:
+              enabled: false
+              requests:
+                /_cluster/settings:
+                - "GET"
+                /_cat/nodes:
+                - "GET"
+    extraEnvs:
+    - name: opensearch_security_disabled
+      value: "false"
+    masterService: opensearch
+    nameOverride: opensearch
+    fullnameOverride: opensearch
+    resources:
+      limits:
+        cpu: 1
+        memory: 10G
+      requests:
+        cpu: 250m
+        memory: 4096Mi
+    extraInitContainers:
+    - command:
+      - sysctl
+      - -w
+      - vm.max_map_count=262144
+      image: library/busybox:1.34.1-glibc
+      name: init-sysctl
+      resources:
+        limits:
+          cpu: 1
+          memory: 32Mi
+        requests:
+          cpu: 10m
+          memory: 32Mi
+      securityContext:
+        allowPrivilegeEscalation: true
+        privileged: true
+        readOnlyRootFilesystem: true  
+        runAsUser: 0
+
+          
+opensearch-dashboards:
+  _install:
+    flags:
+      wait: true
+  _values:
+    image:
+      tag: 1.3.8
+    opensearchHosts: http://opensearch.doc-store:9200
+    config:
+      opensearch_dashboards.yml: |
+        ---
+        server.name: opensearch-dashboards-visualization
+        opensearch.requestTimeout: 360000
+        opensearch.ssl.verificationMode: none
+
+        # yamllint disable-line
+        opensearch_security.multitenancy.enabled: true
+        opensearch_security.multitenancy.tenants.preferred: ["Private", "Global"]
+        opensearch_security.multitenancy.tenants.enable_global: true
+        opensearch_security.multitenancy.tenants.enable_private: true
+
+        opensearch_security.readonly_mode.roles: ["kibana_read_only"]
+        opensearch_security.cookie.secure: false
+        opensearch.requestHeadersWhitelist: [authorization, securitytenant]
+        #opensearch_security.openid.verify_hostnames: false
+        #opensearch.username: kibanaserver
+        #opensearch.password: punch-kibanaserver
+
+        #opensearch.requestHeadersWhitelist: ["securitytenant","Authorization"]
+
+        opensearch_security.auth.type: basicauth
+
+        # The IdP metadata endpoint
+        #opensearch_security.openid.connect_url: "http://keycloak-http.authentication:80/auth/realms/kast/.well-known/openid-configuration"
+
+        #opensearch_security.openid.base_redirect_url: "https://opensearch-dashboards.livedemo/"
+        #opensearch_security.openid.logout_url: "https://auth.dev.punchplatform.com/auth/realms/kast/protocol/openid-connect/logout"
+        # The ID of the OpenID Connect client in your IdP
+        #opensearch_security.openid.client_id: "opensearch-dashboards"
+        # The client secret of the OpenID Connect client
+        #opensearch_security.openid.client_secret: "kget .visualization.keycloak-client.opendashboard-iam-client.clientSecret"
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      annotations: {}
+      hosts:
+        - host: opensearch-dashboards.punch
+          paths:
+            - path: /
+              backend:
+                serviceName: ""
+                servicePort: ""
+    opensearchAccount:
+      secret: "opensearch-dashboards-secrets"
+      keyPassphrase:
+        enabled: false
+    extraObjects:
+      - apiVersion: v1
+        kind: Secret
+        metadata:
+          name: opensearch-dashboards-secrets
+          namespace: visualization
+        type: Opaque
+        data:
+          username: "a2liYW5hc2VydmVyCg=="
+          password: "cHVuY2gta2liYW5hc2VydmVyCg=="
+          cookie:  "MzQ2MThkNTUzYzQ2MDFiNTMwYjM3MjQxNmUxOWY3ZGRmNzdjCg=="
+    
+prometheus: 
+  _install:
+    flags:
+      wait: true
+  _values:
+    alertmanager:
+      enabled: false
+    prometheus-node-exporter:
+      enabled: false
+    
+grafana: 
+  _install:
+    flags:
+      wait: true
+  _values:
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hosts:
+        - grafana.punch
+    adminUser: admin
+    adminPassword: admin
+
+strimzi-kafka-operator: 
+  _install: 
+    flags: 
+      wait: true 
+  _values:
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+# Watchout : BETA kast helm chart
+# No ingress because TLS is enabled by default
+kooker-kafka:
+  _install:
+    flags:
+      wait: true 
+  _values: 
+    kafka:
+      version: 3.0.0
+      resources:
+        requests:
+          cpu: 0
+          memory: 0
+      storage:
+        class: local-path
+    zk:
+      resources:
+        requests:
+          cpu: 0
+          memory: 0
+      storage:
+        class: local-path
+
+jupypunch:
+  _install:
+    flags:
+      wait: false
+  _values:
+    ingress:
+      enabled: true
+      className: "nginx"
+      url: jupypunch.punch
+      urlSparkUI: spark.punch
+    punch.artifacts.server.url: http://artifacts-server.artifacts-server:4245/
+    application:
+      image: ghcr.io/punchplatform/jupypunch:8.1-dev
+      resources: 
+        requests:
+          cpu: 0
+          memory: 0
+    s3ContentsManager:
+      enabled: false
+    s3:
+      access_key: minioadmin
+      secret_key: minioadmin
+      endpoint: http://minio.object-store:9000
+    elasticsearch:
+      http_hosts:
+        - host: opensearch.doc-store
+          port: 9200
+          scheme: http
+      security:
+        credentials:
+          username: kibanaserver
+          password: punch-kibanaserver
+    kafka:
+      kafka.bootstrap.servers: kooker-kafka-kafka-bootstrap.processing:9092
+
+kubernetes-dashboard:
+  _install:
+    flags:
+      wait: true
+  _values:
+    protocolHttp: true
+    service:
+      externalPort: 9090
+    serviceAccount:
+      create: true
+      name: kubernetes-dashboard
+    ingress:
+      enabled: true
+      className: "nginx"
+      hosts: 
+        - dashboard.punch
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+kooker-kubernetes-dashboard-rbac:
+  _install:
+    flags:
+      wait: true
+  _values:
+    clusterRoleName: cluster-admin
+    serviceAccountName: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+
+cert-manager: 
+  _install: 
+    flags: 
+      wait: true
+  _values:
+    installCRDs: true
+  
+punch-operator-crds: 
+  _install: 
+    flags: 
+      wait: true 
+
+punch-operator: 
+  _install: 
+    flags: 
+      wait: true 
+  _values:
+    kubernetes:
+      resources:
+        requests:
+          cpu: 0
+          memory: 0
+
+punch-board:
+  _install:
+    flags:
+      wait: true 
+  _values: 
+    image: ghcr.io/punchplatform/punch-board:8.1-dev
+    imagePullSecrets: [name: admin-secret]
+    ingress:
+      enabled: true
+      className: nginx
+      annotations: { }
+      hosts:
+        - host: board.punch
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls: [ ]
+    config:
+      punchArtifacts: 'http://artifacts-server.artifacts-server:4245'
+
+kooker-post-install: 
+  _install: 
+    flags: 
+      wait: true 
+  _values:
+    serviceAccount: admin-user
+    punchVersion: 8.1-dev
+    resourcesProviderUrl: http://artifacts-server.artifacts-server:4245
+    elasticsearch:
+      http_hosts:
+        - host: opensearch.doc-store
+          port: 9200
+      security:
+        credentials:
+          password: kibanaserver
+          username: punch-kibanaserver
+    minio:
+      endpoint: "http://minio.object-store:9000"
+      access_key: "minioadmin"
+      secret_key: "minioadmin"

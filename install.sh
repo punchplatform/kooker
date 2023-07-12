@@ -71,6 +71,7 @@ function install_kastctl() {
   fi
 
   #add helm repo
+  ${downloadsDir}/helm repo add opensearch https://opensearch-project.github.io/helm-charts/ --force-update
   ${downloadsDir}/helm repo add punch https://punchplatform.github.io/punch-helm/ --force-update
   ${downloadsDir}/helm repo add elastic https://helm.elastic.co --force-update
   ${downloadsDir}/helm repo add strimzi https://strimzi.io/charts/ --force-update
