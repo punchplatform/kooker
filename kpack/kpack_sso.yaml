@@ -214,11 +214,6 @@ punch-operator-crds:
     flags: 
       wait: true 
 
-ingress-nginx: 
-  _install: 
-    flags: 
-      wait: true  
-
 punch-operator: 
   _install: 
     flags: 
