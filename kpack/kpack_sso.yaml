@@ -168,9 +168,11 @@ artifacts-server:
         realm: master
         resource: artifacts-server
         credentials:
-          secret: 1j8dMhmmwnvzFBlzzSGpwNzweBtUA9JS # Fill with your client secret
+          secret: fB4MzWWXQPMCdKUsxSBlT9qX5fBzw3DN # Fill with your client secret
         use-resource-role-mappings: true
-        bearer-only: true
+        enable-basic-auth: true
+        bearer-only: false
+
 
 kubernetes-dashboard:
   _install:
@@ -237,6 +239,7 @@ punch-board:
       className: nginx
       annotations:  
         cert-manager.io/issuer: my-ca-issuer-board
+        nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
       tls:
         - hosts:
           - board.punch
@@ -254,7 +257,7 @@ punch-board:
           auth-server-url: http://keycloakx-http.authentication:80/ # Fill with your keycloak url
           resource: punch-board
           credentials:
-            secret: jt7mlYoqUreJ5lxI0RAnVP48phTj0O8h # Fill with your client secret
+            secret: B3KXQ6uyVqNxAnldcAObnb9HAq6XV6TD # Fill with your client secret
 
 
 kooker-post-install: 
