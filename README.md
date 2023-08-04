@@ -140,3 +140,39 @@ You should increase those minimal requirements based on your usage of Kooker.
 Update the kpack file conf/kpack.yaml to add a new component using a kast or a 
 custo helm chart
 
+## How-To
+
+### Load a development image
+
+Say you want to reload the artifact server image:
+```sh
+kooker --load-image ghcr.io/punchplatform/artifacts-server:8.1-dev
+```
+
+### Restart a pod
+
+Say you want to restart the artifact server pod. The preferred method is :
+```sh
+kubectl rollout restart deployment artifacts-server --namespace artifacts-server
+```
+
+Optionnally you can manually restart the pod. It will be restarted by K8:
+```sh
+kubectl delete pods artifacts-server-789f7655bd-lwqww --namespace artifacts-server
+```
+
+### Check You work with the expected image
+
+Check the sha256 signature of your image. 
+
+```sh
+kooker:[kooker]$ kubectl get pods --namespace=artifacts-server
+NAME                               READY   STATUS    RESTARTS   AGE
+artifacts-server-64b769944-jmhbl   1/1     Running   0          2m49s
+kooker:[kooker]$ kubectl get pod --namespace=artifacts-server artifacts-server-64b769944-jmhbl -o json | jq '.status.containerStatuses[] | { "image": .image, "imageID": .imageID }'
+{
+  "image": "ghcr.io/punchplatform/artifacts-server:8.1-dev",
+  "imageID": "sha256:66f345214703dfcb3204ec7114656f745dd76596a436d03e53bb136916cf4c11"
+}
+```
+kubectl get pod --namespace=artifacts-server artifacts-server-64b769944-jmhbl -o json | jq '.status.containerStatuses[] | { "image": .image, "imageID": .imageID }'

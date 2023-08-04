@@ -464,6 +464,7 @@ do
             exit 0
             ;;
         load-image|-load-image|--load-image)
+            shift
             loadImage "$@"
             exit 0
             ;;
