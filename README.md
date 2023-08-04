@@ -175,4 +175,3 @@ kooker:[kooker]$ kubectl get pod --namespace=artifacts-server artifacts-server-6
   "imageID": "sha256:66f345214703dfcb3204ec7114656f745dd76596a436d03e53bb136916cf4c11"
 }
 ```
-kubectl get pod --namespace=artifacts-server artifacts-server-64b769944-jmhbl -o json | jq '.status.containerStatuses[] | { "image": .image, "imageID": .imageID }'
