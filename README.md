@@ -1,27 +1,25 @@
-Table of Contents
-=================
+# Kooker
 
 * [Kooker](#kooker)
-   * [Kooker Essential Design](#kooker-essential-design)
-   * [Getting Started](#getting-started)
-   * [Custom Deployment](#custom-deployment)
-      * [Install a default platform](#install-a-default-platform)
-      * [Interactively Install What you Want](#interactively-install-what-you-want)
-      * [Define You Own Profile](#define-you-own-profile)
-      * [Registries configuration file](#registries-configuration-file)
-   * [Typical Kooker Users and Usages](#typical-kooker-users-and-usages)
-   * [Requirements](#requirements)
-      * [Hardware](#hardware)
-      * [Software](#software)
-   * [Contributing](#contributing)
-   * [How-To](#how-to)
+* [Kooker Essential Design](#kooker-essential-design)
+* [Getting Started](#getting-started)
+* [Custom Deployment](#custom-deployment)
+   * [Install a default platform](#install-a-default-platform)
+   * [Interactively Install What you Want](#interactively-install-what-you-want)
+   * [Define You Own Profile](#define-you-own-profile)
+   * [Registries configuration file](#registries-configuration-file)
+* [Typical Kooker Users and Usages](#typical-kooker-users-and-usages)
+* [Requirements](#requirements)
+   * [Hardware](#hardware)
+   * [Software](#software)
+* [Contributing](#contributing)
+* [How-Tos](#how-tos)
+   * [Develop using Kooker](#develop-using-kooker)
       * [Load a development image](#load-a-development-image)
-      * [Restart a pod](#restart-a-pod)
-      * [Check You work with the expected image](#check-you-work-with-the-expected-image)
+      * [Restart a component](#restart-a-component)
+      * [Check you work with the image you expect](#check-you-work-with-the-image-you-expect)
 
 <!-- Created by https://github.com/ekalinin/github-markdown-toc -->
-
-# Kooker
 
 **K**ooker with a **K** is derived from the word *Cooker*. Like a cooker is used for 
 making delicious recipes, Kooker cooks a (hopefully tasty) Punch recipe on top of K3D.
@@ -33,7 +31,7 @@ kubernetes applications in minutes on any laptop as long as you have docker inst
 Kooker is developed by the Punch Team with best-effort support and is not included officially 
 in Punch product. We encourage you to contribute.  
 
-## Kooker Essential Design
+# Kooker Essential Design
 
 Kooker first bootstraps a k3d cluster, and next installs a number of additional components, the
 ones you need. You can install any Kubernetes application as long as it is provided through helm
@@ -47,7 +45,7 @@ is to let you define your platform blueprint using a single simpler yaml file ca
 Kastctl is publicly available as a (macOS|linux|windows) application and will be automatically
 downloaded at startup time.
 
-## Getting Started
+# Getting Started
 
 First type in 
 ```sh
@@ -82,12 +80,11 @@ Once components are up, you can visit the various UI, for instance http://dashbo
 
 Note that using the default profile, all login password are set to punch (user) and punchplatform (password).
 
-
-## Custom Deployment
+# Custom Deployment
 
 You have three ways to work with kooker: 
 
-### Install a default platform
+## Install a default platform
 
 Simply type in 
 ```sh
@@ -96,7 +93,7 @@ kooker start
 That command installs all the components as specified in the kastctl [kpack/pack.yaml](./kpack/kpack.yaml)
 configuration file if the *kooker kpack* command has never been used. Have a look at it, it is easy to understand.
 
-### Interactively Install What you Want
+## Interactively Install What you Want
 
 Instead, you can type in: 
 ```sh
@@ -105,7 +102,7 @@ kooker --interactive start
 The same kpack.yaml file is used, but you will be prompted to install only the components that 
 you need from it. 
 
-### Define You Own Profile 
+## Define You Own Profile 
 
 You can define your own kpack.yaml file to include only the components you want. This requires
 a kastctl documentation guide that is planned soon. 
@@ -115,13 +112,13 @@ In order to use your kpack file run the following command:
 ```sh
 kooker kpack <kpack_file>
 ```
-### Registries configuration file
+## Registries configuration file
 
 You can add a *registries.yaml* file in the kooker directory containing images registries configuration.  Note that this file
 is only used during the cluster creation.
 
 
-## Typical Kooker Users and Usages 
+# Typical Kooker Users and Usages 
 
 Here are the Kooker users :
 
@@ -144,37 +141,40 @@ Non Thales user may only refer to their own or to public images and helm charts.
 As for Punch images and charts, they are publicly available from github repositories, hence usable by
 everyone. 
 
-## Requirements
+# Requirements
 
-### Hardware
+## Hardware
 - 4 vCPU
 - 4.5 Go RAM
 - 20 Go Disk (15Go are used by docker images)
 
 You should increase those minimal requirements based on your usage of Kooker.
 
-### Software
+## Software
 - docker
 - curl
 - bash
 
-## Contributing 
+# Contributing 
 
 Update the kpack file conf/kpack.yaml to add a new component using a kast or a 
 custo helm chart
 
-## How-To
+# How-Tos
+
+## Develop using Kooker
 
 ### Load a development image
 
-Say you want to reload the artifact server image:
+Say you want to reload the artifact server image you just regenerated from the sources.
+Use:
 ```sh
 kooker --load-image ghcr.io/punchplatform/artifacts-server:8.1-dev
 ```
 
-### Restart a pod
+### Restart a component
 
-Say you want to restart the artifact server pod. The preferred method is :
+Say you want to restart the artifact server pod. The preferred method is:
 ```sh
 kubectl rollout restart deployment artifacts-server --namespace artifacts-server
 ```
@@ -184,15 +184,25 @@ Optionnally you can manually restart the pod. It will be restarted by K8:
 kubectl delete pods artifacts-server-789f7655bd-lwqww --namespace artifacts-server
 ```
 
-### Check You work with the expected image
+### Check you work with the image you expect
 
-Check the sha256 signature of your image. 
+Ensure the sha256 signature of your image is what you expect. To do that
+get the target pod identifier: 
 
 ```sh
 kooker:[kooker]$ kubectl get pods --namespace=artifacts-server
+```
+which outputs:
+```sh
 NAME                               READY   STATUS    RESTARTS   AGE
 artifacts-server-64b769944-jmhbl   1/1     Running   0          2m49s
+```
+Then :
+```sh
 kooker:[kooker]$ kubectl get pod --namespace=artifacts-server artifacts-server-64b769944-jmhbl -o json | jq '.status.containerStatuses[] | { "image": .image, "imageID": .imageID }'
+```
+That produces something like
+```json
 {
   "image": "ghcr.io/punchplatform/artifacts-server:8.1-dev",
   "imageID": "sha256:66f345214703dfcb3204ec7114656f745dd76596a436d03e53bb136916cf4c11"
