@@ -1,6 +1,15 @@
 # Kooker
 
-* [Kooker](#kooker)
+**K**ooker with a **K** is derived from the word *Cooker*. Like a cooker is used for 
+making delicious recipes, Kooker cooks a (hopefully tasty) Punch recipe on top of K3D.
+
+In short: Kooker deploys a Kubernetes cluster together with services such as Kafka, 
+Elastic, Minio, Clickhouse.. using a tool called *kastctl* so that you can start 
+kubernetes applications in minutes on any laptop as long as you have docker installed.
+
+Kooker is developed by the Punch Team with best-effort support and is not included officially 
+in Punch product. We encourage you to contribute.  
+
 * [Kooker Essential Design](#kooker-essential-design)
 * [Getting Started](#getting-started)
 * [Custom Deployment](#custom-deployment)
@@ -20,16 +29,6 @@
       * [Check you work with the image you expect](#check-you-work-with-the-image-you-expect)
 
 <!-- Created by https://github.com/ekalinin/github-markdown-toc -->
-
-**K**ooker with a **K** is derived from the word *Cooker*. Like a cooker is used for 
-making delicious recipes, Kooker cooks a (hopefully tasty) Punch recipe on top of K3D.
-
-In short: Kooker deploys a Kubernetes cluster together with services such as Kafka, 
-Elastic, Minio, Clickhouse.. using a tool called *kastctl* so that you can start 
-kubernetes applications in minutes on any laptop as long as you have docker installed.
-
-Kooker is developed by the Punch Team with best-effort support and is not included officially 
-in Punch product. We encourage you to contribute.  
 
 # Kooker Essential Design
 
