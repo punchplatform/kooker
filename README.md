@@ -1,3 +1,26 @@
+Table of Contents
+=================
+
+* [Kooker](#kooker)
+   * [Kooker Essential Design](#kooker-essential-design)
+   * [Getting Started](#getting-started)
+   * [Custom Deployment](#custom-deployment)
+      * [Install a default platform](#install-a-default-platform)
+      * [Interactively Install What you Want](#interactively-install-what-you-want)
+      * [Define You Own Profile](#define-you-own-profile)
+      * [Registries configuration file](#registries-configuration-file)
+   * [Typical Kooker Users and Usages](#typical-kooker-users-and-usages)
+   * [Requirements](#requirements)
+      * [Hardware](#hardware)
+      * [Software](#software)
+   * [Contributing](#contributing)
+   * [How-To](#how-to)
+      * [Load a development image](#load-a-development-image)
+      * [Restart a pod](#restart-a-pod)
+      * [Check You work with the expected image](#check-you-work-with-the-expected-image)
+
+<!-- Created by https://github.com/ekalinin/github-markdown-toc -->
+
 # Kooker
 
 **K**ooker with a **K** is derived from the word *Cooker*. Like a cooker is used for 
