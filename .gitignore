@@ -4,6 +4,7 @@ charts/*
 !charts/kooker-kafka
 !charts/kooker-kubernetes-dashboard-rbac
 !charts/kooker-post-install
+!charts/kooker-spark
 activate.sh
 **/.vscode/**
 kubectl

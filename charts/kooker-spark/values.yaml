@@ -1,0 +1,15 @@
+---
+
+role_binding_name: spark
+service_account: spark
+role: spark
+service: spark
+
+spark_ui:
+  port: 4040
+
+blockmanager:
+  port: 7777
+
+driver:
+  port: 2222
