@@ -150,6 +150,7 @@ everyone.
 You should increase those minimal requirements based on your usage of Kooker.
 
 ## Software
+
 - docker
 - curl
 - bash
@@ -160,6 +161,20 @@ Update the kpack file conf/kpack.yaml to add a new component using a kast or a
 custo helm chart
 
 # How-Tos
+
+## Using Helm
+
+### List Helm charts for a component
+
+```sh
+helm list --namespace artifacts-server
+```
+
+### Get Helm values for a component
+
+```sh
+helm get values artifacts-server --namespace artifacts-server
+```
 
 ## Develop using Kooker
 

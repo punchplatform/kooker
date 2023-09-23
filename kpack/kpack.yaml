@@ -130,6 +130,21 @@ artifacts-server:
       url: artifacts-server.punch
       ingressClassName: "nginx"
     config:
+      server:
+        port: 4245
+        tomcat:
+          accesslog:
+            enabled: true
+            directory: /dev
+            prefix: stdout
+            buffered: false
+            suffix:
+            file-date-format:
+      logging:
+        level:
+          root: INFO
+          org.springframework.web: INFO
+          okhttp3: INFO
       application:
         tenant: "default"
       metadata: 
