@@ -110,11 +110,15 @@ minio:
       ingressClassName: "nginx"
       hosts:
         - minio.punch
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: 5g
     ingress: 
       enabled: true
       ingressClassName: "nginx"
       hosts:
         - minio-api.punch
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: 5g
     resources:
       requests:
         cpu: 0

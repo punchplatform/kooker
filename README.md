@@ -183,7 +183,7 @@ helm get values artifacts-server --namespace artifacts-server
 Say you want to reload the artifact server image you just regenerated from the sources.
 Use:
 ```sh
-kooker --load-image ghcr.io/punchplatform/artifacts-server:8.1-dev
+kooker load-image ghcr.io/punchplatform/artifacts-server:8.1-dev
 ```
 
 ### Restart a component
