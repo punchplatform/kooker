@@ -27,7 +27,7 @@ in Punch product. We encourage you to contribute.
       * [Load a development image](#load-a-development-image)
       * [Restart a component](#restart-a-component)
       * [Check you work with the image you expect](#check-you-work-with-the-image-you-expect)
-* [Troubleshooting](#Troubleshooting
+* [Troubleshooting](#Troubleshooting)
    * [punch operator does not install](#punch-operator-does-not-install)
 
 <!-- Created by https://github.com/ekalinin/github-markdown-toc -->
@@ -218,5 +218,5 @@ You have the following message:
 ```sh
 2:58PM ERR Error: UPGRADE FAILED: "punch-operator" has no deployed releases
 ```
-Try stopping the punch-operator then restart it< The root cause is caused by the CRDs not uninstalled every ti;e the operator is recreated.
+Try stopping the punch-operator then restart it. The problem is caused by the CRDs not uninstalled every time the operator is recreated.
 This makes start command fail, even if there is no new release of the punch-operator. 
