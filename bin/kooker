@@ -187,6 +187,7 @@ function installComponent() {
         KASTCTL_OPTS+=(--log-level ERROR)
   fi
   cmd="kastctl install --kpack-path ${KOOKER_KPACK_DIR} --kpack ${KOOKER_KPACK_NAME} --component=${component} --deployment-path ${KOOKER_CHARTS_DIR} ${KASTCTL_OPTS[@]}"
+  log "  ${gry}${cmd}"
   $cmd
   if [ "$?" != 0 ]; then
     red "✓ ${component} deployment failed"
