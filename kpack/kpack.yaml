@@ -51,11 +51,6 @@ components:
 - name: kooker-kafka
   namespace: processing
 
-# - name: jupypunch 
-#   namespace: jupypunch
-#   version: 8.1-dev
-#   repo: punch
-
 - name: cert-manager
   version: v1.11.0
   namespace: cert-manager
@@ -334,41 +329,6 @@ kooker-kafka:
           memory: 0
       storage:
         class: local-path
-
-# jupypunch:
-#   _install:
-#     flags:
-#       wait: false
-#   _values:
-#     ingress:
-#       enabled: true
-#       className: "nginx"
-#       url: jupypunch.punch
-#       urlSparkUI: spark.punch
-#     punch.artifacts.server.url: http://artifacts-server.artifacts-server:4245/
-#     application:
-#       image: ghcr.io/punchplatform/jupypunch:8.1-dev
-#       resources: 
-#         requests:
-#           cpu: 0
-#           memory: 0
-#     s3ContentsManager:
-#       enabled: false
-#     s3:
-#       access_key: minioadmin
-#       secret_key: minioadmin
-#       endpoint: http://minio.object-store:9000
-#     elasticsearch:
-#       http_hosts:
-#         - host: elasticsearch-master.doc-store
-#           port: 9200
-#           scheme: http
-#       security:
-#         credentials:
-#           username: elastic
-#           password: elastic
-#     kafka:
-#       kafka.bootstrap.servers: kooker-kafka-kafka-bootstrap.processing:9092
 
 kubernetes-dashboard:
   _install:
