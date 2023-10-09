@@ -113,11 +113,13 @@ jupyterhub:
   _install:
     flags:
       wait: false
+      timeout: 20m
   _values:
     singleuser:
       image:
         name: ghcr.io/punchplatform/jupypunch
         tag: 8.1-dev
+        pullPolicy: Always
       cmd: "/usr/local/bin/jupyterhub-singleuser"
       defaultUrl: /tree/
       networkPolicy:
