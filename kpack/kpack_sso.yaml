@@ -1,58 +1,58 @@
 components:
 
-- name: ingress-nginx
-  version: 4.6.0
-  namespace: ingress
-  repo: ingress-nginx
+  - name: ingress-nginx
+    version: 4.6.0
+    namespace: ingress
+    repo: ingress-nginx
 
-- name: kubernetes-dashboard
-  namespace: kubernetes-dashboard
-  version:  6.0.0
-  repo: kubernetes-dashboard
+  - name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+    version: 6.0.0
+    repo: kubernetes-dashboard
 
-- name: kooker-kubernetes-dashboard-rbac
-  namespace: kubernetes-dashboard 
+  - name: kooker-kubernetes-dashboard-rbac
+    namespace: kubernetes-dashboard
 
-- name: keycloakx
-  namespace: authentication
-  version: 2.1.1
-  repo: codecentric
+  - name: keycloakx
+    namespace: authentication
+    version: 2.1.1
+    repo: codecentric
 
-- name: minio
-  namespace: object-store
-  version: 5.0.7
-  repo: minio
+  - name: minio
+    namespace: object-store
+    version: 5.0.7
+    repo: minio
 
-- name: artifacts-server
-  namespace: artifacts-server
-  version: 8.1-dev
-  repo: punch
+  - name: artifacts-server
+    namespace: artifacts-server
+    version: 8.1-dev
+    repo: punch
 
-- name: cert-manager
-  version: v1.11.0
-  namespace: cert-manager
-  repo: jetstack
+  - name: cert-manager
+    version: v1.11.0
+    namespace: cert-manager
+    repo: jetstack
 
-- alias: punch-operator-crds
-  name: operator-crds
-  namespace: punchoperator-system
-  version: 8.1-dev 
-  repo: punch 
+  - alias: punch-operator-crds
+    name: operator-crds
+    namespace: punchoperator-system
+    version: 8.1-dev
+    repo: punch
 
-- alias: punch-operator
-  name: operator
-  namespace: punchoperator-system
-  version: 8.1-dev 
-  repo: punch 
+  - alias: punch-operator
+    name: operator
+    namespace: punchoperator-system
+    version: 8.1-dev
+    repo: punch
 
-- name: punch-board
-  namespace: punch-board
-  version: 8.1-dev
-  repo: punch
+  - name: punch-board
+    namespace: punch-board
+    version: 8.1-dev
+    repo: punch
 
-- name: kooker-post-install
-  namespace: default 
-  
+  - name: kooker-post-install
+    namespace: default
+
 global:
   pullPolicy: IfNotPresent
   storageClassName: local-path
@@ -61,28 +61,28 @@ global:
     enabled: false
   replicas: 1
 
-ingress-nginx: 
+ingress-nginx:
   _install:
     flags:
       wait: true
       wait-for-jobs: true
       #timeout: (default 5m0s)
-      
+
 keycloakx:
   _install:
     flags:
       wait: true
   _values:
     http:
-      relativePath: '/'        
-    ingress: 
+      relativePath: '/'
+    ingress:
       enabled: true
       ingressClassName: nginx
       rules:
-      - host: keycloak.punch
-        paths:
-          - path: '/'
-            pathType: Prefix  
+        - host: keycloak.punch
+          paths:
+            - path: '/'
+              pathType: Prefix
     command:
       - "/opt/keycloak/bin/kc.sh"
       - "start"
@@ -92,7 +92,7 @@ keycloakx:
       - "--hostname-strict-https=false"
       - "--hostname-admin-url=https://keycloak.punch:8443/"
       - "--hostname-url=https://keycloak.punch:8443/"
-      
+
     extraEnv: |
       - name: JAVA_OPTS_APPEND
         value: >-
@@ -106,7 +106,7 @@ keycloakx:
         value: admin
       - name: KEYCLOAK_FRONTEND_URL
         value: https://keycloak.punch:8443/
-      
+
 
 minio:
   _install:
@@ -122,7 +122,7 @@ minio:
       ingressClassName: ""
       hosts:
         - minio.punch
-    ingress: 
+    ingress:
       enabled: true
       ingressClassName: "nginx"
       hosts:
@@ -154,7 +154,7 @@ artifacts-server:
     config:
       application:
         tenant: "default"
-      metadata: 
+      metadata:
         minio:
           host: http://minio.object-store:9000
           access_key: minioadmin
@@ -190,7 +190,7 @@ kubernetes-dashboard:
     ingress:
       enabled: true
       className: "nginx"
-      hosts: 
+      hosts:
         - dashboard.punch
     resources:
       requests:
@@ -206,22 +206,22 @@ kooker-kubernetes-dashboard-rbac:
     serviceAccountName: kubernetes-dashboard
     namespace: kubernetes-dashboard
 
-cert-manager: 
-  _install: 
-    flags: 
+cert-manager:
+  _install:
+    flags:
       wait: true
   _values:
     installCRDs: true
-  
-punch-operator-crds: 
-  _install: 
-    flags: 
-      wait: true 
 
-punch-operator: 
-  _install: 
-    flags: 
-      wait: true 
+punch-operator-crds:
+  _install:
+    flags:
+      wait: true
+
+punch-operator:
+  _install:
+    flags:
+      wait: true
   _values:
     kubernetes:
       resources:
@@ -232,19 +232,19 @@ punch-operator:
 punch-board:
   _install:
     flags:
-      wait: true 
-  _values: 
+      wait: true
+  _values:
     image: ghcr.io/punchplatform/punch-board:8.1-dev
-    imagePullSecrets: [name: admin-secret]
+    imagePullSecrets: [ name: admin-secret ]
     ingress:
       enabled: true
       className: nginx
-      annotations:  
+      annotations:
         cert-manager.io/issuer: my-ca-issuer-board
         nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
       tls:
         - hosts:
-          - board.punch
+            - board.punch
           secretName: punch-board-tls
       hosts:
         - host: board.punch
@@ -262,10 +262,10 @@ punch-board:
             secret: B3KXQ6uyVqNxAnldcAObnb9HAq6XV6TD # Fill with your client secret
 
 
-kooker-post-install: 
-  _install: 
-    flags: 
-      wait: true 
+kooker-post-install:
+  _install:
+    flags:
+      wait: true
   _values:
     serviceAccount: admin-user
     punchVersion: 8.1-dev

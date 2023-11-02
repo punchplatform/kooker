@@ -1,86 +1,86 @@
 components:
 
-- name: ingress-nginx
-  version: 4.6.0
-  namespace: ingress
-  repo: ingress-nginx
+  - name: ingress-nginx
+    version: 4.6.0
+    namespace: ingress
+    repo: ingress-nginx
 
-- name: kubernetes-dashboard
-  namespace: kubernetes-dashboard
-  version:  6.0.0
-  repo: kubernetes-dashboard
+  - name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+    version: 6.0.0
+    repo: kubernetes-dashboard
 
-- name: kooker-kubernetes-dashboard-rbac
-  namespace: kubernetes-dashboard 
+  - name: kooker-kubernetes-dashboard-rbac
+    namespace: kubernetes-dashboard
 
-- name: minio
-  namespace: object-store
-  version: 5.0.7
-  repo: minio
+  - name: minio
+    namespace: object-store
+    version: 5.0.7
+    repo: minio
 
-- name: artifacts-server
-  namespace: artifacts-server
-  version: 8.1-dev
-  repo: punch
+  - name: artifacts-server
+    namespace: artifacts-server
+    version: 8.1-dev
+    repo: punch
 
-- name: opensearch
-  version: 1.2.5
-  namespace: doc-store
-  repo: opensearch
+  - name: opensearch
+    version: 1.2.5
+    namespace: doc-store
+    repo: opensearch
 
-- name: opensearch-dashboards
-  version: 2.9.0
-  namespace: visualization
-  repo: opensearch
+  - name: opensearch-dashboards
+    version: 2.9.0
+    namespace: visualization
+    repo: opensearch
 
-- name: prometheus
-  namespace: monitoring
-  version: 19.3.3
-  repo: prometheus-community
+  - name: prometheus
+    namespace: monitoring
+    version: 19.3.3
+    repo: prometheus-community
 
-- name: grafana
-  namespace: monitoring
-  version: 6.51.1
-  repo: grafana
+  - name: grafana
+    namespace: monitoring
+    version: 6.51.1
+    repo: grafana
 
-- name: strimzi-kafka-operator
-  namespace: processing
-  version: 0.29.0
-  repo: strimzi
+  - name: strimzi-kafka-operator
+    namespace: processing
+    version: 0.29.0
+    repo: strimzi
 
-- name: kooker-kafka
-  namespace: processing
+  - name: kooker-kafka
+    namespace: processing
 
-- name: jupypunch 
-  namespace: jupypunch
-  version: 8.1-dev
-  repo: punch
+  - name: jupypunch
+    namespace: jupypunch
+    version: 8.1-dev
+    repo: punch
 
-- name: cert-manager
-  version: v1.11.0
-  namespace: cert-manager
-  repo: jetstack
+  - name: cert-manager
+    version: v1.11.0
+    namespace: cert-manager
+    repo: jetstack
 
-- alias: punch-operator-crds
-  name: operator-crds
-  namespace: punchoperator-system
-  version: 8.1-dev 
-  repo: punch 
+  - alias: punch-operator-crds
+    name: operator-crds
+    namespace: punchoperator-system
+    version: 8.1-dev
+    repo: punch
 
-- alias: punch-operator
-  name: operator
-  namespace: punchoperator-system
-  version: 8.1-dev 
-  repo: punch 
+  - alias: punch-operator
+    name: operator
+    namespace: punchoperator-system
+    version: 8.1-dev
+    repo: punch
 
-- name: punch-board
-  namespace: punch-board
-  version: 8.1-dev
-  repo: punch
+  - name: punch-board
+    namespace: punch-board
+    version: 8.1-dev
+    repo: punch
 
-- name: kooker-post-install
-  namespace: default 
-  
+  - name: kooker-post-install
+    namespace: default
+
 global:
   pullPolicy: IfNotPresent
   storageClassName: local-path
@@ -88,7 +88,7 @@ global:
   sso:
     enabled: false
   replicas: 1
-    
+
 minio:
   _install:
     flags:
@@ -105,7 +105,7 @@ minio:
         - minio.punch
       annotations:
         nginx.ingress.kubernetes.io/proxy-body-size: 5g
-    ingress: 
+    ingress:
       enabled: true
       ingressClassName: "nginx"
       hosts:
@@ -129,7 +129,7 @@ artifacts-server:
     config:
       application:
         tenant: "default"
-      metadata: 
+      metadata:
         minio:
           host: http://minio.object-store:9000
           access_key: minioadmin
@@ -187,7 +187,7 @@ opensearch:
             enable_snapshot_restore_privilege: true
             check_snapshot_restore_write_privileges: true
             restapi:
-              roles_enabled: ["all_access", "security_rest_api_access"]
+              roles_enabled: [ "all_access", "security_rest_api_access" ]
             system_indices:
               enabled: true
               indices:
@@ -203,7 +203,7 @@ opensearch:
                   ".opendistro-notebooks",
                   ".opendistro-asynchronous-search-response*",
                 ]
-  
+
     securityConfig:
       config:
         data:
@@ -225,7 +225,7 @@ opensearch:
                       challenge: true
                     authentication_backend:
                       type: internal
-          roles_mapping.yml: | 
+          roles_mapping.yml: |
             ---
             # In this file users, backendroles and hosts can be mapped to OpenSearch Security roles.
             # # Permissions for OpenSearch roles are configured in roles.yml
@@ -292,7 +292,7 @@ opensearch:
               users: []
               and_backend_roles: []
               description: "Operator group role mapping"
-          roles.yml: | 
+          roles.yml: |
             ---
             _meta:
               type: "roles"
@@ -327,7 +327,7 @@ opensearch:
                   allowed_actions:
                     - unlimited
               tenant_permissions: []
-          internal_users.yml: | 
+          internal_users.yml: |
             ---
             # This is the internal user database
             # The hash value is a bcrypt hash and can be generated with plugin/tools/hash.sh
@@ -366,7 +366,7 @@ opensearch:
             admin_tenant:
               reserved: false
               description: "Demo tenant for admin user"
-              
+
           audit.yml: |
             ---
             _meta:
@@ -421,8 +421,8 @@ opensearch:
                 /_cat/nodes:
                 - "GET"
     extraEnvs:
-    - name: opensearch_security_disabled
-      value: "false"
+      - name: opensearch_security_disabled
+        value: "false"
     masterService: opensearch
     nameOverride: opensearch
     fullnameOverride: opensearch
@@ -434,26 +434,26 @@ opensearch:
         cpu: 250m
         memory: 4096Mi
     extraInitContainers:
-    - command:
-      - sysctl
-      - -w
-      - vm.max_map_count=262144
-      image: library/busybox:1.34.1-glibc
-      name: init-sysctl
-      resources:
-        limits:
-          cpu: 1
-          memory: 32Mi
-        requests:
-          cpu: 10m
-          memory: 32Mi
-      securityContext:
-        allowPrivilegeEscalation: true
-        privileged: true
-        readOnlyRootFilesystem: true  
-        runAsUser: 0
+      - command:
+          - sysctl
+          - -w
+          - vm.max_map_count=262144
+        image: library/busybox:1.34.1-glibc
+        name: init-sysctl
+        resources:
+          limits:
+            cpu: 1
+            memory: 32Mi
+          requests:
+            cpu: 10m
+            memory: 32Mi
+        securityContext:
+          allowPrivilegeEscalation: true
+          privileged: true
+          readOnlyRootFilesystem: true
+          runAsUser: 0
 
-          
+
 opensearch-dashboards:
   _install:
     flags:
@@ -498,7 +498,7 @@ opensearch-dashboards:
     ingress:
       enabled: true
       ingressClassName: nginx
-      annotations: {}
+      annotations: { }
       hosts:
         - host: opensearch-dashboards.punch
           paths:
@@ -520,9 +520,9 @@ opensearch-dashboards:
         data:
           username: "a2liYW5hc2VydmVyCg=="
           password: "cHVuY2gta2liYW5hc2VydmVyCg=="
-          cookie:  "MzQ2MThkNTUzYzQ2MDFiNTMwYjM3MjQxNmUxOWY3ZGRmNzdjCg=="
-    
-prometheus: 
+          cookie: "MzQ2MThkNTUzYzQ2MDFiNTMwYjM3MjQxNmUxOWY3ZGRmNzdjCg=="
+
+prometheus:
   _install:
     flags:
       wait: true
@@ -531,8 +531,8 @@ prometheus:
       enabled: false
     prometheus-node-exporter:
       enabled: false
-    
-grafana: 
+
+grafana:
   _install:
     flags:
       wait: true
@@ -545,10 +545,10 @@ grafana:
     adminUser: admin
     adminPassword: admin
 
-strimzi-kafka-operator: 
-  _install: 
-    flags: 
-      wait: true 
+strimzi-kafka-operator:
+  _install:
+    flags:
+      wait: true
   _values:
     resources:
       requests:
@@ -560,8 +560,8 @@ strimzi-kafka-operator:
 kooker-kafka:
   _install:
     flags:
-      wait: true 
-  _values: 
+      wait: true
+  _values:
     kafka:
       version: 3.0.0
       resources:
@@ -591,7 +591,7 @@ jupypunch:
     punch.artifacts.server.url: http://artifacts-server.artifacts-server:4245/
     application:
       image: ghcr.io/punchplatform/jupypunch:8.1-dev
-      resources: 
+      resources:
         requests:
           cpu: 0
           memory: 0
@@ -627,7 +627,7 @@ kubernetes-dashboard:
     ingress:
       enabled: true
       className: "nginx"
-      hosts: 
+      hosts:
         - dashboard.punch
     resources:
       requests:
@@ -643,22 +643,22 @@ kooker-kubernetes-dashboard-rbac:
     serviceAccountName: kubernetes-dashboard
     namespace: kubernetes-dashboard
 
-cert-manager: 
-  _install: 
-    flags: 
+cert-manager:
+  _install:
+    flags:
       wait: true
   _values:
     installCRDs: true
-  
-punch-operator-crds: 
-  _install: 
-    flags: 
-      wait: true 
 
-punch-operator: 
-  _install: 
-    flags: 
-      wait: true 
+punch-operator-crds:
+  _install:
+    flags:
+      wait: true
+
+punch-operator:
+  _install:
+    flags:
+      wait: true
   _values:
     kubernetes:
       resources:
@@ -669,10 +669,10 @@ punch-operator:
 punch-board:
   _install:
     flags:
-      wait: true 
-  _values: 
+      wait: true
+  _values:
     image: ghcr.io/punchplatform/punch-board:8.1-dev
-    imagePullSecrets: [name: admin-secret]
+    imagePullSecrets: [ name: admin-secret ]
     ingress:
       enabled: true
       className: nginx
@@ -686,10 +686,10 @@ punch-board:
     config:
       punchArtifacts: 'http://artifacts-server.artifacts-server:4245'
 
-kooker-post-install: 
-  _install: 
-    flags: 
-      wait: true 
+kooker-post-install:
+  _install:
+    flags:
+      wait: true
   _values:
     serviceAccount: admin-user
     punchVersion: 8.1-dev
