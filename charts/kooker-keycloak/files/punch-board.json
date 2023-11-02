@@ -1,0 +1,54 @@
+{
+  "clients": [
+    {
+      "clientId": "punch-board",
+      "publicClient": false,
+      "protocolMappers": [
+        {
+          "name": "serviceAccount",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "userinfo.token.claim": "false",
+            "user.attribute": "serviceAccount",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "serviceAccount"
+          }
+        }
+      ],
+      "secret": "A3KXQ6uyVqNxAnldcAObnb9HAq6XV6TD"
+    }
+  ],
+  "roles": {
+    "client": {
+      "punch-board": [
+        {
+          "name": "viewer"
+        },
+        {
+          "name": "editor",
+          "composite": true,
+          "composites": {
+            "client": {
+              "punch-board": [
+                "viewer"
+              ]
+            }
+          }
+        },
+        {
+          "name": "admin",
+          "composite": true,
+          "composites": {
+            "client": {
+              "punch-board": [
+                "editor"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

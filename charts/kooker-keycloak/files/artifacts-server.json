@@ -1,0 +1,40 @@
+{
+  "clients": [
+    {
+      "clientId": "artifacts-server",
+      "publicClient": false,
+      "directAccessGrantsEnabled": true
+    }
+  ],
+  "roles": {
+    "client": {
+      "artifacts-server": [
+        {
+          "name": "viewer"
+        },
+        {
+          "name": "editor",
+          "composite": true,
+          "composites": {
+            "client": {
+              "artifacts-server": [
+                "viewer"
+              ]
+            }
+          }
+        },
+        {
+          "name": "admin",
+          "composite": true,
+          "composites": {
+            "client": {
+              "artifacts-server": [
+                "editor"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

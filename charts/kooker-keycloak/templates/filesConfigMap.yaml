@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: clients
+  labels:
+    app: clients
+data:
+{{- if .Values.punchBoardClient }}
+  punch-board.json: |-
+{{ .Files.Get "files/punch-board.json" | indent 4 }}
+{{- end }}
+{{ if .Values.artifactsServerClient }}
+  artifacts-server.json: |-
+{{ .Files.Get "files/artifacts-server.json" | indent 4 }}
+{{- end }}
+{{ if .Values.basicUsers }}
+  basic-users.json: |-
+{{ .Files.Get "files/basic-users.json" | indent 4 }}
+{{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scripts
+  labels:
+    app: scripts
+data:
+  functions.sh: |-
+{{ tpl (.Files.Get "scripts/functions.sh") . | indent 4 }}
+  configure.sh: |-
+{{ tpl (.Files.Get "scripts/configure.sh") . | indent 4 }}

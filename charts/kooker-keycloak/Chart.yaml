@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: Helm chart to configure deployed Keycloak
+type: application
+version: 1.0.0
+name: kooker-keycloak

@@ -2,6 +2,7 @@
 downloads
 charts/*
 !charts/kooker-kafka
+!charts/kooker-keycloak
 !charts/kooker-kubernetes-dashboard-rbac
 !charts/kooker-post-install
 !charts/kooker-spark
