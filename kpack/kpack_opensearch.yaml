@@ -100,14 +100,14 @@ minio:
     rootPassword: minioadmin
     consoleIngress:
       enabled: true
-      ingressClassName: "nginx"
+      ingressClassName: nginx
       hosts:
         - minio.punch
       annotations:
         nginx.ingress.kubernetes.io/proxy-body-size: 5g
     ingress:
       enabled: true
-      ingressClassName: "nginx"
+      ingressClassName: nginx
       hosts:
         - minio-api.punch
       annotations:
@@ -125,10 +125,10 @@ artifacts-server:
     # Set ingress class name to default k3d one (traefik), same url than kast pattern
     ingress:
       url: artifacts-server.punch
-      ingressClassName: "nginx"
+      ingressClassName: nginx
     config:
       application:
-        tenant: "default"
+        tenant: default
       metadata:
         minio:
           host: http://minio.object-store:9000
@@ -585,7 +585,7 @@ jupypunch:
   _values:
     ingress:
       enabled: true
-      className: "nginx"
+      className: nginx
       url: jupypunch.punch
       urlSparkUI: spark.punch
     punch.artifacts.server.url: http://artifacts-server.artifacts-server:4245/
@@ -626,7 +626,7 @@ kubernetes-dashboard:
       name: kubernetes-dashboard
     ingress:
       enabled: true
-      className: "nginx"
+      className: nginx
       hosts:
         - dashboard.punch
     resources:
@@ -704,5 +704,5 @@ kooker-post-install:
           username: punch-kibanaserver
     minio:
       endpoint: "http://minio.object-store:9000"
-      access_key: "minioadmin"
-      secret_key: "minioadmin"
+      access_key: minioadmin
+      secret_key: minioadmin

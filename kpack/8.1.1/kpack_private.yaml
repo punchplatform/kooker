@@ -103,7 +103,7 @@ artifacts-server:
       ingressClassName: ""
     config:
       application:
-        tenant: "default"
+        tenant: default
       metadata:
         minio:
           host: http://minio.object-store:9000
@@ -303,5 +303,5 @@ kooker-post-install:
           username: elastic
     minio:
       endpoint: "http://minio.object-store:9000"
-      access_key: "punch"
-      secret_key: "punchplatform"
+      access_key: punch
+      secret_key: punchplatform
