@@ -119,9 +119,11 @@ minio:
     rootPassword: minioadmin
     consoleIngress:
       enabled: true
-      ingressClassName: ""
+      ingressClassName: nginx
       hosts:
         - minio.punch
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: 5g
     ingress:
       enabled: true
       ingressClassName: nginx
@@ -143,8 +145,6 @@ artifacts-server:
     ingress:
       url: artifacts-server.punch
       ingressClassName: nginx
-      # -- enable an ingress
-      enabled: true
       # -- ingress url
       tls: true
       certManagement: cert-manager
@@ -241,7 +241,6 @@ punch-board:
       className: nginx
       annotations:
         cert-manager.io/issuer: my-ca-issuer-board
-        nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
       tls:
         - hosts:
             - board.punch
