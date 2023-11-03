@@ -1,70 +1,70 @@
 components:
-- name: kubernetes-dashboard
-  namespace: kubernetes-dashboard
-  version:  6.0.0
-  repo: kubernetes-dashboard
+  - name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+    version: 6.0.0
+    repo: kubernetes-dashboard
 
-- name: kooker-kubernetes-dashboard-rbac
-  namespace: kubernetes-dashboard 
+  - name: kooker-kubernetes-dashboard-rbac
+    namespace: kubernetes-dashboard
 
-- name: minio
-  namespace: object-store
-  version: 5.0.7
-  repo: minio
+  - name: minio
+    namespace: object-store
+    version: 5.0.7
+    repo: minio
 
-- name: artifacts-server
-  namespace: artifacts-server
-  version: 8.1.1
-  repo: punch
+  - name: artifacts-server
+    namespace: artifacts-server
+    version: 8.1.1
+    repo: punch
 
-- name: elasticsearch 
-  namespace: doc-store
-  version: 8.5.1
-  repo: elastic
+  - name: elasticsearch
+    namespace: doc-store
+    version: 8.5.1
+    repo: elastic
 
-- name: kibana 
-  namespace: visualization
-  version: 7.17.3
-  repo: elastic
+  - name: kibana
+    namespace: visualization
+    version: 7.17.3
+    repo: elastic
 
-- name: strimzi-kafka-operator
-  namespace: processing
-  version: 0.29.0
-  repo: strimzi
+  - name: strimzi-kafka-operator
+    namespace: processing
+    version: 0.29.0
+    repo: strimzi
 
-- name: kooker-kafka
-  namespace: processing
+  - name: kooker-kafka
+    namespace: processing
 
-- name: jupypunch 
-  namespace: jupypunch
-  version: 8.1.1
-  repo: punch
+  - name: jupypunch
+    namespace: jupypunch
+    version: 8.1.1
+    repo: punch
 
-- name: cert-manager
-  version: v1.11.0
-  namespace: cert-manager
-  repo: jetstack
+  - name: cert-manager
+    version: v1.11.0
+    namespace: cert-manager
+    repo: jetstack
 
-- alias: punch-operator-crds
-  name: operator-crds
-  namespace: punchoperator-system
-  version: 8.1.1 
-  repo: punch 
+  - alias: punch-operator-crds
+    name: operator-crds
+    namespace: punchoperator-system
+    version: 8.1.1
+    repo: punch
 
-- alias: punch-operator
-  name: operator
-  namespace: punchoperator-system
-  version: 8.1.1 
-  repo: punch 
+  - alias: punch-operator
+    name: operator
+    namespace: punchoperator-system
+    version: 8.1.1
+    repo: punch
 
-- name: punch-board
-  namespace: punch-board
-  version: 8.1.1
-  repo: punch
+  - name: punch-board
+    namespace: punch-board
+    version: 8.1.1
+    repo: punch
 
-- name: kooker-post-install
-  namespace: default 
-  
+  - name: kooker-post-install
+    namespace: default
+
 global:
   pullPolicy: IfNotPresent
   storageClassName: local-path
@@ -72,7 +72,7 @@ global:
   sso:
     enabled: false
   replicas: 1
-    
+
 minio:
   _install:
     flags:
@@ -87,7 +87,7 @@ minio:
       ingressClassName: ""
       hosts:
         - minio.punch
-    ingress: 
+    ingress:
       enabled: true
       ingressClassName: ""
       hosts:
@@ -109,7 +109,7 @@ artifacts-server:
     config:
       application:
         tenant: "default"
-      metadata: 
+      metadata:
         minio:
           host: http://minio.object-store:9000
           access_key: minioadmin
@@ -127,8 +127,8 @@ artifacts-server:
 elasticsearch:
   _install:
     flags:
-      wait: true 
-  _values: 
+      wait: true
+  _values:
     replicas: 1
     esMajorVersion: 7
     imageTag: 7.10.2
@@ -147,7 +147,7 @@ elasticsearch:
         cpu: 0
         memory: 0
 
-kibana: 
+kibana:
   _install:
     flags:
       wait: true
@@ -168,10 +168,10 @@ kibana:
         cpu: 0
         memory: 0
 
-strimzi-kafka-operator: 
-  _install: 
-    flags: 
-      wait: true 
+strimzi-kafka-operator:
+  _install:
+    flags:
+      wait: true
   _values:
     resources:
       requests:
@@ -183,8 +183,8 @@ strimzi-kafka-operator:
 kooker-kafka:
   _install:
     flags:
-      wait: true 
-  _values: 
+      wait: true
+  _values:
     kafka:
       version: 3.0.0
       resources:
@@ -214,7 +214,7 @@ jupypunch:
     punch.artifacts.server.url: http://artifacts-server.artifacts-server:4245/
     application:
       image: ghcr.io/punchplatform/jupypunch:8.1.1
-      resources: 
+      resources:
         requests:
           cpu: 0
           memory: 0
@@ -250,7 +250,7 @@ kubernetes-dashboard:
     ingress:
       enabled: true
       className: ""
-      hosts: 
+      hosts:
         - dashboard.punch
     resources:
       requests:
@@ -266,22 +266,22 @@ kooker-kubernetes-dashboard-rbac:
     serviceAccountName: kubernetes-dashboard
     namespace: kubernetes-dashboard
 
-cert-manager: 
-  _install: 
-    flags: 
+cert-manager:
+  _install:
+    flags:
       wait: true
   _values:
     installCRDs: true
-  
-punch-operator-crds: 
-  _install: 
-    flags: 
-      wait: true 
 
-punch-operator: 
-  _install: 
-    flags: 
-      wait: true 
+punch-operator-crds:
+  _install:
+    flags:
+      wait: true
+
+punch-operator:
+  _install:
+    flags:
+      wait: true
   _values:
     kubernetes:
       resources:
@@ -292,10 +292,10 @@ punch-operator:
 punch-board:
   _install:
     flags:
-      wait: true 
-  _values: 
+      wait: true
+  _values:
     image: ghcr.io/punchplatform/punch-board:8.1.1
-    imagePullSecrets: [name: admin-secret]
+    imagePullSecrets: [ name: admin-secret ]
     ingress:
       enabled: true
       className: null
@@ -309,10 +309,10 @@ punch-board:
     config:
       punchArtifacts: 'http://artifacts-server.artifacts-server:4245'
 
-kooker-post-install: 
-  _install: 
-    flags: 
-      wait: true 
+kooker-post-install:
+  _install:
+    flags:
+      wait: true
   _values:
     serviceAccount: admin-user
     punchVersion: 8.1.1

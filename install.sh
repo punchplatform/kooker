@@ -82,7 +82,7 @@ function install_kastctl() {
   ${downloadsDir}/helm repo add grafana https://grafana.github.io/helm-charts --force-update
   ${downloadsDir}/helm repo add codecentric https://codecentric.github.io/helm-charts --force-update
   ${downloadsDir}/helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx --force-update
-
+  ${downloadsDir}/helm repo add jupyterhub https://hub.jupyter.org/helm-chart --force-update
   green "✔ Kastctl and his prerequisites has been installed."
 }
 
