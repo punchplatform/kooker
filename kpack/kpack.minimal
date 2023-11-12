@@ -1,0 +1,224 @@
+components:
+
+  - name: ingress-nginx
+    version: 4.6.0
+    namespace: ingress
+    repo: ingress-nginx
+
+  - name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+    version: 6.0.0
+    repo: kubernetes-dashboard
+
+  - name: kooker-kubernetes-dashboard-rbac
+    namespace: kubernetes-dashboard
+
+  - name: minio
+    namespace: object-store
+    version: 5.0.7
+    repo: minio
+
+  - name: artifacts-server
+    namespace: artifacts-server
+    version: 8.1-dev
+    repo: punch
+
+  - name: cert-manager
+    version: v1.11.0
+    namespace: cert-manager
+    repo: jetstack
+
+  - alias: punch-operator-crds
+    name: operator-crds
+    namespace: punchoperator-system
+    version: 8.1-dev
+    repo: punch
+
+  - alias: punch-operator
+    name: operator
+    namespace: punchoperator-system
+    version: 8.1-dev
+    repo: punch
+
+  - name: punch-board
+    namespace: punch-board
+    version: 8.1-dev
+    repo: punch
+
+  - name: kooker-post-install
+    namespace: default
+
+global:
+  pullPolicy: IfNotPresent
+  storageClassName: local-path
+  domain: punch
+  sso:
+    enabled: false
+  replicas: 1
+
+ingress-nginx:
+  _install:
+    flags:
+      wait: true
+      wait-for-jobs: true
+      #timeout: (default 5m0s)
+
+minio:
+  _install:
+    flags:
+      wait: true
+  _values:
+    replicas: 1
+    mode: standalone
+    rootUser: minioadmin
+    rootPassword: minioadmin
+    consoleIngress:
+      enabled: true
+      ingressClassName: "nginx"
+      hosts:
+        - minio.punch
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: 5g
+    ingress:
+      enabled: true
+      ingressClassName: "nginx"
+      hosts:
+        - minio-api.punch
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: 5g
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+artifacts-server:
+  _install:
+    flags:
+      wait: true
+  _values:
+    # Set ingress class name to default k3d one (traefik), same url than kast pattern
+    ingress:
+      url: artifacts-server.punch
+      ingressClassName: "nginx"
+    config:
+      server:
+        port: 4245
+        tomcat:
+          accesslog:
+            enabled: true
+            directory: /dev
+            prefix: stdout
+            buffered: false
+            suffix:
+            file-date-format:
+      logging:
+        level:
+          root: INFO
+          org.springframework.web: INFO
+          okhttp3: INFO
+      application:
+        tenant: "default"
+      metadata:
+        minio:
+          host: http://minio.object-store:9000
+          access_key: minioadmin
+          secret_key: minioadmin
+      data:
+        minio:
+          host: http://minio.object-store:9000
+          access_key: minioadmin
+          secret_key: minioadmin
+
+kubernetes-dashboard:
+  _install:
+    flags:
+      wait: true
+  _values:
+    protocolHttp: true
+    service:
+      externalPort: 9090
+    serviceAccount:
+      create: true
+      name: kubernetes-dashboard
+    ingress:
+      enabled: true
+      className: "nginx"
+      hosts:
+        - dashboard.punch
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+kooker-kubernetes-dashboard-rbac:
+  _install:
+    flags:
+      wait: true
+  _values:
+    clusterRoleName: cluster-admin
+    serviceAccountName: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+
+cert-manager:
+  _install:
+    flags:
+      wait: true
+  _values:
+    installCRDs: true
+
+punch-operator-crds:
+  _install:
+    flags:
+      wait: true
+
+punch-operator:
+  _install:
+    flags:
+      wait: true
+  _values:
+    kubernetes:
+      resources:
+        requests:
+          cpu: 0
+          memory: 0
+
+punch-board:
+  _install:
+    flags:
+      wait: true
+  _values:
+    image: ghcr.io/punchplatform/punch-board:8.1-dev
+    imagePullSecrets: [ name: admin-secret ]
+    ingress:
+      enabled: true
+      className: nginx
+      annotations: { }
+      hosts:
+        - host: board.punch
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls: [ ]
+    config:
+      punchArtifacts: 'http://artifacts-server.artifacts-server:4245'
+
+kooker-post-install:
+  _install:
+    flags:
+      wait: true
+  _values:
+    serviceAccount: admin-user
+    punchVersion: 8.1-dev
+    resourcesProviderUrl: http://artifacts-server.artifacts-server:4245
+    elasticsearch:
+      http_hosts:
+        - host: elasticsearch-master.doc-store
+          port: 9200
+      security:
+        credentials:
+          password: elastic
+          username: elastic
+    minio:
+      endpoint: "http://minio.object-store:9000"
+      access_key: "minioadmin"
+      secret_key: "minioadmin"

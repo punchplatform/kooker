@@ -113,6 +113,8 @@ In order to use your kpack file run the following command:
 ```sh
 kooker kpack <kpack_file>
 ```
+The kpack file you selected will then be used for the next installation. 
+
 ## Registries configuration file
 
 You can add a *registries.yaml* file in the kooker directory containing images registries configuration.  Note that this file

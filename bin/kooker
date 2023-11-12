@@ -250,12 +250,14 @@ function createCluster() {
           --k3s-arg "--no-deploy=traefik@server:*" \
           -p "8080:80@loadbalancer" \
           -p "8443:443@loadbalancer" \
+          -p "8090:8090@loadbalancer" \
           --api-port "6443"
       else
         k3d cluster create ${KOOKER_CLUSTER_NAME} $(getProxyEnv) \
           --k3s-arg "--no-deploy=traefik@server:*" \
           -p "8080:80@loadbalancer" \
           -p "8443:443@loadbalancer" \
+          -p "8090:8090@loadbalancer" \
           --api-port "6443"
       fi
       if [ ! $? == 0 ]; then
