@@ -1,0 +1,56 @@
+[
+  {
+    "username": "admin",
+    "enabled": true,
+    "credentials": [
+      {
+        "type": "password",
+        "value": "admin"
+      }
+    ],
+    "clientRoles": {
+      "punch-board": [
+        "admin"
+      ],
+      "artifacts-server": [
+        "admin"
+      ]
+    }
+  },
+  {
+    "username": "editor",
+    "enabled": true,
+    "credentials": [
+      {
+        "type": "password",
+        "value": "editor"
+      }
+    ],
+    "clientRoles": {
+      "punch-board": [
+        "editor"
+      ],
+      "artifacts-server": [
+        "editor"
+      ]
+    }
+  },
+  {
+    "username": "viewer",
+    "enabled": true,
+    "credentials": [
+      {
+        "type": "password",
+        "value": "viewer"
+      }
+    ],
+    "clientRoles": {
+      "punch-board": [
+        "viewer"
+      ],
+      "artifacts-server": [
+        "viewer"
+      ]
+    }
+  }
+]

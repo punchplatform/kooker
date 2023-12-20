@@ -137,24 +137,11 @@ function _bashComplete() {
 
 
 function startComponents() {
-  if [ "${1:-}" == "all" ] ; then
-    INSTALL_ALL_FROM_KPACK=1
-    shift
-  else
-    INSTALL_ALL_FROM_KPACK=0
-  fi
-
-  # Creation of component list (if nothing was installed previously = first install)
-
-  if [ ! -n "$(find ${KOOKER_DOWNLOADS_DIR}/ -name '.installed*' | head -1)" ] && [ ${INSTALL_ALL_FROM_KPACK} -eq 0 ]; then
-    for component in `yq -r '.components[] | .alias // .name' ${KOOKER_KPACK}`; do
-      componentToInstall ${component}
-    done
-  fi 
   for component in `yq -r '.components[] | .alias // .name' ${KOOKER_KPACK}`; do
-      if [ -f "${KOOKER_DOWNLOADS_DIR}/.installed-${component}" ]; then
-        installComponent ${component} "$@"
-      fi
+    if [ ! -f "${KOOKER_DOWNLOADS_DIR}/.installed-${component}" ]; then
+      componentToInstall ${component}
+    fi
+    installComponent ${component} "$@"
   done
 }
 

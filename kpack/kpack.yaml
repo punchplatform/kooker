@@ -163,7 +163,7 @@ jupyterhub:
       enabled: true
       annotations:
         nginx.ingress.kubernetes.io/proxy-body-size: 5g
-      ingressClassName: "nginx"
+      ingressClassName: nginx
       hosts:
         - jupyterhub.punch
       pathSuffix:
@@ -188,14 +188,14 @@ minio:
     rootPassword: minioadmin
     consoleIngress:
       enabled: true
-      ingressClassName: "nginx"
+      ingressClassName: nginx
       hosts:
         - minio.punch
       annotations:
         nginx.ingress.kubernetes.io/proxy-body-size: 5g
     ingress:
       enabled: true
-      ingressClassName: "nginx"
+      ingressClassName: nginx
       hosts:
         - minio-api.punch
       annotations:
@@ -213,7 +213,7 @@ artifacts-server:
     # Set ingress class name to default k3d one (traefik), same url than kast pattern
     ingress:
       url: artifacts-server.punch
-      ingressClassName: "nginx"
+      ingressClassName: nginx
     config:
       server:
         port: 4245
@@ -231,7 +231,7 @@ artifacts-server:
           org.springframework.web: INFO
           okhttp3: INFO
       application:
-        tenant: "default"
+        tenant: default
       metadata:
         minio:
           host: http://minio.object-store:9000
@@ -260,7 +260,7 @@ elasticsearch:
     clusterHealthCheckParams: ""
     ingress:
       enabled: true
-      className: "nginx"
+      className: nginx
       hosts:
         - host: elasticsearch-master.punch
           paths:
@@ -281,7 +281,7 @@ kibana:
     elasticsearchHosts: "http://elasticsearch-master.doc-store:9200"
     ingress:
       enabled: true
-      className: "nginx"
+      className: nginx
       hosts:
         - host: kibana.punch
           paths:
@@ -360,7 +360,7 @@ kubernetes-dashboard:
       name: kubernetes-dashboard
     ingress:
       enabled: true
-      className: "nginx"
+      className: nginx
       hosts:
         - dashboard.punch
     resources:
@@ -438,5 +438,5 @@ kooker-post-install:
           username: elastic
     minio:
       endpoint: "http://minio.object-store:9000"
-      access_key: "minioadmin"
-      secret_key: "minioadmin"
+      access_key: minioadmin
+      secret_key: minioadmin

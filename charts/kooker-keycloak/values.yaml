@@ -1,0 +1,13 @@
+---
+# Keycloak server
+keycloak:
+  version: 20.0.3
+  server: http://keycloakx-http.authentication:80/
+  realm: master
+  user: admin
+  password: admin
+
+# Actions to perform on Keycloak
+punchBoardClient: true
+artifactsServerClient: true
+basicUsers: true
