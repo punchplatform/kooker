@@ -17,6 +17,8 @@ This chart configure a Keycloak server with clients and users.
 | artifactsServerClient | bool   | `true`                                       | whether to create the artifacts-server client                    |
 | basicUsers            | bool   | `true`                                       | whether to create the basic users                                |
 | extraUsers            | list   | `[]`                                         | extra users to create. See [below](#Users)                       |
+| clientsSecrets        | list   | `[]`                                         | clients secrets. See [below](#SecretsAndUris)                    |
+| clientsRedirectUris   | list   | `[]`                                         | clients redirect uris. See [below](#SecretsAndUris)              |
 
 ### Clients
 
@@ -51,6 +53,49 @@ users:
 
 Basic users can be created by setting the `basicUsers` value to `true`. They are basically a user for each role, which
 are "admin", "editor" and "viewer". Username and Password are the same as the role.
+
+### Secrets and Uris
+
+Each clients have a secret and a redirect uri. These have to be set in the `clientsSecrets` and `clientsRedirectUris`.
+The reason being, they are closely related to the punch-board and artifacts-server values.
+
+You can set them like this:
+
+```yaml
+clientsSecrets:
+  punch-board: "<a secret>"
+  artifacts-server: "<another secret>"
+clientsRedirectUris:
+  punch-board: "<your punch-board login url>"
+  artifacts-server: "<your artifacts-server login url. May be optional>"
+```  
+
+You can then use them in your punch-board and artifacts-server values like this:
+
+```yaml
+punch-board:
+  # ...
+  _values:
+    # ...
+    config:
+      # ...
+      auth:
+        keycloak:
+          # ...
+          credentials:
+            secret: <punch-board secret>
+  # ...
+artifacts-server:
+  # ...
+  _values:
+    # ...
+    config:
+      # ...
+      keycloak:
+        # ...
+        credentials:
+          secret: <artifacts-server secret>
+```
 
 ## Development
 

@@ -163,6 +163,21 @@ artifacts-server:
 #        issuerType: issuer
 #        issuerName: my-ca-issuer
     config:
+      server:
+        port: 4245
+        tomcat:
+          accesslog:
+            enabled: true
+            directory: /dev
+            prefix: stdout
+            buffered: false
+            suffix:
+            file-date-format:
+      logging:
+        level:
+          root: INFO
+          org.springframework.web: INFO
+          okhttp3: INFO
       application:
         tenant: default
       metadata:
@@ -251,7 +266,6 @@ punch-board:
       enabled: true
       className: nginx
       annotations: { }
-      tls: [ ]
 #      annotations:
 #        cert-manager.io/issuer: my-ca-issuer-board
 #      tls:
@@ -263,6 +277,7 @@ punch-board:
           paths:
             - path: /
               pathType: ImplementationSpecific
+      tls: [ ]
     config:
       punchArtifacts: 'http://artifacts-server.artifacts-server:4245'
       auth:
