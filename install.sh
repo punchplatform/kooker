@@ -3,7 +3,7 @@
 # @desc: Installer script for Kooker Standalone.
 
 
-kastctlVersion="2.2.2"
+kastctlVersion="2.11.1"
 hostctlVersion="1.0.10"
 kubectlVersion="1.26.0"
 k3dVersion="v5.4.6"
@@ -83,6 +83,8 @@ function install_kastctl() {
   ${downloadsDir}/helm repo add codecentric https://codecentric.github.io/helm-charts --force-update
   ${downloadsDir}/helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx --force-update
   ${downloadsDir}/helm repo add jupyterhub https://hub.jupyter.org/helm-chart --force-update
+  ${downloadsDir}/helm repo add mlflow https://community-charts.github.io/helm-charts/ --force-update
+  ${downloadsDir}/helm repo add bitnami https://charts.bitnami.com/bitnami --force-update
   green "✔ Kastctl and his prerequisites has been installed."
 }
 
