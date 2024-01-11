@@ -37,6 +37,8 @@ components:
 
   ## tenant : punch1
 
+  # artifacts-server and punch-board are deployed in the same namespace
+  # The naming convention is <tenant>-punchapps
   - alias: artifacts-server-punch1
     name: artifacts-server
     namespace: punch1-punchapps
@@ -49,6 +51,9 @@ components:
     version: 8.1-dev
     repo: punch
 
+    # Kooker-post-install will create the good namespace for punchlines deployed by the punch-board.
+    # The namespace is the same as the one in the configuration of the punch-board.
+    # The naming convention is <tenant>-punchservices
   - alias: kooker-post-install-punch1
     name: kooker-post-install
     namespace: punch1-punchservices
@@ -175,6 +180,7 @@ artifacts-server-punch1:
   _values:
     # Set ingress class name to default k3d one (traefik), same url than kast pattern
     ingress:
+    #the naming convention for the ingress url is <service>.<tenant>
       url: artifacts-server.punch1
       ingressClassName: nginx
     config:
@@ -218,12 +224,14 @@ punch-board-punch1:
       className: nginx
       annotations: { }
       hosts:
+        #the naming convention for the host is <service>.<tenant>
         - host: board.punch1
           paths:
             - path: /
               pathType: ImplementationSpecific
       tls: [ ]
     config:
+      #the naming convention for the punchArtfacts url is http://<service>.<tenant-punchapps>:port
       punchArtifacts: 'http://artifacts-server.punch1-punchapps:4245'
       kubernetes:
         namespace: punch1-punchservices
