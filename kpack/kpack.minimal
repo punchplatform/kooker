@@ -45,8 +45,10 @@ components:
     version: 8.1-dev
     repo: punch
 
+    #Namespace where punchservices will be deployed
+    #Same name as the one in the kubernetes section of the punch-board
   - name: kooker-post-install
-    namespace: default
+    namespace: punchservices
 
 global:
   pullPolicy: IfNotPresent
@@ -201,6 +203,9 @@ punch-board:
       tls: [ ]
     config:
       punchArtifacts: 'http://artifacts-server.artifacts-server:4245'
+      kubernetes:
+        namespace: punchservices
+        serviceAccount: admin-user
 
 kooker-post-install:
   _install:
