@@ -9,6 +9,7 @@ kubectlVersion="1.26.0"
 k3dVersion="v5.4.6"
 helmVersion="v3.11.1"
 yqVersion="v4.30.8"
+flowctlVersion="0.0.5"
 
 kookerDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 downloadsDir=${kookerDir}/downloads
@@ -38,6 +39,8 @@ function install_prerequisites() {
   install_kubectl
   # Install hostctl to expose services 
   install_hostctl
+	# Install flowctl
+	install_flowctl
   green "✔ Your platform has all the required packages."
 }
 
@@ -88,6 +91,8 @@ function install_kastctl() {
   green "✔ Kastctl and his prerequisites has been installed."
 }
 
+
+
 function install_hostctl {   
   cd ${downloadsDir}
   if [ ! -f "hostctl" ]; then
@@ -116,6 +121,15 @@ function install_kubectl {
     fi
     chmod +x $downloadsDir/kubectl
     green "✔ Kubectl has been installed."
+  fi
+}
+
+function install_flowctl {
+  cd ${downloadsDir}
+  if [ ! -f "flowctl" ]; then
+      curl --header "PRIVATE-TOKEN: xFinL1Pw1dT_mYN1o7xL" \
+           "https://gitlab.thalesdigital.io/api/v4/projects/44068/packages/generic/flowctl/${flowctlVersion}/flowctl" --output ${downloadsDir}/flowctl && chmod 0775 ${downloadsDir}/flowctl
+      green "✔ Flowctl has been installed."
   fi
 }
 
