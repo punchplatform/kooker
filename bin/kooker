@@ -9,6 +9,7 @@ export KOOKER_KPACK_DIR="${KOOKER_DIR}/kpack"
 export KOOKER_KPACK_NAME=".kpack"
 export KOOKER_KPACK="${KOOKER_KPACK_DIR}/${KOOKER_KPACK_NAME}"
 export KOOKER_RESOURCES="${KOOKER_DIR}/resources"
+export KFLOW_KUBECONFIG=$(kubectl config view --raw | base64 -w 0)
 
 kookerVersion="1.0.0"
 DEBUG=false
@@ -138,10 +139,12 @@ function _bashComplete() {
 
 function startComponents() {
   for component in `yq -r '.components[] | .alias // .name' ${KOOKER_KPACK}`; do
-    if [ ! -f "${KOOKER_DOWNLOADS_DIR}/.installed-${component}" ]; then
-      componentToInstall ${component}
-    fi
-    installComponent ${component} "$@"
+  	if [[ "$component" != "kastflowworkflowengine " ]] ; then
+			if [ ! -f "${KOOKER_DOWNLOADS_DIR}/.installed-${component}" ]; then
+				componentToInstall ${component}
+			fi
+			installComponent ${component} "$@"
+		fi
   done
 }
 
@@ -173,13 +176,23 @@ function installComponent() {
   if [[ "${KASTCTL_OPTS[*]}" != *"--log-level"* ]] ; then
         KASTCTL_OPTS+=(--log-level ERROR)
   fi
-  cmd="kastctl install --kpack-path ${KOOKER_KPACK_DIR} --kpack ${KOOKER_KPACK_NAME} --component=${component} --deployment-path ${KOOKER_CHARTS_DIR} ${KASTCTL_OPTS[@]}"
-  log "  ${gry}${cmd}"
-  $cmd
-  if [ "$?" != 0 ]; then
-    red "✓ ${component} deployment failed"
+	cmd="kastctl install --kpack-path ${KOOKER_KPACK_DIR} --kpack ${KOOKER_KPACK_NAME} --component=${component} --deployment-path ${KOOKER_CHARTS_DIR} ${KASTCTL_OPTS[@]}"
+	log "  ${gry}${cmd}"
+  if [[ "$component" == "kastflowworkflowengine " ]] ; then
+		if [ -z "${REGISTRY_USER:-}" ] || [ -z "${REGISTRY_PASSWORD:-}" ]; then
+      log "Warning: REGISTRY_USER or REGISTRY_PASSWORD environment variables are not set. Make sure to set these environment variables."
+      return 1
+    else
+      kubectl create secret docker-registry thalesdigital --docker-server=registry.thalesdigital.io --docker-username=${REGISTRY_USER} --docker-password=${REGISTRY_PASSWORD}
+      $cmd
+    fi
   else
+    $cmd
+    if [ "$?" != 0 ]; then
+      red "✓ ${component} deployment failed"
+    else
     green "✓ ${component} installed"
+    fi
   fi
 }
 
