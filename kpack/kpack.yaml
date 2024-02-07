@@ -77,7 +77,7 @@ components:
     namespace: default
 
   - name: kastflowworkflowengine
-    version: &version 0.0.5
+    version: &version 0.0.6
     namespace: default
     repo: registry.thalesdigital.io
 

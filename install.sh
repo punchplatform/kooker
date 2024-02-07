@@ -11,6 +11,8 @@ helmVersion="v3.11.1"
 yqVersion="v4.30.8"
 flowctlVersion="0.0.5"
 
+kastFlowProjectID="44068"
+
 kookerDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 downloadsDir=${kookerDir}/downloads
 binDir=${kookerDir}/bin
@@ -88,6 +90,14 @@ function install_kastctl() {
   ${downloadsDir}/helm repo add jupyterhub https://hub.jupyter.org/helm-chart --force-update
   ${downloadsDir}/helm repo add mlflow https://community-charts.github.io/helm-charts/ --force-update
   ${downloadsDir}/helm repo add bitnami https://charts.bitnami.com/bitnami --force-update
+  if [ -z "${REGISTRY_USER:-}" ] || [ -z "${REGISTRY_PASSWORD:-}" ]; then
+  	log "Warning: REGISTRY_USER or REGISTRY_PASSWORD environment variables are not set. Make sure to set these environment variables if you want to install kastflow workflow engine."
+	else
+		${downloadsDir}/helm repo add\
+				--username "${REGISTRY_USER:-}"\
+				--password "${REGISTRY_PASSWORD:-}"\
+				registry.thalesdigital.io https://gitlab.thalesdigital.io/api/v4/projects/${kastFlowProjectID}/packages/helm/devel --force-update
+	fi
   green "✔ Kastctl and his prerequisites has been installed."
 }
 

@@ -139,10 +139,12 @@ function _bashComplete() {
 
 function startComponents() {
   for component in `yq -r '.components[] | .alias // .name' ${KOOKER_KPACK}`; do
-    if [ ! -f "${KOOKER_DOWNLOADS_DIR}/.installed-${component}" ]; then
-      componentToInstall ${component}
-    fi
-    installComponent ${component} "$@"
+  	if [[ "$component" != "kastflowworkflowengine " ]] ; then
+			if [ ! -f "${KOOKER_DOWNLOADS_DIR}/.installed-${component}" ]; then
+				componentToInstall ${component}
+			fi
+			installComponent ${component} "$@"
+		fi
   done
 }
 
@@ -178,18 +180,13 @@ function installComponent() {
 	log "  ${gry}${cmd}"
   if [[ "$component" == "kastflowworkflowengine " ]] ; then
 		if [ -z "${REGISTRY_USER:-}" ] || [ -z "${REGISTRY_PASSWORD:-}" ]; then
-      log "Warning: REGISTRY_USER or REGISTRY_PASSWORD are not set. Make sure to set these environment variables."
+      log "Warning: REGISTRY_USER or REGISTRY_PASSWORD environment variables are not set. Make sure to set these environment variables."
       return 1
     else
-      log "Proceeding with the installation of ${component} ..."
-      kubectl create secret docker-registry thalesdigital\
-        --docker-server=registry.thalesdigital.io\
-        --docker-username=${REGISTRY_USER}\
-        --docker-password=${REGISTRY_PASSWORD}
+      kubectl create secret docker-registry thalesdigital --docker-server=registry.thalesdigital.io --docker-username=${REGISTRY_USER} --docker-password=${REGISTRY_PASSWORD}
       $cmd
     fi
   else
-  	log "post-test: component=${component}"
     $cmd
     if [ "$?" != 0 ]; then
       red "✓ ${component} deployment failed"
