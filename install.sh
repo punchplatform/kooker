@@ -137,7 +137,7 @@ function install_kubectl {
 function install_flowctl {
   cd ${downloadsDir}
   if [ ! -f "flowctl" ]; then
-      curl --header "PRIVATE-TOKEN: xFinL1Pw1dT_mYN1o7xL" \
+      curl --header "PRIVATE-TOKEN: ${REGISTRY_PASSWORD:-}" \
            "https://gitlab.thalesdigital.io/api/v4/projects/44068/packages/generic/flowctl/${flowctlVersion}/flowctl" --output ${downloadsDir}/flowctl && chmod 0775 ${downloadsDir}/flowctl
       green "✔ Flowctl has been installed."
   fi
