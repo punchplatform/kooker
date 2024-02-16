@@ -9,9 +9,6 @@ kubectlVersion="1.26.0"
 k3dVersion="v5.4.6"
 helmVersion="v3.11.1"
 yqVersion="v4.30.8"
-flowctlVersion="0.0.5"
-
-kastFlowProjectID="44068"
 
 kookerDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 downloadsDir=${kookerDir}/downloads
@@ -41,8 +38,6 @@ function install_prerequisites() {
   install_kubectl
   # Install hostctl to expose services 
   install_hostctl
-	# Install flowctl
-	install_flowctl
   green "✔ Your platform has all the required packages."
 }
 
@@ -90,18 +85,8 @@ function install_kastctl() {
   ${downloadsDir}/helm repo add jupyterhub https://hub.jupyter.org/helm-chart --force-update
   ${downloadsDir}/helm repo add mlflow https://community-charts.github.io/helm-charts/ --force-update
   ${downloadsDir}/helm repo add bitnami https://charts.bitnami.com/bitnami --force-update
-  if [ -z "${REGISTRY_USER:-}" ] || [ -z "${REGISTRY_PASSWORD:-}" ]; then
-  	log "Warning: REGISTRY_USER or REGISTRY_PASSWORD environment variables are not set. Make sure to set these environment variables if you want to install kastflow workflow engine."
-	else
-		${downloadsDir}/helm repo add\
-				--username "${REGISTRY_USER:-}"\
-				--password "${REGISTRY_PASSWORD:-}"\
-				registry.thalesdigital.io https://gitlab.thalesdigital.io/api/v4/projects/${kastFlowProjectID}/packages/helm/devel --force-update
-	fi
   green "✔ Kastctl and his prerequisites has been installed."
 }
-
-
 
 function install_hostctl {   
   cd ${downloadsDir}
@@ -131,15 +116,6 @@ function install_kubectl {
     fi
     chmod +x $downloadsDir/kubectl
     green "✔ Kubectl has been installed."
-  fi
-}
-
-function install_flowctl {
-  cd ${downloadsDir}
-  if [ ! -f "flowctl" ]; then
-      curl --header "PRIVATE-TOKEN: ${REGISTRY_PASSWORD:-}" \
-           "https://gitlab.thalesdigital.io/api/v4/projects/44068/packages/generic/flowctl/${flowctlVersion}/flowctl" --output ${downloadsDir}/flowctl && chmod 0775 ${downloadsDir}/flowctl
-      green "✔ Flowctl has been installed."
   fi
 }
 
