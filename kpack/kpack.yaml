@@ -76,10 +76,6 @@ components:
   - name: kooker-post-install
     namespace: default
 
-  - name: kastflowworkflowengine
-    version: &version 0.0.6
-    namespace: default
-    repo: registry.thalesdigital.io
 
   - name: kooker-spark
     namespace: jupyterhub
@@ -96,8 +92,6 @@ global:
   sso:
     enabled: false
   replicas: 1
-  flowRegistry: &flowregistry registry.thalesdigital.io/sixdt/kast-flow/kast-flow-workflow-engine
-  imagePullPolicy: &flowpullpolicy Always
 
 kooker-spark:
   _install:
@@ -446,58 +440,3 @@ kooker-post-install:
       endpoint: "http://minio.object-store:9000"
       access_key: minioadmin
       secret_key: minioadmin
-
-kastflowworkflowengine:
-  _install:
-    flags:
-      wait: true
-  _values:
-    secrets:
-      # used only for embedded
-      postgresAdminUser: postgres
-      # by default non root user is kastflow
-      postgresUser: kastflow
-      postgresPassword: password
-      # DB
-      temporalDB: kastflowtemporal
-      restDB: kastflow
-    kubeconfig: !env KFLOW_KUBECONFIG
-    multiCluster: false
-    light:
-      enabled: false
-    dev:
-      enabled: true
-      imagePullSecrets:
-        - name: thalesdigital
-      storage:
-        hostPath: /data
-        db: temporal-dev.db
-        resourcesRequestsStorage: 2Gi
-        image:
-          repository: docker.io
-          tag: 13
-          pullPolicy: *flowpullpolicy
-      servers:
-        log:
-          level: info
-          format: pretty
-        image:
-          repository: docker.io
-          tag: 1.22.0.0
-          pullPolicy: *flowpullpolicy
-      workers:
-        log:
-          level: info
-          format: pretty
-        image:
-          repository: *flowregistry
-          tag: *version
-          pullPolicy: *flowpullpolicy
-      rest:
-        log:
-          level: info
-          format: pretty
-        image:
-          repository: *flowregistry
-          tag: *version
-          pullPolicy: *flowpullpolicy
