@@ -418,7 +418,77 @@ punch-board:
               pathType: ImplementationSpecific
       tls: [ ]
     config:
-      punchArtifacts: 'http://artifacts-server.artifacts-server:4245'
+      # ---------------------------------
+      # Punch Board configuration file
+      # ---------------------------------
+    
+      # application address and port
+      listen: 0.0.0.0:8080
+    
+      # temporary directory
+      tmpDir: /tmp
+    
+      # schema location
+      schemas:
+        file:
+          path: /static
+    
+      kubernetes:
+        namespace: default
+        serviceAccount: default
+        labels:
+          board.punch.io/platform: kooker
+        authenticationStrategy: serviceAccount
+    
+      # The proxying of the services to your backends.
+      # usage:
+      #  call: /v1/<prefix>/<your service path> --> will be sent to --> <service>/v1/<prefix>/<your service path>
+      services:
+        - prefix: '/v1/artifacts'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/configuration'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/topology'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/devices'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/settings'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/alerts'
+          service: 'artifacts-server.artifacts-server:4245'
+      # This jwt key is used to (only) sign the jwt token. The jwt token is a standard token
+      # that contain the useful information about the user.
+      # Check the proxy.go file.
+      jwt:
+        secretKey: 'B613679A0814D9EC772F95D778C35FC5FF1697C493715653C6C712144292C5AD'
+    
+      # The frontend configuration for you board. Here you select the views you want to display
+      # and the logo you want to display.
+      frontend:
+        name: "punch"
+        views:
+          - "devices"
+          - "alerts"
+        favicon: "/images/punch/favicon.png"
+        title: "Punch"
+        navBarLogo: "/images/punch/punch_logo_white.svg"
+        loginLogo: "/images/punch/punch_logo_white.svg"
+    
+      # The authentication configuration. Here you can define the users and their roles.
+      auth:
+        users:
+          board:
+            password: board
+            roles:
+              - admin
+              - editor
+              - viewer
+      #  keycloak:
+      #    realm: master
+      #    auth-server-url: http://keycloak.punch:8080/
+      #    resource: punch-board
+      #    credentials:
+      #      secret: 3e2Iov2MhYRh8VrG50F5INCT1vzU6b5a
 
 kooker-post-install:
   _install:
