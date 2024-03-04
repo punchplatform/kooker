@@ -279,7 +279,24 @@ punch-board:
               pathType: ImplementationSpecific
       tls: [ ]
     config:
-      punchArtifacts: 'http://artifacts-server.artifacts-server:4245'
+      # The proxying of the services to your backends.
+      # usage:
+      #  call: /v1/<prefix>/<your service path> --> will be sent to --> <service>/v1/<prefix>/<your service path>
+      services:
+        - prefix: '/v1/artifacts'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/configuration'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/topology'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/devices'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/settings'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/alerts'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/api-docs'
+          service: 'artifacts-server.artifacts-server:4245'
       auth:
         keycloak:
           realm: master

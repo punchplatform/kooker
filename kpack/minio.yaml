@@ -1,0 +1,131 @@
+components:
+
+  - name: ingress-nginx
+    version: 4.6.0
+    namespace: ingress
+    repo: ingress-nginx
+
+  - name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+    version: 6.0.0
+    repo: kubernetes-dashboard
+
+  - name: kooker-kubernetes-dashboard-rbac
+    namespace: kubernetes-dashboard
+
+  - name: minio
+    namespace: object-store
+    version: 5.0.7
+    repo: minio
+
+  - name: cert-manager
+    version: v1.11.0
+    namespace: cert-manager
+    repo: jetstack
+
+  - name: kooker-post-install
+    namespace: default
+
+global:
+  pullPolicy: IfNotPresent
+  storageClassName: local-path
+  domain: punch
+  sso:
+    enabled: false
+  replicas: 1
+
+minio:
+  _install:
+    flags:
+      wait: true
+  _values:
+    replicas: 1
+    mode: standalone
+    rootUser: minioadmin
+    rootPassword: minioadmin
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      rules:
+        - host: kooker.io
+          http:
+            paths:
+              - path: /service/minio-ui
+                pathType: Prefix
+                backend:
+                  service:
+                    name: minio-console-service  # This should match your MinIO Console service name if different; otherwise, use the same as above
+                    port:
+                      number: 9001  # The port MinIO Console is running on, if different from the MinIO API port
+              - path: /service/s3
+                pathType: Prefix
+                backend:
+                  service:
+                  name: minio
+                  port:
+                    number: 9000
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: 5g
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+kubernetes-dashboard:
+  _install:
+    flags:
+      wait: true
+  _values:
+    protocolHttp: true
+    service:
+      externalPort: 9090
+    serviceAccount:
+      create: true
+      name: kubernetes-dashboard
+    ingress:
+      enabled: true
+      className: nginx
+      rules:
+        - host: kooker.io
+          http:
+            paths:
+              - path: /service/kubernetes-dashboard
+                pathType: Prefix
+                backend:
+                  service:
+                    name: kubernetes-dashboard
+                    port:
+                      number: 9090
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+kooker-kubernetes-dashboard-rbac:
+  _install:
+    flags:
+      wait: true
+  _values:
+    clusterRoleName: cluster-admin
+    serviceAccountName: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+
+cert-manager:
+  _install:
+    flags:
+      wait: true
+  _values:
+    installCRDs: true
+
+kooker-post-install:
+  _install:
+    flags:
+      wait: true
+  _values:
+    serviceAccount: admin-user
+    punchVersion: 8.1-dev
+    resourcesProviderUrl: http://artifacts-server.artifacts-server:4245
+    minio:
+      endpoint: "http://minio.object-store:9000"
+      access_key: minioadmin
+      secret_key: minioadmin
