@@ -48,11 +48,18 @@ downloaded at startup time.
 
 ## Punch operator
 
-In the sample kpack.yaml files you will see a punch Kubernetes operator. This operator
-is in charge of executing applications. The advantage of K8 operators it to benefit from
-a REST api to submit apps. In turn the punch team designed a UIs.
-It is used by various projects and maybe of interest to you. You can also design
-a simple kpack.yaml file without any of these if you prefer working on your own K8 application.
+In the sample kpack.hub.yaml and kpack.punch.yaml files you will see a punch Kubernetes operator. 
+This operator is in charge of executing applications. The advantage of K8 operators it to benefit 
+from a REST api, web hooks and many other high level means to manage your applications through (so-called)
+Custom Resource Definition files. That makes it way easier to manage yoru application than producing a helm chart
+for each.
+
+## Punch Board
+
+In addition a punch board application exposes a UI to interact with the platform, and provides also a 
+lightweight reverse proxy that act as a Policy Enforcment Point. Together the punch board lets you 
+deploy secured applications yet benefit from a UI and powerful APIs instead of struggling with
+terminal commands. 
 
 ## Networking Architecture
 
@@ -73,14 +80,14 @@ These are handled by k3d load balancer that runs itself as a docker container.
 
 The following services are exposed:
 
-* kooker.io:8080 : is directed to a so called board application (punch or innovation or your own)running in namespace 'board'
-* kooker.io:8080/projects/someproject1: is directed to a serving pod (your app1) running in namespace 'someproject1'
-* kooker.io:8080/projects/someproject12: is directed to a serving pod (your app2) running in namespace 'someproject2'
-* kooker.io:8080/services/kube-dashboard: is directed to the kubernetes dashboard
-* kooker.io:8080/services/minio: is directed to the S3 minio
+* board.punch:8080 : is directed to a so called board application (punch or innovation or your own)running in namespace 'board'
+* board.punch:8080/projects/someproject1: is directed to a serving pod (your app1) running in namespace 'someproject1'
+* board.punch:8080/projects/someproject2: is directed to a serving pod (your app2) running in namespace 'someproject2'
+* kooker.io:8080/dashboard.punch: is directed to the kubernetes dashboard
+* kooker.io:8080/minio.punch: is directed to the S3 minio
 * etc..
 
-As you can see the 'projects' path is reserved for applications, while 'services' point to database and other various platform services. 
+As you can see the 'projects' path is reserved for applications. 
 
 ![Alt text for the image](./media/KookerNetworking.png).
 
