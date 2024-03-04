@@ -7,8 +7,7 @@ In short: Kooker deploys a Kubernetes cluster together with services such as Kaf
 Elastic, Minio, Clickhouse.. using a tool called *kastctl* so that you can start 
 kubernetes applications in minutes on any laptop as long as you have docker installed.
 
-Kooker is developed by the Punch Team with best-effort support and is not included officially 
-in Punch product. We encourage you to contribute.  
+Kooker is developed by Punch and Kast Teams with best-effort support. We encourage you to contribute.  
 
 * [Kooker Essential Design](#kooker-essential-design)
 * [Getting Started](#getting-started)
@@ -32,6 +31,7 @@ in Punch product. We encourage you to contribute.
 
 <!-- Created by https://github.com/ekalinin/github-markdown-toc -->
 
+
 # Kooker Essential Design
 
 Kooker first bootstraps a k3d cluster, and next installs a number of additional components, the
@@ -46,6 +46,45 @@ is to let you define your platform blueprint using a single simpler yaml file ca
 Kastctl is publicly available as a (macOS|linux|windows) application and will be automatically
 downloaded at startup time.
 
+## Punch operator
+
+In the sample kpack.yaml files you will see a punch Kubernetes operator. This operator
+is in charge of executing applications. The advantage of K8 operators it to benefit from
+a REST api to submit apps. In turn the punch team designed a UIs.
+It is used by various projects and maybe of interest to you. You can also design
+a simple kpack.yaml file without any of these if you prefer working on your own K8 application.
+
+## Networking Architecture
+
+Kooker exposes its various internal services to your local host.
+Here is what you need to know. 
+
+###  Default port mapping
+
+Kooker is created with three rules to map port from your host laptop to internal kooker services:
+
+* '8443:443'
+* '8090:8090'
+* '8080:80' 
+
+These are handled by k3d load balancer that runs itself as a docker container. 
+
+### Service external exposure
+
+The following services are exposed:
+
+* kooker.io:8080 : is directed to a so called board application (punch or innovation or your own)running in namespace 'board'
+* kooker.io:8080/projects/someproject1: is directed to a serving pod (your app1) running in namespace 'someproject1'
+* kooker.io:8080/projects/someproject12: is directed to a serving pod (your app2) running in namespace 'someproject2'
+* kooker.io:8080/services/kube-dashboard: is directed to the kubernetes dashboard
+* kooker.io:8080/services/minio: is directed to the S3 minio
+* etc..
+
+As you can see the 'projects' path is reserved for applications, while 'services' point to database and other various platform services. 
+
+![Alt text for the image](./media/KookerNetworking.png).
+
+
 # Getting Started
 
 First type in 
@@ -59,13 +98,24 @@ source activate.sh
 
 The default procedure is then the following:
 
-```sh
-# download deploy and start the required components. Skip the
-# --interactive option to install the default profile as defined
-# in kpack/kpack.yaml
-kooker --interactive start 
+## Choose a ready to use kpack
 
-# Expose all the reruied service to your host. This requires a sudoer
+Choose your use case by executing:
+```sh
+kooker kpack kpack/kpack.hub.yaml
+```
+ As of today two kpack are tested and working:
+ * [kpack/pack.yaml](./kpack/kpack.yaml): install a small K8 cluster with Minio, grafana; kube dashboard. The other kpack extend this simple one with more features.
+ * [kpack/pack.punch.yaml](./kpack/kpack.yaml): install a complete punch with Jupypunch, elasticsearch, kibana.
+ * [kpack/pack.hub.yaml](./kpack/kpack.yaml): install instead TSN innovation hub. Elasticsearch is not in there. It provides Kafka, Minio, and punch operators, artifact servers and board services. 
+
+You can of course design your own kpack if you want something else. 
+Onec you have chosen, simply type in. 
+```sh
+# download deploy and start the required components.
+kooker start 
+
+# Expose all the required services to your host. This requires a sudoer
 # password to patch your /etc/host file.
 kooker expose 
 
@@ -76,27 +126,18 @@ kooker status
 kooker info
 ```
 
-Once components are up, you can visit the various UI, for instance http://dashboard.punch:8080
-(if you selected the punch board application). 
+## From there 
 
-Note that using the default profile, all login password are set to punch (user) and punchplatform (password).
+Once components are up, you can visit the various UI, for instance http://board.punch:8080
+(if you selected the punch board application). 
 
 # Custom Deployment
 
 You have three ways to work with kooker: 
 
-## Install a default platform
-
-Simply type in 
-```sh
-kooker start
-```
-That command installs all the components as specified in the kastctl [kpack/pack.yaml](./kpack/kpack.yaml)
-configuration file if the *kooker kpack* command has never been used. Have a look at it, it is easy to understand.
-
 ## Interactively Install What you Want
 
-Instead, you can type in: 
+Instead or installing all the components defined in your kpack, you can type in: 
 ```sh
 kooker --interactive start
 ```
@@ -119,7 +160,6 @@ The kpack file you selected will then be used for the next installation.
 
 You can add a *registries.yaml* file in the kooker directory containing images registries configuration.  Note that this file
 is only used during the cluster creation.
-
 
 # Typical Kooker Users and Usages 
 

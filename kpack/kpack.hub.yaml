@@ -1,0 +1,438 @@
+components:
+
+  - name: ingress-nginx
+    version: 4.6.0
+    namespace: ingress
+    repo: ingress-nginx
+
+  - name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+    version: 6.0.0
+    repo: kubernetes-dashboard
+
+  - name: kooker-kubernetes-dashboard-rbac
+    namespace: kubernetes-dashboard
+
+  - name: minio
+    namespace: object-store
+    version: 5.0.7
+    repo: minio
+
+  - name: artifacts-server
+    namespace: artifacts-server
+    version: 8.1-dev
+    repo: punch
+
+  - name: prometheus
+    namespace: monitoring
+    version: 19.3.3
+    repo: prometheus-community
+
+  - name: grafana
+    namespace: monitoring
+    version: 6.51.1
+    repo: grafana
+
+  - name: strimzi-kafka-operator
+    namespace: processing
+    version: 0.29.0
+    repo: strimzi
+
+  - name: kooker-kafka
+    namespace: processing
+
+  - name: cert-manager
+    version: v1.11.0
+    namespace: cert-manager
+    repo: jetstack
+
+  - alias: punch-operator-crds
+    name: operator-crds
+    namespace: punchoperator-system
+    version: 8.1-dev
+    repo: punch
+
+  - alias: punch-operator
+    name: operator
+    namespace: punchoperator-system
+    version: 8.1-dev
+    repo: punch
+
+  - name: punch-board
+    namespace: punch-board
+    version: 8.1-dev
+    repo: punch
+
+  - name: kooker-post-install
+    namespace: default
+
+  - name: kooker-spark
+    namespace: jupyterhub
+
+  - name: jupyterhub
+    version: 3.0.3
+    namespace: jupyterhub
+    repo: jupyterhub
+
+global:
+  pullPolicy: IfNotPresent
+  storageClassName: local-path
+  domain: punch
+  sso:
+    enabled: false
+  replicas: 1
+
+kooker-spark:
+  _install:
+    flags:
+      wait: true
+  _values:
+    role_binding_name: spark
+    service_account: spark
+    role: spark
+    selector:
+      app: jupyterhub
+      component: singleuser-server
+    service: spark
+    ingress:
+      url: spark.punch
+      ingressClassName: nginx
+
+jupyterhub:
+  _install:
+    flags:
+      wait: false
+      timeout: 20m
+  _values:
+    singleuser:
+      image:
+        name: ghcr.io/punchplatform/jupypunch
+        tag: 8.1-dev
+        pullPolicy: Always
+      cmd: "/usr/local/bin/jupyterhub-singleuser"
+      defaultUrl: /tree/
+      networkPolicy:
+        enabled: false
+      serviceAccountName: spark
+      extraFiles:
+        jupypunch_conf.yaml:
+          mountPath: /opt/jupypunch/jupypunch_conf.yaml
+          data:
+            kubernetes: true
+            spark.kubernetes.namespace: jupyterhub
+            spark.driver.host: spark.jupyterhub.svc.cluster.local
+            spark.kubernetes.authenticate.driver.serviceAccountName: spark
+            spark.ui.port: 4040
+            spark.hadoop.fs.s3a.endpoint: http://minio.object-store:9000
+            spark.hadoop.fs.s3a.access.key: minioadmin
+            spark.hadoop.fs.s3a.secret.key: minioadmin
+            spark.hadoop.fs.s3a.path.style.access: true
+            hadoop.fs.s3a.aws.credentials.provider: org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider
+            punch.artifacts.server.url: http://artifacts-server.artifacts-server:4245/
+            punch_nodes:
+              s3:
+                access_key: minioadmin
+                secret_key: minioadmin
+                endpoint: http://minio.object-store:9000
+              elasticsearch:
+                http_hosts:
+                  - host: elasticsearch-master.doc-store
+                    port: 9200
+                    scheme: http
+                security:
+                  credentials:
+                    username: elastic
+                    password: elastic
+              kafka:
+                kafka.bootstrap.servers: kooker-kafka-kafka-bootstrap.processing:9092
+              kafka_stream:
+                kafka.bootstrap.servers: kooker-kafka-kafka-bootstrap.processing:9092
+
+    ingress:
+      enabled: true
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: 5g
+      ingressClassName: nginx
+      hosts:
+        - jupyterhub.punch
+      pathSuffix:
+      pathType: Prefix
+      tls: [ ]
+
+ingress-nginx:
+  _install:
+    flags:
+      wait: true
+      wait-for-jobs: true
+      #timeout: (default 5m0s)
+
+minio:
+  _install:
+    flags:
+      wait: true
+  _values:
+    replicas: 1
+    mode: standalone
+    rootUser: minioadmin
+    rootPassword: minioadmin
+    consoleIngress:
+      enabled: true
+      ingressClassName: nginx
+      hosts:
+        - minio.punch
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: 5g
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hosts:
+        - minio-api.punch
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: 5g
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+artifacts-server:
+  _install:
+    flags:
+      wait: true
+  _values:
+    # Set ingress class name to default k3d one (traefik), same url than kast pattern
+    ingress:
+      url: artifacts-server.punch
+      ingressClassName: nginx
+    config:
+      server:
+        port: 4245
+        tomcat:
+          accesslog:
+            enabled: true
+            directory: /dev
+            prefix: stdout
+            buffered: false
+            suffix:
+            file-date-format:
+      logging:
+        level:
+          root: INFO
+          org.springframework.web: INFO
+          okhttp3: INFO
+      application:
+        tenant: default
+      metadata:
+        minio:
+          host: http://minio.object-store:9000
+          access_key: minioadmin
+          secret_key: minioadmin
+      data:
+        minio:
+          host: http://minio.object-store:9000
+          access_key: minioadmin
+          secret_key: minioadmin
+
+prometheus:
+  _install:
+    flags:
+      wait: true
+  _values:
+    alertmanager:
+      enabled: false
+    prometheus-node-exporter:
+      enabled: false
+
+grafana:
+  _install:
+    flags:
+      wait: true
+  _values:
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hosts:
+        - grafana.punch
+    adminUser: admin
+    adminPassword: admin
+
+strimzi-kafka-operator:
+  _install:
+    flags:
+      wait: true
+  _values:
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+# Watchout : BETA kast helm chart
+# No ingress because TLS is enabled by default
+kooker-kafka:
+  _install:
+    flags:
+      wait: true
+  _values:
+    kafka:
+      version: 3.0.0
+      resources:
+        requests:
+          cpu: 0
+          memory: 0
+      storage:
+        class: local-path
+    zk:
+      resources:
+        requests:
+          cpu: 0
+          memory: 0
+      storage:
+        class: local-path
+
+kubernetes-dashboard:
+  _install:
+    flags:
+      wait: true
+  _values:
+    protocolHttp: true
+    service:
+      externalPort: 9090
+    serviceAccount:
+      create: true
+      name: kubernetes-dashboard
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - dashboard.punch
+    resources:
+      requests:
+        cpu: 0
+        memory: 0
+
+kooker-kubernetes-dashboard-rbac:
+  _install:
+    flags:
+      wait: true
+  _values:
+    clusterRoleName: cluster-admin
+    serviceAccountName: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+
+cert-manager:
+  _install:
+    flags:
+      wait: true
+  _values:
+    installCRDs: true
+
+punch-operator-crds:
+  _install:
+    flags:
+      wait: true
+
+punch-operator:
+  _install:
+    flags:
+      wait: true
+  _values:
+    kubernetes:
+      resources:
+        requests:
+          cpu: 0
+          memory: 0
+
+punch-board:
+  _install:
+    flags:
+      wait: true
+  _values:
+    image: ghcr.io/punchplatform/punch-board:8.1-dev
+    imagePullSecrets: [ name: admin-secret ]
+    ingress:
+      enabled: true
+      className: nginx
+      annotations: { }
+      hosts:
+        - host: board.punch
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls: [ ]
+    config:
+      # ---------------------------------
+      # Punch Board configuration file
+      # ---------------------------------
+    
+      # application address and port
+      listen: 0.0.0.0:8080
+    
+      # temporary directory
+      tmpDir: /tmp
+    
+      # schema location
+      schemas:
+        file:
+          path: /static
+    
+      kubernetes:
+        namespace: default
+        serviceAccount: default
+        labels:
+          board.punch.io/platform: kooker
+        authenticationStrategy: serviceAccount
+    
+      # The proxying of the services to your backends.
+      # usage:
+      #  call: /v1/<prefix>/<your service path> --> will be sent to --> <service>/v1/<prefix>/<your service path>
+      services:
+        - prefix: '/v1/artifacts'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/configuration'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/topology'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/settings'
+          service: 'artifacts-server.artifacts-server:4245'
+      # This jwt key is used to (only) sign the jwt token. The jwt token is a standard token
+      # that contain the useful information about the user.
+      # Check the proxy.go file.
+      jwt:
+        secretKey: 'B613679A0814D9EC772F95D778C35FC5FF1697C493715653C6C712144292C5AD'
+    
+      # The frontend configuration for you board. Here you select the views you want to display
+      # and the logo you want to display.
+      frontend:
+        name: "hub"
+        views:
+        favicon: "/images/innovation/logos/favicon.png"
+        title: "Innovation Hub"
+        loginLogo: "innovation/images/logos/logo_white.svg"
+    
+      # The authentication configuration. Here you can define the users and their roles.
+      auth:
+        users:
+          board:
+            password: board
+            roles:
+              - admin
+              - editor
+              - viewer
+      #  keycloak:
+      #    realm: master
+      #    auth-server-url: http://keycloak.punch:8080/
+      #    resource: punch-board
+      #    credentials:
+      #      secret: 3e2Iov2MhYRh8VrG50F5INCT1vzU6b5a
+
+kooker-post-install:
+  _install:
+    flags:
+      wait: true
+  _values:
+    serviceAccount: admin-user
+    punchVersion: 8.1-dev
+    resourcesProviderUrl: http://artifacts-server.artifacts-server:4245
+    minio:
+      endpoint: "http://minio.object-store:9000"
+      access_key: minioadmin
+      secret_key: minioadmin

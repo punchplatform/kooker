@@ -18,21 +18,6 @@ components:
     version: 5.0.7
     repo: minio
 
-  - name: artifacts-server
-    namespace: artifacts-server
-    version: 8.1-dev
-    repo: punch
-
-  - name: elasticsearch
-    namespace: doc-store
-    version: 8.5.1
-    repo: elastic
-
-  - name: kibana
-    namespace: visualization
-    version: 7.17.3
-    repo: elastic
-
   - name: prometheus
     namespace: monitoring
     version: 19.3.3
@@ -56,34 +41,8 @@ components:
     namespace: cert-manager
     repo: jetstack
 
-  - alias: punch-operator-crds
-    name: operator-crds
-    namespace: punchoperator-system
-    version: 8.1-dev
-    repo: punch
-
-  - alias: punch-operator
-    name: operator
-    namespace: punchoperator-system
-    version: 8.1-dev
-    repo: punch
-
-  - name: punch-board
-    namespace: punch-board
-    version: 8.1-dev
-    repo: punch
-
   - name: kooker-post-install
     namespace: default
-
-
-  - name: kooker-spark
-    namespace: jupyterhub
-
-  - name: jupyterhub
-    version: 3.0.3
-    namespace: jupyterhub
-    repo: jupyterhub
 
 global:
   pullPolicy: IfNotPresent
@@ -92,83 +51,6 @@ global:
   sso:
     enabled: false
   replicas: 1
-
-kooker-spark:
-  _install:
-    flags:
-      wait: true
-  _values:
-    role_binding_name: spark
-    service_account: spark
-    role: spark
-    selector:
-      app: jupyterhub
-      component: singleuser-server
-    service: spark
-    ingress:
-      url: spark.punch
-      ingressClassName: nginx
-
-jupyterhub:
-  _install:
-    flags:
-      wait: false
-      timeout: 20m
-  _values:
-    singleuser:
-      image:
-        name: ghcr.io/punchplatform/jupypunch
-        tag: 8.1-dev
-        pullPolicy: Always
-      cmd: "/usr/local/bin/jupyterhub-singleuser"
-      defaultUrl: /tree/
-      networkPolicy:
-        enabled: false
-      serviceAccountName: spark
-      extraFiles:
-        jupypunch_conf.yaml:
-          mountPath: /opt/jupypunch/jupypunch_conf.yaml
-          data:
-            kubernetes: true
-            spark.kubernetes.namespace: jupyterhub
-            spark.driver.host: spark.jupyterhub.svc.cluster.local
-            spark.kubernetes.authenticate.driver.serviceAccountName: spark
-            spark.ui.port: 4040
-            spark.hadoop.fs.s3a.endpoint: http://minio.object-store:9000
-            spark.hadoop.fs.s3a.access.key: minioadmin
-            spark.hadoop.fs.s3a.secret.key: minioadmin
-            spark.hadoop.fs.s3a.path.style.access: true
-            hadoop.fs.s3a.aws.credentials.provider: org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider
-            punch.artifacts.server.url: http://artifacts-server.artifacts-server:4245/
-            punch_nodes:
-              s3:
-                access_key: minioadmin
-                secret_key: minioadmin
-                endpoint: http://minio.object-store:9000
-              elasticsearch:
-                http_hosts:
-                  - host: elasticsearch-master.doc-store
-                    port: 9200
-                    scheme: http
-                security:
-                  credentials:
-                    username: elastic
-                    password: elastic
-              kafka:
-                kafka.bootstrap.servers: kooker-kafka-kafka-bootstrap.processing:9092
-              kafka_stream:
-                kafka.bootstrap.servers: kooker-kafka-kafka-bootstrap.processing:9092
-
-    ingress:
-      enabled: true
-      annotations:
-        nginx.ingress.kubernetes.io/proxy-body-size: 5g
-      ingressClassName: nginx
-      hosts:
-        - jupyterhub.punch
-      pathSuffix:
-      pathType: Prefix
-      tls: [ ]
 
 ingress-nginx:
   _install:
@@ -200,92 +82,6 @@ minio:
         - minio-api.punch
       annotations:
         nginx.ingress.kubernetes.io/proxy-body-size: 5g
-    resources:
-      requests:
-        cpu: 0
-        memory: 0
-
-artifacts-server:
-  _install:
-    flags:
-      wait: true
-  _values:
-    # Set ingress class name to default k3d one (traefik), same url than kast pattern
-    ingress:
-      url: artifacts-server.punch
-      ingressClassName: nginx
-    config:
-      server:
-        port: 4245
-        tomcat:
-          accesslog:
-            enabled: true
-            directory: /dev
-            prefix: stdout
-            buffered: false
-            suffix:
-            file-date-format:
-      logging:
-        level:
-          root: INFO
-          org.springframework.web: INFO
-          okhttp3: INFO
-      application:
-        tenant: default
-      metadata:
-        minio:
-          host: http://minio.object-store:9000
-          access_key: minioadmin
-          secret_key: minioadmin
-      data:
-        minio:
-          host: http://minio.object-store:9000
-          access_key: minioadmin
-          secret_key: minioadmin
-
-# Watchout, here we use 8.5.1 helm chart to install an elastic 7.10.2 (free licence & punch feedback compatible)
-# Why ? : Ingress API version from chart 7.10.2 is not supported in kube > 1.22
-#       : Cannot use a 7.16 or 7.17 elastic chart version because of https://github.com/elastic/helm-charts/issues/1492
-# Ref for values here : https://github.com/elastic/helm-charts/blob/v8.5.1/elasticsearch/values.yaml
-elasticsearch:
-  _install:
-    flags:
-      wait: true
-  _values:
-    replicas: 1
-    esMajorVersion: 7
-    imageTag: 7.10.2
-    protocol: http
-    createCert: false
-    clusterHealthCheckParams: ""
-    ingress:
-      enabled: true
-      className: nginx
-      hosts:
-        - host: elasticsearch-master.punch
-          paths:
-            - path: /
-    resources:
-      requests:
-        cpu: 0
-        memory: 0
-
-kibana:
-  _install:
-    flags:
-      wait: true
-  _values:
-    image: ghcr.io/punchplatform/kibana-7.10.2-datafeedback
-    imageTag: 2.1.3
-    protocol: http
-    elasticsearchHosts: "http://elasticsearch-master.doc-store:9200"
-    ingress:
-      enabled: true
-      className: nginx
-      hosts:
-        - host: kibana.punch
-          paths:
-            - path: /
     resources:
       requests:
         cpu: 0
@@ -384,128 +180,12 @@ cert-manager:
   _values:
     installCRDs: true
 
-punch-operator-crds:
-  _install:
-    flags:
-      wait: true
-
-punch-operator:
-  _install:
-    flags:
-      wait: true
-  _values:
-    kubernetes:
-      resources:
-        requests:
-          cpu: 0
-          memory: 0
-
-punch-board:
-  _install:
-    flags:
-      wait: true
-  _values:
-    image: ghcr.io/punchplatform/punch-board:8.1-dev
-    imagePullSecrets: [ name: admin-secret ]
-    ingress:
-      enabled: true
-      className: nginx
-      annotations: { }
-      hosts:
-        - host: board.punch
-          paths:
-            - path: /
-              pathType: ImplementationSpecific
-      tls: [ ]
-    config:
-      # ---------------------------------
-      # Punch Board configuration file
-      # ---------------------------------
-    
-      # application address and port
-      listen: 0.0.0.0:8080
-    
-      # temporary directory
-      tmpDir: /tmp
-    
-      # schema location
-      schemas:
-        file:
-          path: /static
-    
-      kubernetes:
-        namespace: default
-        serviceAccount: default
-        labels:
-          board.punch.io/platform: kooker
-        authenticationStrategy: serviceAccount
-    
-      # The proxying of the services to your backends.
-      # usage:
-      #  call: /v1/<prefix>/<your service path> --> will be sent to --> <service>/v1/<prefix>/<your service path>
-      services:
-        - prefix: '/v1/artifacts'
-          service: 'artifacts-server.artifacts-server:4245'
-        - prefix: '/v1/configuration'
-          service: 'artifacts-server.artifacts-server:4245'
-        - prefix: '/v1/topology'
-          service: 'artifacts-server.artifacts-server:4245'
-        - prefix: '/v1/devices'
-          service: 'artifacts-server.artifacts-server:4245'
-        - prefix: '/v1/settings'
-          service: 'artifacts-server.artifacts-server:4245'
-        - prefix: '/v1/alerts'
-          service: 'artifacts-server.artifacts-server:4245'
-      # This jwt key is used to (only) sign the jwt token. The jwt token is a standard token
-      # that contain the useful information about the user.
-      # Check the proxy.go file.
-      jwt:
-        secretKey: 'B613679A0814D9EC772F95D778C35FC5FF1697C493715653C6C712144292C5AD'
-    
-      # The frontend configuration for you board. Here you select the views you want to display
-      # and the logo you want to display.
-      frontend:
-        name: "punch"
-        views:
-          - "devices"
-          - "alerts"
-        favicon: "/images/punch/favicon.png"
-        title: "Punch"
-        navBarLogo: "/images/punch/punch_logo_white.svg"
-        loginLogo: "/images/punch/punch_logo_white.svg"
-    
-      # The authentication configuration. Here you can define the users and their roles.
-      auth:
-        users:
-          board:
-            password: board
-            roles:
-              - admin
-              - editor
-              - viewer
-      #  keycloak:
-      #    realm: master
-      #    auth-server-url: http://keycloak.punch:8080/
-      #    resource: punch-board
-      #    credentials:
-      #      secret: 3e2Iov2MhYRh8VrG50F5INCT1vzU6b5a
-
 kooker-post-install:
   _install:
     flags:
       wait: true
   _values:
     serviceAccount: admin-user
-    punchVersion: 8.1-dev
-    resourcesProviderUrl: http://artifacts-server.artifacts-server:4245
-    elasticsearch:
-      http_hosts:
-        - host: elasticsearch-master.doc-store
-          port: 9200
-      security:
-        credentials:
-          password: elastic
-          username: elastic
     minio:
       endpoint: "http://minio.object-store:9000"
       access_key: minioadmin
