@@ -31,6 +31,50 @@ Kooker is developed by Punch and Kast Teams with best-effort support. We encoura
 
 <!-- Created by https://github.com/ekalinin/github-markdown-toc -->
 
+# Getting Started
+
+First type in 
+```sh
+./install.sh 
+```
+That generates a small setup environment script. Activate it as follows:
+```sh
+source activate.sh 
+```
+
+## Choose a ready to use kpack
+
+Choose your use case by executing:
+```sh
+kooker kpack kpack/<choose your kpack deployment file here>
+```
+ As of today three kpacks are tested and working:
+ * [kpack/kpack.yaml](./kpack/kpack.yaml): install a small K8 cluster with Minio, grafana; kube dashboard. The other kpack extend this simple one with more features.
+ * [kpack/kpack.punch.yaml](./kpack/kpack.yaml): install a complete punch with Jupypunch, elasticsearch, kibana.
+ * [kpack/kpack.hub.yaml](./kpack/kpack.yaml): install the innovation hub. It provides Kafka, Minio, and punch operators, artifact servers and board services. 
+
+You can of course design your own kpack if you want something else. 
+Once you have chosen, simply type in. 
+```sh
+# download deploy and start the required components.
+kooker start 
+
+# Expose all the required services to your host. This requires a sudoer
+# password to patch your /etc/host file.
+kooker expose 
+
+# Just checking
+kooker status
+
+# Get the information about what is there and what are the exposed URLs
+kooker info
+```
+
+## From there 
+
+Once components are up, you can visit the various UI, for instance http://dashboard.punch:8080
+or http://board.punch:8080 (if you selected the punch or hub application). 
+
 
 # Kooker Essential Design
 
@@ -92,51 +136,6 @@ As you can see the 'projects' path is reserved for applications.
 ![Alt text for the image](./media/KookerNetworking.png).
 
 
-# Getting Started
-
-First type in 
-```sh
-./install.sh 
-```
-That generates a small setup environment script. Activate it as follows:
-```sh
-source activate.sh 
-```
-
-The default procedure is then the following:
-
-## Choose a ready to use kpack
-
-Choose your use case by executing:
-```sh
-kooker kpack kpack/kpack.hub.yaml
-```
- As of today two kpack are tested and working:
- * [kpack/pack.yaml](./kpack/kpack.yaml): install a small K8 cluster with Minio, grafana; kube dashboard. The other kpack extend this simple one with more features.
- * [kpack/pack.punch.yaml](./kpack/kpack.yaml): install a complete punch with Jupypunch, elasticsearch, kibana.
- * [kpack/pack.hub.yaml](./kpack/kpack.yaml): install instead TSN innovation hub. Elasticsearch is not in there. It provides Kafka, Minio, and punch operators, artifact servers and board services. 
-
-You can of course design your own kpack if you want something else. 
-Onec you have chosen, simply type in. 
-```sh
-# download deploy and start the required components.
-kooker start 
-
-# Expose all the required services to your host. This requires a sudoer
-# password to patch your /etc/host file.
-kooker expose 
-
-# Just checking
-kooker status
-
-# Get the information about what is there and what are the exposed URLs
-kooker info
-```
-
-## From there 
-
-Once components are up, you can visit the various UI, for instance http://board.punch:8080
-(if you selected the punch board application). 
 
 # Custom Deployment
 
