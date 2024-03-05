@@ -179,14 +179,3 @@ cert-manager:
       wait: true
   _values:
     installCRDs: true
-
-kooker-post-install:
-  _install:
-    flags:
-      wait: true
-  _values:
-    serviceAccount: admin-user
-    minio:
-      endpoint: "http://minio.object-store:9000"
-      access_key: minioadmin
-      secret_key: minioadmin
