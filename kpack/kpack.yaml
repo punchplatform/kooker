@@ -41,9 +41,6 @@ components:
     namespace: cert-manager
     repo: jetstack
 
-  - name: kooker-post-install
-    namespace: default
-
 global:
   pullPolicy: IfNotPresent
   storageClassName: local-path
