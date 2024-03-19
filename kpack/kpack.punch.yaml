@@ -456,6 +456,8 @@ punch-board:
           service: 'artifacts-server.artifacts-server:4245'
         - prefix: '/v1/alerts'
           service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/metrics'
+          service: 'artifacts-server.artifacts-server:4245'
       # This jwt key is used to (only) sign the jwt token. The jwt token is a standard token
       # that contain the useful information about the user.
       # Check the proxy.go file.
