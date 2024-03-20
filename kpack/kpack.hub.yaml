@@ -66,14 +66,6 @@ components:
   - name: kooker-post-install
     namespace: default
 
-  - name: kooker-spark
-    namespace: jupyterhub
-
-  - name: jupyterhub
-    version: 3.0.3
-    namespace: jupyterhub
-    repo: jupyterhub
-
 global:
   pullPolicy: IfNotPresent
   storageClassName: local-path
@@ -81,83 +73,6 @@ global:
   sso:
     enabled: false
   replicas: 1
-
-kooker-spark:
-  _install:
-    flags:
-      wait: true
-  _values:
-    role_binding_name: spark
-    service_account: spark
-    role: spark
-    selector:
-      app: jupyterhub
-      component: singleuser-server
-    service: spark
-    ingress:
-      url: spark.punch
-      ingressClassName: nginx
-
-jupyterhub:
-  _install:
-    flags:
-      wait: false
-      timeout: 20m
-  _values:
-    singleuser:
-      image:
-        name: ghcr.io/punchplatform/jupypunch
-        tag: 8.1-dev
-        pullPolicy: Always
-      cmd: "/usr/local/bin/jupyterhub-singleuser"
-      defaultUrl: /tree/
-      networkPolicy:
-        enabled: false
-      serviceAccountName: spark
-      extraFiles:
-        jupypunch_conf.yaml:
-          mountPath: /opt/jupypunch/jupypunch_conf.yaml
-          data:
-            kubernetes: true
-            spark.kubernetes.namespace: jupyterhub
-            spark.driver.host: spark.jupyterhub.svc.cluster.local
-            spark.kubernetes.authenticate.driver.serviceAccountName: spark
-            spark.ui.port: 4040
-            spark.hadoop.fs.s3a.endpoint: http://minio.object-store:9000
-            spark.hadoop.fs.s3a.access.key: minioadmin
-            spark.hadoop.fs.s3a.secret.key: minioadmin
-            spark.hadoop.fs.s3a.path.style.access: true
-            hadoop.fs.s3a.aws.credentials.provider: org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider
-            punch.artifacts.server.url: http://artifacts-server.artifacts-server:4245/
-            punch_nodes:
-              s3:
-                access_key: minioadmin
-                secret_key: minioadmin
-                endpoint: http://minio.object-store:9000
-              elasticsearch:
-                http_hosts:
-                  - host: elasticsearch-master.doc-store
-                    port: 9200
-                    scheme: http
-                security:
-                  credentials:
-                    username: elastic
-                    password: elastic
-              kafka:
-                kafka.bootstrap.servers: kooker-kafka-kafka-bootstrap.processing:9092
-              kafka_stream:
-                kafka.bootstrap.servers: kooker-kafka-kafka-bootstrap.processing:9092
-
-    ingress:
-      enabled: true
-      annotations:
-        nginx.ingress.kubernetes.io/proxy-body-size: 5g
-      ingressClassName: nginx
-      hosts:
-        - jupyterhub.punch
-      pathSuffix:
-      pathType: Prefix
-      tls: [ ]
 
 ingress-nginx:
   _install:
@@ -394,6 +309,8 @@ punch-board:
         - prefix: '/v1/settings'
           service: 'artifacts-server.artifacts-server:4245'
         - prefix: '/v1/api-docs'
+          service: 'artifacts-server.artifacts-server:4245'
+        - prefix: '/v1/metrics'
           service: 'artifacts-server.artifacts-server:4245'
       # This jwt key is used to (only) sign the jwt token. The jwt token is a standard token
       # that contain the useful information about the user.
