@@ -26,6 +26,7 @@ Kooker is developed by Punch and Kast Teams with best-effort support. We encoura
       * [Load a development image](#load-a-development-image)
       * [Restart a component](#restart-a-component)
       * [Check you work with the image you expect](#check-you-work-with-the-image-you-expect)
+   * [Run Kooker on a corporate Windows laptop](#develop-using-corporate-laptop)
 * [Troubleshooting](#Troubleshooting)
    * [punch operator does not install](#punch-operator-does-not-install)
 
@@ -272,6 +273,10 @@ That produces something like
   "imageID": "sha256:66f345214703dfcb3204ec7114656f745dd76596a436d03e53bb136916cf4c11"
 }
 ```
+
+## Using Kooker on a corporate Windows Laptop
+
+Refer to this [guide](./docs/README.md).
 
 # Troubleshooting
 

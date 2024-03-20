@@ -17,6 +17,7 @@ wsl OS | Ubuntu 22.04 LTS | kernel 5.15.131.1-microsoft-standard-WLS2 x84-64
 Docker |  25.0.1 | build 29cf629 version on the ubuntu VM WSL2
 
 ## Configuration on the host machine
+
 <b>Please note, you must first shut down the Windows VM in order to make this modification.<b>
 
 To activate nested virtualization, run this command in Powershell on the host machine : 
@@ -30,9 +31,10 @@ Once this step is completed the configuration of the host machine is over.
 
 ## Configuration of the Windows VM
 
-The Windows 10 VM already has WSL but it isn't functionnal. Several Powershell command instructions need to be run as administrator to repair it.
+The Windows 10 VM already has WSL but it is not functionnal. Several Powershell command instructions need to be run as administrator to repair it.
 
 ### Activating WSL
+
 #### Through PowerShell command line
 
 This command activate Windows sub-system for Linux
