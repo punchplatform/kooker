@@ -387,7 +387,7 @@ do
                 for host in ${hosts}; do
                 # If standardized comments are provided in the kpack (<component> default credentials)
                 # this will output default credentials of the component
-                  info "✓ ${component}: http://${host}:8080    $(grep "${component} default credentials" kpack/.kpack 2> /dev/null)"
+                  info "✓ ${component}: http://${host}:8080    $(grep "${component} default credentials" ${KOOKER_KPACK_DIR}/.kpack 2> /dev/null)"
                 done
             done
             exit 0
