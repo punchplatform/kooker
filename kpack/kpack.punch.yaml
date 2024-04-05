@@ -326,8 +326,8 @@ strimzi-kafka-operator:
   _values:
     resources:
       requests:
-        cpu: 0
-        memory: 0
+        cpu: 0.25
+        memory: 400m
 
 # Watchout : BETA kast helm chart
 # No ingress because TLS is enabled by default
@@ -337,18 +337,18 @@ kooker-kafka:
       wait: true
   _values:
     kafka:
-      version: 3.0.0
+      version: 3.4.0
       resources:
         requests:
-          cpu: 0
-          memory: 0
+          cpu: "0.5"
+          memory: 500m
       storage:
         class: local-path
     zk:
       resources:
         requests:
-          cpu: 0
-          memory: 0
+          cpu: "0.25"
+          memory: 400m
       storage:
         class: local-path
 
