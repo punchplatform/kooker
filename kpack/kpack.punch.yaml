@@ -45,7 +45,7 @@ components:
 
   - name: strimzi-kafka-operator
     namespace: processing
-    version: 0.29.0
+    version: 0.34.0
     repo: strimzi
 
   - name: kooker-kafka
@@ -110,6 +110,7 @@ kooker-spark:
       ingressClassName: nginx
 
 jupyterhub:
+    # jupyterhub default credentials: punch/punch
   _install:
     flags:
       wait: false
@@ -178,12 +179,14 @@ ingress-nginx:
       #timeout: (default 5m0s)
 
 minio:
+
   _install:
     flags:
       wait: true
   _values:
     replicas: 1
     mode: standalone
+      # minio default credentials: minioadmin/minioadmin
     rootUser: minioadmin
     rootPassword: minioadmin
     consoleIngress:
@@ -311,6 +314,8 @@ grafana:
       ingressClassName: nginx
       hosts:
         - grafana.punch
+
+      # grafana default credentials: admin/admin
     adminUser: admin
     adminPassword: admin
 
@@ -321,8 +326,8 @@ strimzi-kafka-operator:
   _values:
     resources:
       requests:
-        cpu: 0
-        memory: 0
+        cpu: 0.25
+        memory: 400m
 
 # Watchout : BETA kast helm chart
 # No ingress because TLS is enabled by default
@@ -332,18 +337,18 @@ kooker-kafka:
       wait: true
   _values:
     kafka:
-      version: 3.0.0
+      version: 3.4.0
       resources:
         requests:
-          cpu: 0
-          memory: 0
+          cpu: "0.5"
+          memory: 500m
       storage:
         class: local-path
     zk:
       resources:
         requests:
-          cpu: 0
-          memory: 0
+          cpu: "0.25"
+          memory: 400m
       storage:
         class: local-path
 
@@ -479,9 +484,11 @@ punch-board:
         loginLogo: "/images/punch/punch_logo_white.svg"
     
       # The authentication configuration. Here you can define the users and their roles.
+      #
       auth:
         users:
           board:
+      # punch-board default credentials: board/board
             password: board
             roles:
               - admin

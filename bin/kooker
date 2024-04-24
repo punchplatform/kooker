@@ -385,7 +385,9 @@ do
                 ns=$(yq -r ".components[] | select(.alias == \"$component\" or .name == \"$component\").namespace" ${KOOKER_KPACK}) 
                 hosts=$(kubectl get ingress -n $ns -o jsonpath='{range .items[*]}{.spec.rules[*].host}{"\n"}{end}')
                 for host in ${hosts}; do
-                  info "✓ ${component}: http://${host}:8080"
+                # If standardized comments are provided in the kpack (<component> default credentials)
+                # this will output default credentials of the component
+                  info "✓ ${component}: http://${host}:8080    $(grep "${component} default credentials" ${KOOKER_KPACK_DIR}/.kpack 2> /dev/null)"
                 done
             done
             exit 0
