@@ -56,18 +56,6 @@ components:
     namespace: cert-manager
     repo: jetstack
 
-  - alias: punch-operator-crds
-    name: operator-crds
-    namespace: punchoperator-system
-    version: 8.1-dev
-    repo: punch
-
-  - alias: punch-operator
-    name: operator
-    namespace: punchoperator-system
-    version: 8.1-dev
-    repo: punch
-
   - name: punch-board
     namespace: punch-board
     version: 8.1-dev
@@ -297,22 +285,6 @@ cert-manager:
       wait: true
   _values:
     installCRDs: true
-
-punch-operator-crds:
-  _install:
-    flags:
-      wait: true
-
-punch-operator:
-  _install:
-    flags:
-      wait: true
-  _values:
-    kubernetes:
-      resources:
-        requests:
-          cpu: 0
-          memory: 0
 
 punch-board:
   _install:
