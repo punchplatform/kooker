@@ -5,13 +5,13 @@ components:
     namespace: ingress
     repo: ingress-nginx
 
-  - name: kubernetes-dashboard
-    namespace: kubernetes-dashboard
-    version: 6.0.0
-    repo: kubernetes-dashboard
-
-  - name: kooker-kubernetes-dashboard-rbac
-    namespace: kubernetes-dashboard
+#  - name: kubernetes-dashboard
+#    namespace: kubernetes-dashboard
+#    version: 6.0.0
+#    repo: kubernetes-dashboard
+#
+#  - name: kooker-kubernetes-dashboard-rbac
+#    namespace: kubernetes-dashboard
 
   - name: minio
     namespace: object-store
@@ -22,24 +22,6 @@ components:
     namespace: artifacts-server
     version: 8.1-dev
     repo: punch
-
-  - name: prometheus
-    namespace: monitoring
-    version: 19.3.3
-    repo: prometheus-community
-
-  - name: grafana
-    namespace: monitoring
-    version: 6.51.1
-    repo: grafana
-
-  - name: strimzi-kafka-operator
-    namespace: processing
-    version: 0.29.0
-    repo: strimzi
-
-  - name: kooker-kafka
-    namespace: processing
 
   - name: cert-manager
     version: v1.11.0
@@ -62,9 +44,6 @@ components:
     namespace: punch-board
     version: 8.1-dev
     repo: punch
-
-  - name: kooker-post-install
-    namespace: default
 
 global:
   pullPolicy: IfNotPresent
@@ -147,91 +126,35 @@ artifacts-server:
           access_key: minioadmin
           secret_key: minioadmin
 
-prometheus:
-  _install:
-    flags:
-      wait: true
-  _values:
-    alertmanager:
-      enabled: false
-    prometheus-node-exporter:
-      enabled: false
-
-grafana:
-  _install:
-    flags:
-      wait: true
-  _values:
-    ingress:
-      enabled: true
-      ingressClassName: nginx
-      hosts:
-        - grafana.punch
-    adminUser: admin
-    adminPassword: admin
-
-strimzi-kafka-operator:
-  _install:
-    flags:
-      wait: true
-  _values:
-    resources:
-      requests:
-        cpu: 0
-        memory: 0
-
-# Watchout : BETA kast helm chart
-# No ingress because TLS is enabled by default
-kooker-kafka:
-  _install:
-    flags:
-      wait: true
-  _values:
-    kafka:
-      version: 3.0.0
-      resources:
-        requests:
-          cpu: 0
-          memory: 0
-      storage:
-        class: local-path
-    zk:
-      resources:
-        requests:
-          cpu: 0
-          memory: 0
-      storage:
-        class: local-path
-
-kubernetes-dashboard:
-  _install:
-    flags:
-      wait: true
-  _values:
-    protocolHttp: true
-    service:
-      externalPort: 9090
-    serviceAccount:
-      create: true
-      name: kubernetes-dashboard
-    ingress:
-      enabled: true
-      className: nginx
-      hosts:
-        - dashboard.punch
-    resources:
-      requests:
-        cpu: 0
-        memory: 0
-
-kooker-kubernetes-dashboard-rbac:
-  _install:
-    flags:
-      wait: true
-  _values:
-    clusterRoleName: cluster-admin
-    serviceAccountName: kubernetes-dashboard
-    namespace: kubernetes-dashboard
+#kubernetes-dashboard:
+#  _install:
+#    flags:
+#      wait: true
+#  _values:
+#    protocolHttp: true
+#    service:
+#      externalPort: 9090
+#    serviceAccount:
+#      create: true
+#      name: kubernetes-dashboard
+#    ingress:
+#      enabled: true
+#      className: nginx
+#      hosts:
+#        - dashboard.punch
+#    resources:
+#      requests:
+#        cpu: 0
+#        memory: 0
+#
+#kooker-kubernetes-dashboard-rbac:
+#  _install:
+#    flags:
+#      wait: true
+#  _values:
+#    clusterRoleName: cluster-admin
+#    serviceAccountName: kubernetes-dashboard
+#    namespace: kubernetes-dashboard
 
 cert-manager:
   _install:
@@ -342,16 +265,3 @@ punch-board:
       #    resource: punch-board
       #    credentials:
       #      secret: 3e2Iov2MhYRh8VrG50F5INCT1vzU6b5a
-
-kooker-post-install:
-  _install:
-    flags:
-      wait: true
-  _values:
-    serviceAccount: admin-user
-    punchVersion: 8.1-dev
-    resourcesProviderUrl: http://artifacts-server.artifacts-server:4245
-    minio:
-      endpoint: "http://minio.object-store:9000"
-      access_key: minioadmin
-      secret_key: minioadmin
